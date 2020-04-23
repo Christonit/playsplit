@@ -1,0 +1,14 @@
+aside{
+    padding: 24px;
+    max-width: 268px;
+    height: calc(100vh - 10rem);
+    position: sticky;
+    top: 66px;
+    background-color: $black;
+
+}
+
+.playlist-playing-container{
+    position: absolute;
+    bottom: 24px;
+}

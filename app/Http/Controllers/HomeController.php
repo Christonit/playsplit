@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ServerRequestInterface;
 use App\User;
@@ -28,7 +27,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+
+        if( Auth::check()){
+
+            $user = Auth::user();
+
+            // return $user;
+
+            return view('app-overview')->with('user', $user); 
+        }
+        return view('landing');
     }
     public function callback(Request $request)
     {
@@ -57,11 +65,11 @@ class HomeController extends Controller
             ]);
 
 
-        // 6. encode response in JSON  
+            // 6. encode response in JSON  
         $tokens = json_decode($response->getBody(),true);
-
         // 7. OPen get request to api spotify to obtain user ID.
         $spotify_user = $this->handleUserInfo($tokens);
+
 
         // return $user['email'];
         $user = $this->findOrCreateSpotifyUser($spotify_user);
@@ -78,7 +86,7 @@ class HomeController extends Controller
     {
 
         // 1. Set scopes of the privilege you want.
-        $scopes = 'user-read-private user-read-email';
+        $scopes = 'streaming user-read-private user-read-email';
         $redirect_url = 'http://127.0.0.1:8000/auth/spotify/callback';
 
 
@@ -109,6 +117,8 @@ class HomeController extends Controller
 
     protected function findOrCreateSpotifyUser($spotify){
 
+
+
         
         $user = User::firstOrNew(['spotify_id' => $spotify['id'] ]);
 
@@ -121,10 +131,17 @@ class HomeController extends Controller
             return $user;
         }
 
+        if( !empty($spotify['images']) ){
+            
+            $prof_pic = $spotify['images'][0]['url'];
+        }else{
+            $prof_pic = null;
+        }
+
         $user->fill([
             'spotify_id' => $spotify['id'],
             'spotify_email' => $spotify['email'],
-            'avatar' => $spotify['images'][0]['url'],
+            'avatar' => $prof_pic,
             'access_token' => $spotify['access_token'],
             'refresh_token' => $spotify['refresh_token']
         ])->save();

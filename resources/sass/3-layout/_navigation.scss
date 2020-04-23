@@ -1,0 +1,33 @@
+
+
+.nav-container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.nav-item-icon{
+    display: block;
+    content: " ";
+    height: 20px;
+    background-color: $white100;
+    width: 20px;
+    margin-right: 16px;
+}
+
+.nav-item{
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    margin: 8px 0;
+}
+.nav-item.active::before{
+    display: block;
+    content: " ";
+    height: 20px;
+    width: 3px;
+    background-color: $cherry;
+    left: 0;
+    position: absolute;
+    
+}

@@ -1,0 +1,25 @@
+.app-header{
+    padding: 16px 24px;
+    display: flex;
+    position: sticky;
+    top: 0;
+    background-color: $black;
+}
+.branding{
+    max-width: 268px;
+}
+
+.top-navigation{
+    display: inline-flex;
+    align-items: center;
+    margin-left: 20%;
+}
+
+
+#top-bar-links{
+    display: inline-block;
+    position: relative;
+    margin: 0 0 0 auto;
+}
+
+
