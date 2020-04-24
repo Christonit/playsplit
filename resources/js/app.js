@@ -7,6 +7,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+import Vuex from 'vuex';
 import VueDraggable from 'vue-draggable'
 
 
@@ -23,7 +24,15 @@ import VueDraggable from 'vue-draggable'
 import TopNav from './components/top-nav.vue';
 import SidebarComp from './components/sidebar.vue';
 import PlaybackController from './components/playback-component.vue';
-Vue.use(VueDraggable)
+
+import store from './store/index.js';
+import spotify from './spotify/core.js';
+
+    
+
+
+Vue.use(Vuex);
+Vue.use(VueDraggable);
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
@@ -33,11 +42,23 @@ Vue.use(VueDraggable)
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+
 const app = new Vue({
     el: '#app',
+    store,
+    mixins:[spotify],
     components:{
         TopNav,
         SidebarComp,
         PlaybackController
+    },
+    created(){
+     
+        this.$store.dispatch('getUserData')
     }
 });
+
+
+window.onSpotifyWebPlaybackSDKReady = () => {
+    app.$store.commit('setSDKReady',true)
+}

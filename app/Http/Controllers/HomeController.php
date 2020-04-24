@@ -86,7 +86,7 @@ class HomeController extends Controller
     {
 
         // 1. Set scopes of the privilege you want.
-        $scopes = 'streaming user-read-private user-read-email';
+        $scopes = 'streaming user-read-private user-read-email user-read-playback-state playlist-read-collaborative user-modify-playback-state playlist-modify-public user-read-currently-playing playlist-read-private';
         $redirect_url = 'http://127.0.0.1:8000/auth/spotify/callback';
 
 
@@ -154,5 +154,10 @@ class HomeController extends Controller
         Auth::logout();
 
         return redirect('/');
+    }
+
+    public function userData(){
+
+        return Auth::user();
     }
 }

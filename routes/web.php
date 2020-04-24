@@ -22,6 +22,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/fetch-user-data', 'HomeController@userData');
 
 
 Route::get('/auth/spotify/callback', 'HomeController@callback');

@@ -3,6 +3,7 @@
 @section('content')
     <top-nav></top-nav>
     <sidebar-comp></sidebar-comp>
+    <playback-controller></playback-controller>
     <div class="flex-center position-ref full-height">
 
             <div class="content">
