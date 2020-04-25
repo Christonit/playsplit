@@ -1957,10 +1957,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var token = this.user.access_token;
       var player = new Spotify.Player({
-        name: 'Web Playback SDK Quick Start Player',
+        name: 'Playsplit',
         getOAuthToken: function getOAuthToken(cb) {
           cb(token);
-        }
+        },
+        volume: 0.9
       }); // Error handling
 
       player.addListener('initialization_error', function (_ref) {
@@ -1988,6 +1989,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       player.addListener('ready', function (_ref5) {
         var device_id = _ref5.device_id;
         console.log('Ready with Device ID', device_id);
+
+        _this2.$store.commit('setDeviceId', device_id);
+
         _this2.isSpotifyOnline = true;
       }); // Not Ready
 
@@ -1995,6 +1999,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         var device_id = _ref6.device_id;
         console.log('Device ID has gone offline', device_id);
       }); // Connect to the player!
+
+      player.connect();
     }
   }
 });
@@ -52798,6 +52804,12 @@ __webpack_require__.r(__webpack_exports__);
           Authorization: "Bearer ".concat(this.$store.state.user.access_token)
         }
       };
+    },
+    authorization: function authorization() {
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer ".concat(this.$store.state.user.access_token)
+      };
     }
   },
   created: function created() {},
@@ -52815,6 +52827,17 @@ __webpack_require__.r(__webpack_exports__);
         _this.$store.commit('setPlaylists', payload.items);
 
         console.log('Playlists loaded');
+      });
+    },
+    playSong: function playSong(e) {
+      return fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
+        method: 'PUT',
+        headers: this.authorization,
+        body: JSON.stringify({
+          uris: ["spotify:track:7xGfFoTpQ2E7fRF5lN10tr"]
+        })
+      }).then(function (res) {
+        return console.log(res);
       });
     }
   }
@@ -52843,6 +52866,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist: null,
+    device_id: null,
     playlists: []
   },
   mutations: {
@@ -52857,6 +52881,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     setPlaylists: function setPlaylists(state, payload) {
       state.playlists = payload;
+    },
+    setDeviceId: function setDeviceId(state, payload) {
+      state.device_id = payload;
     }
   },
   actions: {

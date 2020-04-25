@@ -13,6 +13,10 @@ export default {
                     Authorization:`Bearer ${this.$store.state.user.access_token}`
                 }
             }
+        },
+        authorization(){
+
+            return { 'Content-Type': 'application/json','Authorization':`Bearer ${this.$store.state.user.access_token}`}          
         }
     },
   
@@ -34,7 +38,17 @@ export default {
               console.log('Playlists loaded')
 
           })
+      },
+      playSong(e){
+        return fetch('https://api.spotify.com/v1/me/player/play?device_id='+this.$store.state.device_id,{
+                            method: 'PUT',
+                            headers: this.authorization,
+                            body:JSON.stringify({uris: ["spotify:track:7xGfFoTpQ2E7fRF5lN10tr"]})
+                        }).then( (res)=> console.log(res))
+                              
+                            
       }
+
     }
   };
   

@@ -1,1 +1,22 @@
 
+@mixin flex-between-center{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+@mixin flex-align-center{
+    display: flex;
+    align-items: center;
+}
+
+@mixin b-radius-4{
+    border-radius: 4px;
+}
+@mixin b-radius-8{
+    border-radius: 8px;
+}
+
+
+@mixin border-white-1 {
+    border: 1px solid $white100;
+}

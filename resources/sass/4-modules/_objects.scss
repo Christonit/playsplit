@@ -1,0 +1,19 @@
+.grid-actions-container{
+    position: relative;
+    margin: 0 0 0 auto;
+    @include flex-align-center;
+}
+
+
+.grid-list-item:hover .btn-container{
+    margin: 0 32px;
+    position: relative;
+    top: 0px;
+    opacity: 1;
+}
+.grid-list-item  .btn-container{
+    margin: 0 32px;
+    position: relative;
+    top: 56px;
+    opacity: 0;
+}

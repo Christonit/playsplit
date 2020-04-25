@@ -10909,6 +10909,7 @@ body {
 body {
   background-color: #111417;
   color: #fff;
+  font-family: "Cabin", sans-serif;
 }
 
 .app-header {
@@ -10918,6 +10919,7 @@ body {
   position: sticky;
   top: 0;
   background-color: #111417;
+  z-index: 10;
 }
 
 .branding {
@@ -10939,16 +10941,39 @@ body {
 aside {
   padding: 24px;
   max-width: 268px;
+  width: 100%;
   height: calc(100vh - 10rem);
-  position: -webkit-sticky;
-  position: sticky;
+  position: fixed;
   top: 66px;
   background-color: #111417;
+  z-index: 10;
 }
 
 .playlist-playing-container {
   position: absolute;
   bottom: 24px;
+}
+
+.app-container {
+  width: calc(100% - 268px);
+  margin-left: auto;
+  margin-right: 0;
+  position: static;
+  top: 0;
+}
+
+.section-container {
+  width: 60%;
+  max-width: 960px;
+  min-width: 740px;
+  margin-left: 10%;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
 }
 
 .nav-container {
@@ -10981,6 +11006,90 @@ aside {
   background-color: #ED2F52;
   left: 0;
   position: absolute;
+}
+
+.grid-actions-container {
+  position: relative;
+  margin: 0 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.grid-list-item:hover .btn-container {
+  margin: 0 32px;
+  position: relative;
+  top: 0px;
+  opacity: 1;
+}
+
+.grid-list-item .btn-container {
+  margin: 0 32px;
+  position: relative;
+  top: 56px;
+  opacity: 0;
+}
+
+.grid-list-item {
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 16px;
+  overflow: hidden;
+}
+
+.grid-list-img {
+  border-radius: 4px;
+  height: 44px;
+  width: 44px;
+  overflow: hidden;
+  position: relative;
+}
+
+.grid-list-heading {
+  font-size: 14px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.97);
+  display: block;
+}
+
+.grid-list-img img {
+  height: 100%;
+  width: 100%;
+}
+
+.grid-list-item .grid-cell:nth-child(2) {
+  min-width: 216px;
+  max-width: 216px;
+  text-align: left;
+}
+
+.grid-list-item .grid-cell {
+  margin: 0 24px;
+  width: auto;
+  max-width: 108px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.grid-list-img .btn-play {
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  color: rgba(255, 255, 255, 0.97);
+  background-color: rgba(237, 47, 82, 0.5);
+  border: none;
+  font-size: 24px;
+}
+
+.grid-list-img:hover .btn-play {
+  opacity: 1;
 }
 
 @-webkit-keyframes fadeInDown {

@@ -9,6 +9,7 @@ const store = new Vuex.Store({
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist:null,
+    device_id:null,
     playlists: []
   },
   mutations: {
@@ -23,6 +24,9 @@ const store = new Vuex.Store({
     },
     setPlaylists(state, payload) {
         state.playlists = payload;
+    },
+    setDeviceId(state, payload) {
+        state.device_id = payload;
     }
   },
   actions:{

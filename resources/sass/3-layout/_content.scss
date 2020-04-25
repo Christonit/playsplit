@@ -1,14 +1,39 @@
 aside{
     padding: 24px;
     max-width: 268px;
+    width: 100%;
     height: calc(100vh - 10rem);
-    position: sticky;
+    position: fixed;
     top: 66px;
     background-color: $black;
+    z-index: 10;
 
 }
 
 .playlist-playing-container{
     position: absolute;
     bottom: 24px;
+}
+
+.app-container{
+    width: calc(100% - 268px);
+    // height: 100vh;
+    margin-left: auto;
+    margin-right: 0;
+    position: static;
+    top: 0;
+}
+
+.section-container {
+    width: 60%;
+    max-width: 960px;
+    min-width: 740px;
+    margin-left: 10%;
+}
+
+
+
+.section-header{
+    @include flex-between-center;
+    padding: 0 16px;
 }

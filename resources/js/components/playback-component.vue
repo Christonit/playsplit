@@ -45,8 +45,9 @@
             player(){
                 const token = this.user.access_token;
                 const player = new Spotify.Player({
-                    name: 'Web Playback SDK Quick Start Player',
-                    getOAuthToken: cb => { cb(token); }
+                    name: 'Playsplit',
+                    getOAuthToken: cb => { cb(token); },
+                    volume:0.9
                 });
 
                 // Error handling
@@ -64,7 +65,9 @@
                 // Ready
                 player.addListener('ready', ({ device_id }) => {
                     console.log('Ready with Device ID', device_id);
+                    this.$store.commit('setDeviceId', device_id);
                     this.isSpotifyOnline = true;
+                    
                 });
 
                 // Not Ready
@@ -72,9 +75,9 @@
                     console.log('Device ID has gone offline', device_id);
                 });
 
-                
                 // Connect to the player!
-                
+                player.connect();
+
             }
         }
     }
