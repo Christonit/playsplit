@@ -1,11 +1,25 @@
 .grid-list-item{
-    @include flex-align-center;
+    @include inline-flex-align-center;
+    width: 100%;
     @include b-radius-4;
     @include border-white-1;
     padding: 16px 16px;
     overflow: hidden;
+    height: 76px;
+    margin: 8px 0;
+}
+.grid-list-item:hover{
+    border: 1px solid $white300;
 }
 
+
+.grid-list-item.to-merge:hover{
+    border: 1px solid $white300;
+}
+.grid-list-item.to-merge{
+    background-color: $white100;
+    border-color: transparent;;
+}
 
 .grid-list-img{
     @include b-radius-4;
@@ -31,6 +45,9 @@
     min-width: 216px;
     max-width: 216px;
     text-align: left;
+}
+.grid-list-item .grid-cell:nth-child(4){
+    margin: 0 0 0 24px;
 }
 
 .grid-list-item .grid-cell{

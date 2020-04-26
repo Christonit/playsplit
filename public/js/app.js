@@ -2113,6 +2113,55 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'playlist-dashboard',
@@ -39382,7 +39431,14 @@ var render = function() {
     [
       _vm._m(0),
       _vm._v(" "),
-      _c("div", { staticClass: "section-body" }, [_c("grid-item")], 1)
+      _c(
+        "div",
+        { staticClass: "section-body" },
+        [_c("grid-item"), _vm._v(" "), _vm._m(1)],
+        1
+      ),
+      _vm._v(" "),
+      _vm._m(2)
     ]
   )
 }
@@ -39394,16 +39450,109 @@ var staticRenderFns = [
     return _c("div", { staticClass: "section-header" }, [
       _c("h2", { staticClass: "title" }, [_vm._v("My playlists")]),
       _vm._v(" "),
-      _c("div", { staticClass: "btn-container" }, [
-        _c("div", { staticClass: "view-type-toggle" }, [
-          _c("button", { staticClass: "material-icons" }, [
-            _vm._v("view_list")
+      _c(
+        "div",
+        { staticClass: "btn-container d-inline-flex align-items-center" },
+        [
+          _c("button", { staticClass: " mx-3 btn btn-secondary" }, [
+            _vm._v("Cancel merge")
           ]),
           _vm._v(" "),
-          _c("button", { staticClass: "material-icons" }, [
-            _vm._v("view_module")
+          _c("div", { staticClass: "view-type-toggle" }, [
+            _c("button", { staticClass: "material-icons" }, [
+              _vm._v("view_list")
+            ]),
+            _vm._v(" "),
+            _c("button", { staticClass: "material-icons" }, [
+              _vm._v("view_module")
+            ])
           ])
+        ]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "grid-list-item to-merge" }, [
+      _c("div", { staticClass: "grid-list-img" }, [
+        _c("img", {
+          attrs: {
+            src: "https://via.placeholder.com/88",
+            alt: "Playlist title - cover"
+          }
+        }),
+        _vm._v(" "),
+        _c("button", { staticClass: "btn-play material-icons" }, [
+          _vm._v("\n                        play_arrow\n                    ")
         ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "grid-cell" }, [
+        _c("a", { staticClass: "grid-list-heading", attrs: { href: "#" } }, [
+          _vm._v("Hate it or love it")
+        ]),
+        _vm._v(" "),
+        _c("span", { staticClass: "grid-list-text" }, [
+          _vm._v("New age, synthwave, hip hop...")
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "grid-cell" }, [
+        _c("span", { staticClass: "grid-list-text" }, [_vm._v("172 songs")])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "grid-cell" }, [
+        _c("span", { staticClass: "grid-list-text" }, [
+          _vm._v("3 hours 25 min")
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "grid-actions-container" }, [
+        _c("label", { staticClass: "toggle-label", attrs: { for: "toggle" } }, [
+          _vm._v(
+            "\n                        Preserve\n                        "
+          ),
+          _c("button", { staticClass: "btn-toggle active" }, [_c("hr")])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "btn-container" }, [
+          _c("button", [_vm._v("merge")]),
+          _vm._v(" "),
+          _c("button", [_vm._v("split")])
+        ]),
+        _vm._v(" "),
+        _c("span", { staticClass: "material-icons btn-options" }, [
+          _vm._v("more_horiz")
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { attrs: { id: "quickmerge" } }, [
+      _c("div", { staticClass: "merge-info-review" }, [
+        _c("span", { staticClass: "merge-title" }, [
+          _vm._v("Type playlist name")
+        ]),
+        _vm._v(" "),
+        _c("p", { staticClass: "text mb-0" }, [
+          _c("span", { staticClass: "highlight" }, [
+            _vm._v("Select one more playlit")
+          ]),
+          _vm._v(" | 127 songs, 3:25 durations")
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "btn-container" }, [
+        _c("button", { staticClass: "btn btn-secondary" }, [
+          _vm._v("Clear selected")
+        ]),
+        _vm._v(" "),
+        _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Merge")])
       ])
     ])
   }

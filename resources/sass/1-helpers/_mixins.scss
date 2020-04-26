@@ -4,16 +4,29 @@
     justify-content: space-between;
     align-items: center;
 }
+@mixin inline-flex-between-center{
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+}
 @mixin flex-align-center{
     display: flex;
     align-items: center;
 }
+@mixin inline-flex-align-center{
+    display: inline-flex;
+    align-items: center;
+}
+
 
 @mixin b-radius-4{
     border-radius: 4px;
 }
 @mixin b-radius-8{
     border-radius: 8px;
+}
+@mixin b-radius-full{
+    border-radius: 100%;
 }
 
 
