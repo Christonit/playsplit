@@ -10938,11 +10938,17 @@ body {
   margin: 0 0 0 auto;
 }
 
+#music-stats {
+  max-width: 280px;
+  width: 100%;
+  margin-left: 32px;
+}
+
 aside {
   padding: 24px;
   max-width: 268px;
   width: 100%;
-  height: calc(100vh - 10rem);
+  height: calc(100vh - 10.5rem);
   position: fixed;
   top: 66px;
   background-color: #111417;
@@ -10958,15 +10964,19 @@ aside {
   width: calc(100% - 268px);
   margin-left: auto;
   margin-right: 0;
-  position: static;
-  top: 0;
+  position: fixed;
+  top: 72px;
+  height: calc(100vh - 10.5rem);
+  right: 0;
+  overflow: hidden;
+  display: flex;
 }
 
 .section-container {
   width: 60%;
   max-width: 960px;
   min-width: 740px;
-  margin-left: 10%;
+  margin-left: 8%;
 }
 
 .section-header {
@@ -11027,6 +11037,26 @@ aside {
   position: relative;
   top: 56px;
   opacity: 0;
+}
+
+.text {
+  font-size: 14px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.5);
+  display: block;
+  line-height: 1.4;
+}
+
+.text-small {
+  font-size: 12px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.5);
+  display: block;
+  line-height: 1.4;
+}
+
+.highlight {
+  color: rgba(255, 255, 255, 0.97);
 }
 
 .grid-list-item {
@@ -11090,6 +11120,95 @@ aside {
 
 .grid-list-img:hover .btn-play {
   opacity: 1;
+}
+
+#playback {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 16px 24px;
+}
+
+.current-song {
+  display: flex;
+  align-items: center;
+}
+
+.current-song-img {
+  height: 48px;
+  border-radius: 4px;
+  width: 48px;
+  margin-right: 16px;
+}
+
+.playback-controller {
+  width: 666px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.playback-timer {
+  display: flex;
+  align-items: center;
+}
+
+.progress-bar {
+  width: 334px;
+  height: 4px;
+  margin: 0 12px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-tracker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  height: 4px;
+  background-color: #ED2F52;
+  border-radius: 4px;
+}
+
+.stat-bar {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin: 12px 0;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.stats-row {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.stats-row:last-child {
+  padding: 12px 0;
+  border-bottom: none;
+}
+
+.stat-position-tracker {
+  position: relative;
+  margin: 0;
+  height: 8px;
+  width: 8px;
+  background: aqua;
+  border-radius: 100%;
+}
+
+.stats-table {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 12px;
 }
 
 @-webkit-keyframes fadeInDown {

@@ -1,8 +1,13 @@
+#music-stats{
+    max-width: 280px;
+    width: 100%;
+    margin-left: 32px;
+}
 aside{
     padding: 24px;
     max-width: 268px;
     width: 100%;
-    height: calc(100vh - 10rem);
+    height: calc(100vh - 10.5rem);
     position: fixed;
     top: 66px;
     background-color: $black;
@@ -20,15 +25,19 @@ aside{
     // height: 100vh;
     margin-left: auto;
     margin-right: 0;
-    position: static;
-    top: 0;
+    position: fixed;
+    top: 72px;
+    height: calc(100vh - 10.5rem);
+    right: 0;
+    overflow: hidden;
+    display: flex;
 }
 
 .section-container {
     width: 60%;
     max-width: 960px;
     min-width: 740px;
-    margin-left: 10%;
+    margin-left: 8%;
 }
 
 

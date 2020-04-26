@@ -1,0 +1,32 @@
+.stat-bar{
+    display: block;
+    width: 100%;
+    height: 4px;
+    margin: 12px 0;
+    background-color: $white300;
+}
+
+.stats-row{
+    padding: 12px 0;
+    border-bottom: 1px solid $el-2;
+}
+
+.stats-row:last-child{
+    padding: 12px 0;
+    border-bottom: none;
+}
+
+.stat-position-tracker{
+    position: relative;
+    margin: 0;
+    height: 8px;
+    width: 8px;
+    background: aqua;
+    border-radius: 100%;
+}
+
+.stats-table{
+    background-color: $el-1;
+    @include b-radius-4;
+    padding: 12px;
+}

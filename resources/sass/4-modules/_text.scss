@@ -1,0 +1,16 @@
+.text{
+    @include text-14;
+    color: $white500;
+    display: block;
+    line-height: 1.4;
+}
+.text-small{
+    @include text-12;
+    color: $white500;
+    display: block;
+    line-height: 1.4;
+}
+
+.highlight{
+    color: $white900;
+}

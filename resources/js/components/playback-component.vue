@@ -1,6 +1,36 @@
 <template>
-    <div class="container">
-        
+    <div id="playback">
+        <div class="current-song">
+            <img src="https://via.placeholder.com/44" alt="" class="current-song-img"/>
+            <span>
+                <span class="text highlight">Ibuki - Hishou Version</span>
+                <span class="text">Yoshida Brothers</span>
+            </span>
+        </div>
+
+        <div class="playback-controller">
+
+            <div class="playback-timer">
+                <span class="text-small">0:00</span>
+                <div class="progress-bar">
+                    <span class="progress-bar-tracker"></span>
+                </div>
+                <span class="text-small">0:00</span>
+            </div>
+
+            <div class="playback-btn-container">
+                <button class="material-icons">skip_previous</button>
+                <button class="material-icons">play_arrow</button>
+                <button class="material-icons">skip_next</button>
+            </div>
+            
+
+        </div>
+
+        <div class="up-next text-right">
+            <span class="legend text">UP NEXT</span>
+            <p class="my-0">Stay Scheming - Rick Ross, Drake</p>
+        </div>
     </div>
 </template>
 
