@@ -6,7 +6,15 @@
     @include b-radius-4;
     padding: 24px;
     @include flex-between-center;
-    bottom: 30px;
+    bottom: 7.5rem;
+    z-index: 999;
+    max-width: 960px;
+    min-width: 740px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    width: 50%;
+    overflow: hidden;
 
 }
 

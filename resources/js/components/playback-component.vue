@@ -20,7 +20,7 @@
 
             <div class="playback-btn-container">
                 <button class="material-icons">skip_previous</button>
-                <button class="material-icons">play_arrow</button>
+                <button class="material-icons" @click="playSong">play_arrow</button>
                 <button class="material-icons">skip_next</button>
             </div>
             
@@ -36,15 +36,17 @@
 
 <script>    
 
-    import {mapState} from 'vuex';
+    import {mapState, mapMutations} from 'vuex';
     import spotify from '../spotify/core.js';
+    import createSpotifyPlayer from '../spotify/spotify-sdk.js';
 
     export default {
         name:'playback-controller',
         mixins:[spotify],
         data(){
             return {
-                isSpotifyOnline:false
+                isSpotifyOnline:false,
+                player:null
             }
         },
         created(){
@@ -52,15 +54,17 @@
                 let promise = new Promise( (resolve,reject) => {
                    let timer =  setInterval(()=>{
                         if( this.isUserLoaded == true && this.user !== '' && this.isSDKLoaded == true){
+                            // this.setPlayer();
+
                             resolve('User info is loaded');
                             clearInterval(timer)
                         }
                     },10);
 
                 }).then(() => this.getPlaylists(this.user.spotify_id))
-                .then(() => this.player())
-                    
-            
+                .then(() => this.setPlayer())
+                .then(() => this.player.connect())
+                .then(() => this.setPlayerId())         
 
         },
         mounted() {
@@ -69,45 +73,78 @@
 
         },
         computed:{
-            ...mapState(['user','isUserLoaded','isSDKLoaded'])
+            ...mapState(['user','isUserLoaded','isSDKLoaded','activePlaylist']),
+          
         },
         methods:{
-            player(){
+            // setTrack(){
+            //     fetch('',{
+            //         method:'PUT',
+            //         header:{
+            //             Authorization:``
+            //         }
+            //     })
+            // },
+            ...mapMutations(['setPlaylistPlaying']),
+            playTrack(){
+                if(activePlaylist == false){
+                    this.player.togglePlay().then(() => {
+                        console.log('Toggled playback!');
+                    });
+                }
+                
+            },
+            setPlayer(){
                 const token = this.user.access_token;
-                const player = new Spotify.Player({
+                this.player = new Spotify.Player({
                     name: 'Playsplit',
                     getOAuthToken: cb => { cb(token); },
                     volume:0.9
                 });
 
+                // return player;
+
                 // Error handling
-                player.addListener('initialization_error', ({ message }) => { console.error(message); });
-                player.addListener('authentication_error', ({ message }) => { console.error(message); });
-                player.addListener('account_error', ({ message }) => { console.error(message); });
-                player.addListener('playback_error', ({ message }) => { console.error(message); });
+                this.player.addListener('initialization_error', ({ message }) => { console.error(message); });
+                this.player.addListener('authentication_error', ({ message }) => { console.error(message); });
+                this.player.addListener('account_error', ({ message }) => { console.error(message); });
+                this.player.addListener('playback_error', ({ message }) => { console.error(message); });
 
                 // Playback status updates
-                player.addListener('player_state_changed', state => { console.log(state); });
+                this.player.addListener('player_state_changed', state => { console.log(state); });
 
-                player.connect().then( success => {
+                // this.player.connect().then( success => {
                     
-                });
+                // });
                 // Ready
-                player.addListener('ready', ({ device_id }) => {
+                // this.player.addListener('ready', ({ device_id }) => {
+                //     console.log('Ready with Device ID', device_id);
+                //     this.$store.commit('setDeviceId', device_id);
+                //     this.isSpotifyOnline = true;
+                    
+                // });
+
+                // Not Ready
+                // this.player.addListener('not_ready', ({ device_id }) => {
+                //     console.log('Device ID has gone offline', device_id);
+                // });
+
+                // Connect to the player!
+                // this.player.connect();
+
+
+
+
+
+
+            },
+            setPlayerId(){
+                this.player.addListener('ready', ({ device_id }) => {
                     console.log('Ready with Device ID', device_id);
                     this.$store.commit('setDeviceId', device_id);
                     this.isSpotifyOnline = true;
                     
                 });
-
-                // Not Ready
-                player.addListener('not_ready', ({ device_id }) => {
-                    console.log('Device ID has gone offline', device_id);
-                });
-
-                // Connect to the player!
-                player.connect();
-
             }
         }
     }

@@ -1,7 +1,13 @@
+body{
+    overflow: hidden;
+}
 #music-stats{
     max-width: 280px;
     width: 100%;
     margin-left: 32px;
+    position: fixed;
+    right: 2.5%;
+
 }
 aside{
     padding: 24px;
@@ -21,24 +27,36 @@ aside{
 }
 
 .app-container{
-    width: calc(100% - 268px);
-    // height: 100vh;
-    margin-left: auto;
-    margin-right: 0;
+    margin-left: 20px;
+    margin-right: auto;
     position: fixed;
     top: 72px;
-    height: calc(100vh - 10.5rem);
-    right: 0;
-    overflow: hidden;
-    display: flex;
+    height: calc(100vh - 11rem);
+    overflow-y: scroll;
+    width: 100%;
 }
 
+
 .section-container {
-    width: 60%;
+    width: 50%;
     max-width: 960px;
     min-width: 740px;
-    margin-left: 8%;
+    margin: auto ;
     position: relative;
+    right: 10px;
+    // width: 60%;
+    // max-width: 960px;
+    // min-width: 740px;
+    // margin-left: 8%;
+    // position: relative;
+    // overflow-y: scroll;
+    // -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    &::-moz-scrollbar {
+        display: none;
+    }
 }
 
 .section-body {

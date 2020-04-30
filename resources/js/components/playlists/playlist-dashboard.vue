@@ -14,7 +14,11 @@
             </div>
 
             <div class="section-body">
-                <grid-item></grid-item>
+                <template v-if='playlists.length != 0'>
+                    
+                    <grid-item v-for='playlist in playlists' :key='playlist.id' :id="playlist.id" :tracks-total='playlist.tracks.total' :img="playlist.images" :name="playlist.name" :uri="playlist.uri"></grid-item>
+
+                </template>
 
                 <div class="grid-list-item to-merge">
                     <div class="grid-list-img">
@@ -52,17 +56,7 @@
 
                
             </div>
-
-            <div id="quickmerge">
-                <div class="merge-info-review">
-                    <span class="merge-title">Type playlist name</span> 
-                    <p class="text mb-0"><span class="highlight">Select one more playlit</span> | 127 songs, 3:25 durations</p>
-                </div>
-                <div class="btn-container">
-                    <button class="btn btn-secondary">Clear selected</button>
-                    <button class="btn btn-primary">Merge</button>
-                </div>
-            </div>
+            
 
         </section>
 </template>
@@ -70,11 +64,23 @@
 <script>
 
 import GridItem from './grid-item.vue';
+import {mapState} from 'vuex';
 
 export default {
     name:'playlist-dashboard',
     components:{
         GridItem
+    },
+    mounted(){
+
+    },
+    computed:{
+        ...mapState(['playlists'])
+    },
+    methods:{
+        openModal(){
+            this.$store.commit('openCloseModal',0)
+        }
     }
 }
 </script>

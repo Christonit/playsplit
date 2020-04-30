@@ -73,3 +73,34 @@ margin-left: 12px;
     left: 15px;
     position: relative;
 }   
+
+
+.dropdown-items{
+    position: absolute;
+    text-align: right;
+    overflow: hidden;
+    background-color: $el-2;
+    font-size: 14px;
+    padding: 0 8px;
+    right: 0;
+    @include b-radius-4;
+}
+.dropdown-items a, .dropdown-items  button{
+    padding: 11px 12px;
+    display: block;
+    line-height: 1;
+    width: 100%;
+
+}
+
+.dropdown-items::before{
+    display: block;
+    content: " ";
+    height: 100%;
+    width: 100%;
+    background-color: $black;
+    left: 0;
+    top: 0;
+    position: absolute;
+    z-index: -1
+}

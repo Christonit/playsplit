@@ -8,13 +8,18 @@ const store = new Vuex.Store({
     user: '',
     isUserLoaded: false,
     isSDKLoaded: false,
-    activePlaylist:null,
+    activePlaylist:false,
     device_id:null,
-    playlists: []
+    playlists: [],
+    isModalOpen:false,
+    openModal:'edit-name'
   },
   mutations: {
     setUserData(state, payload){
         state.user = payload;
+    },
+    setPlaylistPlaying(state){
+        state.activePlaylist ? state.activePlaylist = false : state.activePlaylist = true;
     },
     setUserOnline(state){
         state.isUserLoaded = true;
@@ -27,6 +32,12 @@ const store = new Vuex.Store({
     },
     setDeviceId(state, payload) {
         state.device_id = payload;
+    },
+    openCloseModal(state, payload) {
+        state.isModalOpen ? state.isModalOpen = false : state.isModalOpen = true ;
+        // state.openModal = payload;
+        state.openModal = 'edit-name';
+
     }
   },
   actions:{

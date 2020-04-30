@@ -23,13 +23,14 @@ import VueDraggable from 'vue-draggable'
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 import TopNav from './components/top-nav.vue';
 import SidebarComp from './components/sidebar.vue';
+import Quickmerge from './components/quickmerge.vue';
 import PlaylistDashboard from './components/playlists/playlist-dashboard.vue';
 import PlaybackController from './components/playback-component.vue';
 import StatsTable from './components/stats-table/stats-table.vue';
 import store from './store/index.js';
 import spotify from './spotify/core.js';
-
-    
+import EditNamePopUp from './components/modals/edit-name.vue';
+import {mapState} from 'vuex';
 
 
 Vue.use(Vuex);
@@ -53,7 +54,12 @@ const app = new Vue({
         SidebarComp,
         PlaybackController,
         PlaylistDashboard,
-        StatsTable
+        StatsTable,
+        EditNamePopUp,
+        Quickmerge
+    },
+    computed:{
+        ...mapState(['isModalOpen'])
     },
     created(){
      

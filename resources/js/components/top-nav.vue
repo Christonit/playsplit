@@ -22,6 +22,10 @@
                     <span class="text">Christopher Santana</span>
                     <img src="#" alt="" class="user-profile-pic">
                 </span>
+                <div class="dropdown-items">
+                    <a href="/auth/spotify/logout"> Logout</a>
+                    <a href="/auth/spotify/logout"> Edit profile</a>
+                </div>
             </div>
         
     </header>

@@ -1899,6 +1899,51 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modals/edit-name.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modals/edit-name.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "edit-name-pop-up",
+  methods: {
+    openModal: function openModal() {
+      this.$store.commit('openCloseModal', 0);
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/playback-component.vue?vue&type=script&lang=js&":
 /*!*****************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/playback-component.vue?vue&type=script&lang=js& ***!
@@ -1910,6 +1955,7 @@ module.exports = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _spotify_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../spotify/core.js */ "./resources/js/spotify/core.js");
+/* harmony import */ var _spotify_spotify_sdk_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../spotify/spotify-sdk.js */ "./resources/js/spotify/spotify-sdk.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -1954,12 +2000,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'playback-controller',
   mixins: [_spotify_core_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
   data: function data() {
     return {
-      isSpotifyOnline: false
+      isSpotifyOnline: false,
+      player: null
     };
   },
   created: function created() {
@@ -1968,6 +2016,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var promise = new Promise(function (resolve, reject) {
       var timer = setInterval(function () {
         if (_this.isUserLoaded == true && _this.user !== '' && _this.isSDKLoaded == true) {
+          // this.setPlayer();
           resolve('User info is loaded');
           clearInterval(timer);
         }
@@ -1975,64 +2024,82 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }).then(function () {
       return _this.getPlaylists(_this.user.spotify_id);
     }).then(function () {
-      return _this.player();
+      return _this.setPlayer();
+    }).then(function () {
+      return _this.player.connect();
+    }).then(function () {
+      return _this.setPlayerId();
     });
   },
   mounted: function mounted() {// Connect to the player!
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded'])),
-  methods: {
-    player: function player() {
-      var _this2 = this;
-
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded', 'activePlaylist'])),
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setPlaylistPlaying']), {
+    playTrack: function playTrack() {
+      if (activePlaylist == false) {
+        this.player.togglePlay().then(function () {
+          console.log('Toggled playback!');
+        });
+      }
+    },
+    setPlayer: function setPlayer() {
       var token = this.user.access_token;
-      var player = new Spotify.Player({
+      this.player = new Spotify.Player({
         name: 'Playsplit',
         getOAuthToken: function getOAuthToken(cb) {
           cb(token);
         },
         volume: 0.9
-      }); // Error handling
+      }); // return player;
+      // Error handling
 
-      player.addListener('initialization_error', function (_ref) {
+      this.player.addListener('initialization_error', function (_ref) {
         var message = _ref.message;
         console.error(message);
       });
-      player.addListener('authentication_error', function (_ref2) {
+      this.player.addListener('authentication_error', function (_ref2) {
         var message = _ref2.message;
         console.error(message);
       });
-      player.addListener('account_error', function (_ref3) {
+      this.player.addListener('account_error', function (_ref3) {
         var message = _ref3.message;
         console.error(message);
       });
-      player.addListener('playback_error', function (_ref4) {
+      this.player.addListener('playback_error', function (_ref4) {
         var message = _ref4.message;
         console.error(message);
       }); // Playback status updates
 
-      player.addListener('player_state_changed', function (state) {
+      this.player.addListener('player_state_changed', function (state) {
         console.log(state);
-      });
-      player.connect().then(function (success) {}); // Ready
+      }); // this.player.connect().then( success => {
+      // });
+      // Ready
+      // this.player.addListener('ready', ({ device_id }) => {
+      //     console.log('Ready with Device ID', device_id);
+      //     this.$store.commit('setDeviceId', device_id);
+      //     this.isSpotifyOnline = true;
+      // });
+      // Not Ready
+      // this.player.addListener('not_ready', ({ device_id }) => {
+      //     console.log('Device ID has gone offline', device_id);
+      // });
+      // Connect to the player!
+      // this.player.connect();
+    },
+    setPlayerId: function setPlayerId() {
+      var _this2 = this;
 
-      player.addListener('ready', function (_ref5) {
+      this.player.addListener('ready', function (_ref5) {
         var device_id = _ref5.device_id;
         console.log('Ready with Device ID', device_id);
 
         _this2.$store.commit('setDeviceId', device_id);
 
         _this2.isSpotifyOnline = true;
-      }); // Not Ready
-
-      player.addListener('not_ready', function (_ref6) {
-        var device_id = _ref6.device_id;
-        console.log('Device ID has gone offline', device_id);
-      }); // Connect to the player!
-
-      player.connect();
+      });
     }
-  }
+  })
 });
 
 /***/ }),
@@ -2046,6 +2113,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _spotify_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../spotify/core.js */ "./resources/js/spotify/core.js");
 //
 //
 //
@@ -2077,8 +2145,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'grid-item'
+  name: 'grid-item',
+  props: ['id', 'uri', 'name', 'img', 'tracks-total'],
+  mixins: [_spotify_core_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  data: function data() {
+    return {
+      playlist: null,
+      duration: null
+    };
+  },
+  computed: {
+    getTotalDuration: function getTotalDuration() {
+      var totalInMinutes = this.songMstoSeconds(this.duration);
+      var hours = totalInMinutes.min / 60;
+      var r = hours % 1;
+      hours = Math.floor(hours);
+      var minutes = Math.floor(r * 60);
+      return {
+        hours: hours,
+        min: minutes
+      };
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.getPlaylistInfo(this.id).then(function (res) {
+      return _this.playlist = res;
+    }).then(function () {
+      var total_ms = 0;
+      var tracks_array = _this.playlist.tracks.items;
+
+      if (tracks_array.length > 0) {
+        tracks_array.map(function (track) {
+          return total_ms += track.track.duration_ms;
+        });
+        _this.duration = total_ms;
+      }
+    });
+  }
 });
 
 /***/ }),
@@ -2093,12 +2203,13 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _grid_item_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./grid-item.vue */ "./resources/js/components/playlists/grid-item.vue");
-//
-//
-//
-//
-//
-//
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2163,10 +2274,51 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'playlist-dashboard',
   components: {
     GridItem: _grid_item_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  mounted: function mounted() {},
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['playlists'])),
+  methods: {
+    openModal: function openModal() {
+      this.$store.commit('openCloseModal', 0);
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/quickmerge.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/quickmerge.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'quickmerge',
+  methods: {
+    openModal: function openModal() {
+      this.$store.commit('openCloseModal', 0);
+    }
   }
 });
 
@@ -2289,6 +2441,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
 //
 //
 //
@@ -39256,6 +39412,66 @@ _core__WEBPACK_IMPORTED_MODULE_0__["VueDraggable"].install = function (Vue) {
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modals/edit-name.vue?vue&type=template&id=93a95e60&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modals/edit-name.vue?vue&type=template&id=93a95e60& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "pop-up" }, [
+    _c("div", { staticClass: "pop-up-content small" }, [
+      _c("div", { staticClass: "pop-up-header" }, [
+        _c("h3", { staticClass: "subtitle text-center" }, [
+          _vm._v("Edit playlist name")
+        ]),
+        _vm._v(" "),
+        _c(
+          "button",
+          { staticClass: "close material-icons", on: { click: _vm.openModal } },
+          [_vm._v("close")]
+        )
+      ]),
+      _vm._v(" "),
+      _vm._m(0)
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "pop-up-overlay", on: { click: _vm.openModal } })
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "pop-up-body app-form" }, [
+      _c("input", {
+        staticClass: "input input-large my-0",
+        attrs: { type: "text", name: "playlist-name" }
+      }),
+      _vm._v(" "),
+      _c("div", { staticClass: "btn-container mt--32 w-100" }, [
+        _c("button", { staticClass: "btn btn-primary" }, [
+          _vm._v("Save changes")
+        ])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/playback-component.vue?vue&type=template&id=38bd8fd6&":
 /*!*********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/playback-component.vue?vue&type=template&id=38bd8fd6& ***!
@@ -39271,59 +39487,73 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { attrs: { id: "playback" } }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "playback-controller" }, [
+      _vm._m(1),
+      _vm._v(" "),
+      _c("div", { staticClass: "playback-btn-container" }, [
+        _c("button", { staticClass: "material-icons" }, [
+          _vm._v("skip_previous")
+        ]),
+        _vm._v(" "),
+        _c(
+          "button",
+          { staticClass: "material-icons", on: { click: _vm.playSong } },
+          [_vm._v("play_arrow")]
+        ),
+        _vm._v(" "),
+        _c("button", { staticClass: "material-icons" }, [_vm._v("skip_next")])
+      ])
+    ]),
+    _vm._v(" "),
+    _vm._m(2)
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { attrs: { id: "playback" } }, [
-      _c("div", { staticClass: "current-song" }, [
-        _c("img", {
-          staticClass: "current-song-img",
-          attrs: { src: "https://via.placeholder.com/44", alt: "" }
-        }),
-        _vm._v(" "),
-        _c("span", [
-          _c("span", { staticClass: "text highlight" }, [
-            _vm._v("Ibuki - Hishou Version")
-          ]),
-          _vm._v(" "),
-          _c("span", { staticClass: "text" }, [_vm._v("Yoshida Brothers")])
-        ])
-      ]),
+    return _c("div", { staticClass: "current-song" }, [
+      _c("img", {
+        staticClass: "current-song-img",
+        attrs: { src: "https://via.placeholder.com/44", alt: "" }
+      }),
       _vm._v(" "),
-      _c("div", { staticClass: "playback-controller" }, [
-        _c("div", { staticClass: "playback-timer" }, [
-          _c("span", { staticClass: "text-small" }, [_vm._v("0:00")]),
-          _vm._v(" "),
-          _c("div", { staticClass: "progress-bar" }, [
-            _c("span", { staticClass: "progress-bar-tracker" })
-          ]),
-          _vm._v(" "),
-          _c("span", { staticClass: "text-small" }, [_vm._v("0:00")])
+      _c("span", [
+        _c("span", { staticClass: "text highlight" }, [
+          _vm._v("Ibuki - Hishou Version")
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "playback-btn-container" }, [
-          _c("button", { staticClass: "material-icons" }, [
-            _vm._v("skip_previous")
-          ]),
-          _vm._v(" "),
-          _c("button", { staticClass: "material-icons" }, [
-            _vm._v("play_arrow")
-          ]),
-          _vm._v(" "),
-          _c("button", { staticClass: "material-icons" }, [_vm._v("skip_next")])
-        ])
+        _c("span", { staticClass: "text" }, [_vm._v("Yoshida Brothers")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "playback-timer" }, [
+      _c("span", { staticClass: "text-small" }, [_vm._v("0:00")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "progress-bar" }, [
+        _c("span", { staticClass: "progress-bar-tracker" })
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "up-next text-right" }, [
-        _c("span", { staticClass: "legend text" }, [_vm._v("UP NEXT")]),
-        _vm._v(" "),
-        _c("p", { staticClass: "my-0" }, [
-          _vm._v("Stay Scheming - Rick Ross, Drake")
-        ])
+      _c("span", { staticClass: "text-small" }, [_vm._v("0:00")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "up-next text-right" }, [
+      _c("span", { staticClass: "legend text" }, [_vm._v("UP NEXT")]),
+      _vm._v(" "),
+      _c("p", { staticClass: "my-0" }, [
+        _vm._v("Stay Scheming - Rick Ross, Drake")
       ])
     ])
   }
@@ -39349,57 +39579,79 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "grid-list-item" }, [
+    _c(
+      "div",
+      { staticClass: "grid-list-img" },
+      [
+        _vm.img.length == 0 || _vm.img == undefined
+          ? [
+              _c("img", {
+                attrs: {
+                  src: " https://via.placeholder.com/88",
+                  alt: _vm.name + " - cover"
+                }
+              })
+            ]
+          : _c("img", {
+              attrs: { src: _vm.img[0].url, alt: _vm.name + " - cover" }
+            }),
+        _vm._v(" "),
+        _c("button", { staticClass: "btn-play material-icons" }, [
+          _vm._v("\n            play_arrow\n        ")
+        ])
+      ],
+      2
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "grid-cell" }, [
+      _c("a", { staticClass: "grid-list-heading", attrs: { href: "#" } }, [
+        _vm._v(_vm._s(_vm.name))
+      ]),
+      _vm._v(" "),
+      _c("span", { staticClass: "grid-list-text" }, [
+        _vm._v("New age, synthwave, hip hop...")
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "grid-cell" }, [
+      _c("span", { staticClass: "grid-list-text" }, [
+        _vm._v(_vm._s(_vm.tracksTotal) + " tracks")
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "grid-cell" }, [
+      _c("span", { staticClass: "grid-list-text" }, [
+        _vm._v(
+          _vm._s(
+            _vm.getTotalDuration.hours > 0
+              ? _vm.getTotalDuration.hours + " hours"
+              : ""
+          ) +
+            "  " +
+            _vm._s(_vm.getTotalDuration.min) +
+            " min"
+        )
+      ])
+    ]),
+    _vm._v(" "),
+    _vm._m(0)
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "grid-list-item" }, [
-      _c("div", { staticClass: "grid-list-img" }, [
-        _c("img", {
-          attrs: {
-            src: "https://via.placeholder.com/88",
-            alt: "Playlist title - cover"
-          }
-        }),
+    return _c("div", { staticClass: "grid-actions-container" }, [
+      _c("div", { staticClass: "btn-container" }, [
+        _c("button", [_vm._v("merge")]),
         _vm._v(" "),
-        _c("button", { staticClass: "btn-play material-icons" }, [
-          _vm._v("\n            play_arrow\n        ")
-        ])
+        _c("button", [_vm._v("split")])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "grid-cell" }, [
-        _c("a", { staticClass: "grid-list-heading", attrs: { href: "#" } }, [
-          _vm._v("Hate it or love it")
-        ]),
-        _vm._v(" "),
-        _c("span", { staticClass: "grid-list-text" }, [
-          _vm._v("New age, synthwave, hip hop...")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "grid-cell" }, [
-        _c("span", { staticClass: "grid-list-text" }, [_vm._v("172 songs")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "grid-cell" }, [
-        _c("span", { staticClass: "grid-list-text" }, [
-          _vm._v("3 hours 25 min")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "grid-actions-container" }, [
-        _c("div", { staticClass: "btn-container" }, [
-          _c("button", [_vm._v("merge")]),
-          _vm._v(" "),
-          _c("button", [_vm._v("split")])
-        ]),
-        _vm._v(" "),
-        _c("span", { staticClass: "material-icons btn-options" }, [
-          _vm._v("more_horiz")
-        ])
+      _c("span", { staticClass: "material-icons btn-options" }, [
+        _vm._v("more_horiz")
       ])
     ])
   }
@@ -39434,11 +39686,26 @@ var render = function() {
       _c(
         "div",
         { staticClass: "section-body" },
-        [_c("grid-item"), _vm._v(" "), _vm._m(1)],
-        1
-      ),
-      _vm._v(" "),
-      _vm._m(2)
+        [
+          _vm.playlists.length != 0
+            ? _vm._l(_vm.playlists, function(playlist) {
+                return _c("grid-item", {
+                  key: playlist.id,
+                  attrs: {
+                    id: playlist.id,
+                    "tracks-total": playlist.tracks.total,
+                    img: playlist.images,
+                    name: playlist.name,
+                    uri: playlist.uri
+                  }
+                })
+              })
+            : _vm._e(),
+          _vm._v(" "),
+          _vm._m(1)
+        ],
+        2
+      )
     ]
   )
 }
@@ -39528,32 +39795,63 @@ var staticRenderFns = [
         ])
       ])
     ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/quickmerge.vue?vue&type=template&id=97c44514&":
+/*!*************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/quickmerge.vue?vue&type=template&id=97c44514& ***!
+  \*************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { attrs: { id: "quickmerge" } }, [
+    _c("div", { staticClass: "merge-info-review" }, [
+      _c("span", { staticClass: "merge-title", on: { click: _vm.openModal } }, [
+        _vm._v("Type playlist name")
+      ]),
+      _vm._v(" "),
+      _vm._m(0)
+    ]),
+    _vm._v(" "),
+    _vm._m(1)
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("p", { staticClass: "text mb-0" }, [
+      _c("span", { staticClass: "highlight" }, [
+        _vm._v("Select one more playlit")
+      ]),
+      _vm._v(" | 127 songs, 3:25 durations")
+    ])
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { attrs: { id: "quickmerge" } }, [
-      _c("div", { staticClass: "merge-info-review" }, [
-        _c("span", { staticClass: "merge-title" }, [
-          _vm._v("Type playlist name")
-        ]),
-        _vm._v(" "),
-        _c("p", { staticClass: "text mb-0" }, [
-          _c("span", { staticClass: "highlight" }, [
-            _vm._v("Select one more playlit")
-          ]),
-          _vm._v(" | 127 songs, 3:25 durations")
-        ])
+    return _c("div", { staticClass: "btn-container" }, [
+      _c("button", { staticClass: "btn btn-secondary" }, [
+        _vm._v("Clear selected")
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "btn-container" }, [
-        _c("button", { staticClass: "btn btn-secondary" }, [
-          _vm._v("Clear selected")
-        ]),
-        _vm._v(" "),
-        _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Merge")])
-      ])
+      _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Merge")])
     ])
   }
 ]
@@ -39768,6 +40066,16 @@ var staticRenderFns = [
             staticClass: "user-profile-pic",
             attrs: { src: "#", alt: "" }
           })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "dropdown-items" }, [
+          _c("a", { attrs: { href: "/auth/spotify/logout" } }, [
+            _vm._v(" Logout")
+          ]),
+          _vm._v(" "),
+          _c("a", { attrs: { href: "/auth/spotify/logout" } }, [
+            _vm._v(" Edit profile")
+          ])
         ])
       ])
     ])
@@ -53054,11 +53362,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_draggable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_draggable__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _components_top_nav_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/top-nav.vue */ "./resources/js/components/top-nav.vue");
 /* harmony import */ var _components_sidebar_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/sidebar.vue */ "./resources/js/components/sidebar.vue");
-/* harmony import */ var _components_playlists_playlist_dashboard_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/playlists/playlist-dashboard.vue */ "./resources/js/components/playlists/playlist-dashboard.vue");
-/* harmony import */ var _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/playback-component.vue */ "./resources/js/components/playback-component.vue");
-/* harmony import */ var _components_stats_table_stats_table_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/stats-table/stats-table.vue */ "./resources/js/components/stats-table/stats-table.vue");
-/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./store/index.js */ "./resources/js/store/index.js");
-/* harmony import */ var _spotify_core_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./spotify/core.js */ "./resources/js/spotify/core.js");
+/* harmony import */ var _components_quickmerge_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/quickmerge.vue */ "./resources/js/components/quickmerge.vue");
+/* harmony import */ var _components_playlists_playlist_dashboard_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/playlists/playlist-dashboard.vue */ "./resources/js/components/playlists/playlist-dashboard.vue");
+/* harmony import */ var _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/playback-component.vue */ "./resources/js/components/playback-component.vue");
+/* harmony import */ var _components_stats_table_stats_table_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/stats-table/stats-table.vue */ "./resources/js/components/stats-table/stats-table.vue");
+/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./store/index.js */ "./resources/js/store/index.js");
+/* harmony import */ var _spotify_core_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./spotify/core.js */ "./resources/js/spotify/core.js");
+/* harmony import */ var _components_modals_edit_name_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/modals/edit-name.vue */ "./resources/js/components/modals/edit-name.vue");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -53086,6 +53402,9 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 
 
+
+
+
 Vue.use(vuex__WEBPACK_IMPORTED_MODULE_0__["default"]);
 Vue.use(vue_draggable__WEBPACK_IMPORTED_MODULE_1___default.a); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
@@ -53097,15 +53416,18 @@ Vue.use(vue_draggable__WEBPACK_IMPORTED_MODULE_1___default.a); // Vue.component(
 
 var app = new Vue({
   el: '#app',
-  store: _store_index_js__WEBPACK_IMPORTED_MODULE_7__["default"],
-  mixins: [_spotify_core_js__WEBPACK_IMPORTED_MODULE_8__["default"]],
+  store: _store_index_js__WEBPACK_IMPORTED_MODULE_8__["default"],
+  mixins: [_spotify_core_js__WEBPACK_IMPORTED_MODULE_9__["default"]],
   components: {
     TopNav: _components_top_nav_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     SidebarComp: _components_sidebar_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    PlaybackController: _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
-    PlaylistDashboard: _components_playlists_playlist_dashboard_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
-    StatsTable: _components_stats_table_stats_table_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+    PlaybackController: _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
+    PlaylistDashboard: _components_playlists_playlist_dashboard_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    StatsTable: _components_stats_table_stats_table_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    EditNamePopUp: _components_modals_edit_name_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
+    Quickmerge: _components_quickmerge_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['isModalOpen'])),
   created: function created() {
     this.$store.dispatch('getUserData');
   }
@@ -53159,6 +53481,75 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/modals/edit-name.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/modals/edit-name.vue ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _edit_name_vue_vue_type_template_id_93a95e60___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./edit-name.vue?vue&type=template&id=93a95e60& */ "./resources/js/components/modals/edit-name.vue?vue&type=template&id=93a95e60&");
+/* harmony import */ var _edit_name_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit-name.vue?vue&type=script&lang=js& */ "./resources/js/components/modals/edit-name.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _edit_name_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _edit_name_vue_vue_type_template_id_93a95e60___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _edit_name_vue_vue_type_template_id_93a95e60___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/modals/edit-name.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/modals/edit-name.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/modals/edit-name.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_edit_name_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./edit-name.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modals/edit-name.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_edit_name_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/modals/edit-name.vue?vue&type=template&id=93a95e60&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/modals/edit-name.vue?vue&type=template&id=93a95e60& ***!
+  \*************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_edit_name_vue_vue_type_template_id_93a95e60___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./edit-name.vue?vue&type=template&id=93a95e60& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modals/edit-name.vue?vue&type=template&id=93a95e60&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_edit_name_vue_vue_type_template_id_93a95e60___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_edit_name_vue_vue_type_template_id_93a95e60___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 
@@ -53364,6 +53755,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_playlist_dashboard_vue_vue_type_template_id_06e34292___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_playlist_dashboard_vue_vue_type_template_id_06e34292___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/quickmerge.vue":
+/*!************************************************!*\
+  !*** ./resources/js/components/quickmerge.vue ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _quickmerge_vue_vue_type_template_id_97c44514___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./quickmerge.vue?vue&type=template&id=97c44514& */ "./resources/js/components/quickmerge.vue?vue&type=template&id=97c44514&");
+/* harmony import */ var _quickmerge_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./quickmerge.vue?vue&type=script&lang=js& */ "./resources/js/components/quickmerge.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _quickmerge_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _quickmerge_vue_vue_type_template_id_97c44514___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _quickmerge_vue_vue_type_template_id_97c44514___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/quickmerge.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/quickmerge.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/quickmerge.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_quickmerge_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./quickmerge.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/quickmerge.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_quickmerge_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/quickmerge.vue?vue&type=template&id=97c44514&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/quickmerge.vue?vue&type=template&id=97c44514& ***!
+  \*******************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quickmerge_vue_vue_type_template_id_97c44514___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./quickmerge.vue?vue&type=template&id=97c44514& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/quickmerge.vue?vue&type=template&id=97c44514&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quickmerge_vue_vue_type_template_id_97c44514___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quickmerge_vue_vue_type_template_id_97c44514___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -53678,6 +54138,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {},
   methods: {
+    getPlaylistInfo: function getPlaylistInfo(playlist_id) {
+      return fetch("".concat(this.apiROOT, "/v1/playlists/").concat(playlist_id), this.header_GET).then(function (response) {
+        if (response.status == 200) {
+          return response.text();
+        }
+      }).then(function (data) {
+        var payload = JSON.parse(data);
+        return payload;
+      });
+    },
     getPlaylists: function getPlaylists(user_id) {
       var _this = this;
 
@@ -53694,18 +54164,110 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     playSong: function playSong(e) {
-      return fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
-        method: 'PUT',
-        headers: this.authorization,
-        body: JSON.stringify({
-          uris: ["spotify:track:7xGfFoTpQ2E7fRF5lN10tr"]
-        })
-      }).then(function (res) {
-        return console.log(res);
-      });
+      var _this2 = this;
+
+      if (this.activePlaylist == false) {
+        fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
+          method: 'PUT',
+          headers: this.authorization,
+          body: JSON.stringify({
+            uris: ["spotify:track:7xGfFoTpQ2E7fRF5lN10tr"]
+          })
+        }).then(function (res) {
+          return _this2.setPlaylistPlaying();
+        });
+      } else {
+        this.player.togglePlay();
+      }
+    },
+    songMstoSeconds: function songMstoSeconds(song) {
+      var ms = song;
+      var seconds = ms / 1000;
+      var min = seconds / 60;
+      var r = min % 1;
+      var sec = r * 60;
+
+      if (sec < 10) {
+        sec = '0' + sec;
+      }
+
+      min = Math.floor(min);
+      return {
+        min: min,
+        sec: sec
+      };
     }
   }
 });
+
+/***/ }),
+
+/***/ "./resources/js/spotify/spotify-sdk.js":
+/*!*********************************************!*\
+  !*** ./resources/js/spotify/spotify-sdk.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var createSpotifyPlayer = function createSpotifyPlayer(name, getOAuthToken) {
+  var Player = /*#__PURE__*/function () {
+    function Player() {
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          name = _ref.name,
+          getOAuthToken = _ref.getOAuthToken;
+
+      _classCallCheck(this, Player);
+
+      this.name = name;
+      this.callback = getOAuthToken;
+      this.listeners = [];
+      this.device_id = "5def083a-a0b0-447c-9e47-1d0123f1453d";
+    }
+
+    _createClass(Player, [{
+      key: "addListener",
+      value: function addListener(eventName, callback) {
+        this.listeners[eventName] = [callback];
+      }
+    }, {
+      key: "trigger",
+      value: function trigger(eventName) {
+        var _this = this;
+
+        this.listeners[eventName].forEach(function (cb) {
+          return cb({
+            device_id: _this.device_id
+          });
+        });
+      }
+    }, {
+      key: "getCurrentState",
+      value: function getCurrentState() {
+        return Promise.resolve();
+      }
+    }, {
+      key: "connect",
+      value: function connect() {}
+    }]);
+
+    return Player;
+  }();
+
+  return new Player({
+    name: name,
+    getOAuthToken: getOAuthToken
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (createSpotifyPlayer);
 
 /***/ }),
 
@@ -53729,13 +54291,18 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     user: '',
     isUserLoaded: false,
     isSDKLoaded: false,
-    activePlaylist: null,
+    activePlaylist: false,
     device_id: null,
-    playlists: []
+    playlists: [],
+    isModalOpen: false,
+    openModal: 'edit-name'
   },
   mutations: {
     setUserData: function setUserData(state, payload) {
       state.user = payload;
+    },
+    setPlaylistPlaying: function setPlaylistPlaying(state) {
+      state.activePlaylist ? state.activePlaylist = false : state.activePlaylist = true;
     },
     setUserOnline: function setUserOnline(state) {
       state.isUserLoaded = true;
@@ -53748,6 +54315,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     setDeviceId: function setDeviceId(state, payload) {
       state.device_id = payload;
+    },
+    openCloseModal: function openCloseModal(state, payload) {
+      state.isModalOpen ? state.isModalOpen = false : state.isModalOpen = true; // state.openModal = payload;
+
+      state.openModal = 'edit-name';
     }
   },
   actions: {

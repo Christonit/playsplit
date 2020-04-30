@@ -5,9 +5,12 @@
     <sidebar-comp></sidebar-comp>
     <div class="app-container">
         <playlist-dashboard></playlist-dashboard>
-        <stats-table></stats-table>
     </div>
+    <stats-table></stats-table>
+    <quickmerge></quickmerge>
     <playback-controller></playback-controller>
+
+    <edit-name-pop-up v-if="isModalOpen"></edit-name-pop-up>
     
     <div class="flex-center position-ref full-height">
 
