@@ -35,7 +35,7 @@
     export default {
         name:'top-nav',
         mounted() {
-            console.log('Component mounted.')
+            
         }
     }
 </script>

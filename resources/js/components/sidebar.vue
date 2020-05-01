@@ -12,28 +12,35 @@
             </a>
         </div>
 
-        <div class="playlist-playing-container">
+        <div v-if="currentPlaylist != null " class="playlist-playing-container">
             <div>
                 <span class="legend">
                     NOW PLAYING
                 </span>
 
-                <div class="d-flex align-items-center justify-space-between">
-                    <b>This is Romeo Santos</b>
-                    <span>50/200</span>
+                <div class="d-flex align-items-center justify-content-between">
+
+                    <b>{{currentPlaylist.title}}</b>
+
+                    <span>50/{{ currentPlaylist.tracks}}</span>
+
                 </div>
             </div>
 
-            <img src="https://via.placeholder.com/220" alt="">
+            <img :src=" currentPlaylist.cover" alt="">
         </div>
     </aside>
 </template>
 
 <script>
+import {mapState} from 'vuex';
+
     export default {
         name:'sidebar-comp',
+        computed:{
+            ...mapState(['currentPlaylist'])
+        },
         mounted() {
-            console.log('Component mounted.')
         }
     }
 </script>

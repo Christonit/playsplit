@@ -24,6 +24,12 @@ aside{
 .playlist-playing-container{
     position: absolute;
     bottom: 24px;
+    width: 240px;
+
+    img{
+        width: 100%;
+        @include b-radius-4;
+    }
 }
 
 .app-container{

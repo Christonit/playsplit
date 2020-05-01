@@ -53,6 +53,24 @@ export default {
             }
                                   
                                 
-          }
+          },
+          songMstoSeconds(song){
+            let ms = song;
+            let seconds = (ms / 1000 );
+            let min = seconds / 60;
+            let r = min % 1;
+            let sec = (r * 60);
+            if (sec < 10) {
+                sec = '0'+sec;
+            }
+            min = Math.floor(min);
+            sec = Math.floor(sec);
+    
+    
+            return {
+              min:min,
+              sec:sec
+            }
+          },
     }
 }

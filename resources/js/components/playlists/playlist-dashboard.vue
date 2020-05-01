@@ -23,7 +23,6 @@
                         :img="playlist.images" 
                         :name="playlist.name" 
                         :uri="playlist.uri" 
-                        :song-msto-seconds='songMstoSeconds' 
                         :get-playlist-info='getPlaylistInfo'>
                     </grid-item>
 
@@ -77,7 +76,7 @@ import {mapState} from 'vuex';
 
 export default {
     name:'playlist-dashboard',
-    props:['songMstoSeconds','getPlaylistInfo'],
+    props:['getPlaylistInfo'],
     components:{
         GridItem
     },

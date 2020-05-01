@@ -10964,6 +10964,12 @@ aside {
 .playlist-playing-container {
   position: absolute;
   bottom: 24px;
+  width: 240px;
+}
+
+.playlist-playing-container img {
+  width: 100%;
+  border-radius: 4px;
 }
 
 .app-container {

@@ -6,7 +6,7 @@
             </template>
             <img v-else :src="img[0].url" :alt="name+' - cover'">
             <button class="btn-play material-icons" 
-                @click="playSong( uri)">
+                @click="play">
                 play_arrow
             </button>
         </div>
@@ -37,7 +37,7 @@
 import functions from '../../spotify/function.js'
 export default {
     name:'grid-item',
-    props:['id','uri', 'name', 'img','tracks-total','songMstoSeconds','getPlaylistInfo'],
+    props:['id','uri', 'name', 'img','tracks-total','getPlaylistInfo'],
     mixins:[functions],
     data(){
         return{
@@ -46,6 +46,7 @@ export default {
         }
     },
     computed:{
+
         getTotalDuration(){
             let totalInMinutes = this.songMstoSeconds(this.duration);
 
@@ -108,6 +109,15 @@ export default {
         
     },
     methods:{
+
+         play(){
+            this.playSong(this.uri)
+            this.$store.commit('setCurrentPlaylist', 
+            {title:this.name, 
+            tracks:this.tracksTotal,
+            cover: this.playlist.images[0].url
+            })
+        }
         
     }
 }

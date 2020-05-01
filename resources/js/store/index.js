@@ -9,6 +9,7 @@ const store = new Vuex.Store({
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist:false,
+    currentPlaylist:null,
     device_id:null,
     playlists: [],
     isModalOpen:false,
@@ -28,8 +29,11 @@ const store = new Vuex.Store({
     setUserData(state, payload){
         state.user = payload;
     },
+    setCurrentPlaylist(state, payload){
+        state.currentPlaylist = payload;
+    },
     setPlaylistPlaying(state){
-        state.activePlaylist ? state.activePlaylist = false : state.activePlaylist = true;
+        state.activePlaylist == false ? state.activePlaylist = true : '';
     },
     setUserOnline(state){
         state.isUserLoaded = true;

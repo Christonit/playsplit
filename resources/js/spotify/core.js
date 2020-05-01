@@ -86,24 +86,24 @@ export default {
                               
                             
       },
-      songMstoSeconds(song){
-        let ms = song;
-        let seconds = (ms / 1000 );
-        let min = seconds / 60;
-        let r = min % 1;
-        let sec = (r * 60);
-        if (sec < 10) {
-            sec = '0'+sec;
-        }
-        min = Math.floor(min);
-        sec = Math.floor(sec);
+      // songMstoSeconds(song){
+      //   let ms = song;
+      //   let seconds = (ms / 1000 );
+      //   let min = seconds / 60;
+      //   let r = min % 1;
+      //   let sec = (r * 60);
+      //   if (sec < 10) {
+      //       sec = '0'+sec;
+      //   }
+      //   min = Math.floor(min);
+      //   sec = Math.floor(sec);
 
 
-        return {
-          min:min,
-          sec:sec
-        }
-      },
+      //   return {
+      //     min:min,
+      //     sec:sec
+      //   }
+      // },
       playTrack(){
         if(activePlaylist == false){
             this.player.togglePlay().then(() => {
@@ -133,10 +133,14 @@ export default {
           if(state != null){
             let { 
                 current_track,
-                next_tracks, 
+                next_tracks 
               } = state.track_window;
 
-              this.$store.commit('setCurrentPlayback',{current_track,next_tracks})
+            let {
+              position
+            } = state
+              
+              this.$store.commit('setCurrentPlayback',{ position ,current_track,next_tracks})
 
             }
 

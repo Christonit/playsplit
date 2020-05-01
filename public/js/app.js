@@ -2012,37 +2012,53 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded', 'activePlaylist', 'player', 'current_playback']), {
     playback: function playback() {
-      // if(current_playback != ''){
-      // let current_track_sp = this.current_playback.current_track;
-      // let next_track_sp = this.current_playback.next_tracks[0];
-      // let artists = []
-      // current_track_sp.map( artist => artists.push( artist.name) )
-      // artist = artists.join(', ');
-      // let cover = current_track_sp.album.images[0].url;
-      // let next_artists = [];
-      // next_track_sp.map( artist => next_artists.push( artist.name) )
-      // next_artists = next_artists.join(', ');
-      // let next_track = {
-      //     artist : next_artists,
-      //     title: next_track_sp.name
-      // }
-      // let current_track = {
-      //     artist : artist,
-      //     title: current_track_sp.name,
-      //     image: cover,
-      //     duration: duration_ms
-      // }
-      // return {current_track,next_track}
-      // }
-      return 'hola';
+      var next_track = {
+        artist: '',
+        title: ''
+      };
+      var current_pos = '';
+      var current_track = {
+        artist: '',
+        title: '',
+        image: '',
+        duration: ''
+      };
+
+      if (this.current_playback != '') {
+        var current_track_sp = this.current_playback.current_track;
+        var next_track_sp = this.current_playback.next_tracks[0];
+        var artists = [];
+        current_track_sp.artists.map(function (artist) {
+          return artists.push(artist.name);
+        });
+        artists = artists.join(', ');
+        var cover = current_track_sp.album.images[0].url;
+        var next_artists = [];
+        next_track_sp.artists.map(function (artist) {
+          return next_artists.push(artist.name);
+        });
+        next_artists = next_artists.join(', ');
+        next_track.artist = next_artists;
+        next_track.title = next_track_sp.name;
+        current_pos = this.songMstoSeconds(this.current_playback.position);
+        current_track.artist = artists;
+        current_track.title = current_track_sp.name;
+        current_track.image = cover;
+        current_track.duration = this.songMstoSeconds(current_track_sp.duration_ms);
+      }
+
+      return {
+        current_track: current_track,
+        next_track: next_track,
+        current_pos: current_pos
+      };
     }
   }),
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setPlaylistPlaying']), {
     playStop: function playStop() {
-      // if(activePlaylist == false){
       this.player.togglePlay().then(function () {
         console.log('Toggled playback!');
-      }); // }
+      });
     },
     nextTrack: function nextTrack() {
       return fetch('https://api.spotify.com/v1/me/player/next', this._POST);
@@ -2103,7 +2119,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'grid-item',
-  props: ['id', 'uri', 'name', 'img', 'tracks-total', 'songMstoSeconds', 'getPlaylistInfo'],
+  props: ['id', 'uri', 'name', 'img', 'tracks-total', 'getPlaylistInfo'],
   mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
   data: function data() {
     return {
@@ -2173,7 +2189,16 @@ __webpack_require__.r(__webpack_exports__);
       }
     }).then(function () {});
   },
-  methods: {}
+  methods: {
+    play: function play() {
+      this.playSong(this.uri);
+      this.$store.commit('setCurrentPlaylist', {
+        title: this.name,
+        tracks: this.tracksTotal,
+        cover: this.playlist.images[0].url
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -2266,12 +2291,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'playlist-dashboard',
-  props: ['songMstoSeconds', 'getPlaylistInfo'],
+  props: ['getPlaylistInfo'],
   components: {
     GridItem: _grid_item_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
@@ -2328,6 +2352,13 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2359,11 +2390,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'sidebar-comp',
-  mounted: function mounted() {
-    console.log('Component mounted.');
-  }
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['currentPlaylist'])),
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -2471,9 +2505,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'top-nav',
-  mounted: function mounted() {
-    console.log('Component mounted.');
-  }
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -39483,10 +39515,51 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { attrs: { id: "playback" } }, [
-    _vm._m(0),
+    _c("div", { staticClass: "current-song" }, [
+      _c("img", {
+        staticClass: "current-song-img",
+        attrs: {
+          src:
+            _vm.playback.current_track.image != ""
+              ? _vm.playback.current_track.image
+              : "https://via.placeholder.com/44",
+          alt: ""
+        }
+      }),
+      _vm._v(" "),
+      _c("span", [
+        _c("span", { staticClass: "text highlight" }, [
+          _vm._v(_vm._s(_vm.playback.current_track.title))
+        ]),
+        _vm._v(" "),
+        _c("span", { staticClass: "text" }, [
+          _vm._v(_vm._s(_vm.playback.current_track.artist))
+        ])
+      ])
+    ]),
     _vm._v(" "),
     _c("div", { staticClass: "playback-controller" }, [
-      _vm._m(1),
+      _c("div", { staticClass: "playback-timer" }, [
+        _c("span", { staticClass: "text-small" }, [
+          _vm._v(
+            _vm._s(
+              _vm.playback.current_pos.min + ":" + _vm.playback.current_pos.sec
+            )
+          )
+        ]),
+        _vm._v(" "),
+        _vm._m(0),
+        _vm._v(" "),
+        _c("span", { staticClass: "text-small" }, [
+          _vm._v(
+            _vm._s(
+              _vm.playback.current_track.duration.min +
+                ":" +
+                _vm.playback.current_track.duration.sec
+            )
+          )
+        ])
+      ]),
       _vm._v(" "),
       _c("div", { staticClass: "playback-btn-container" }, [
         _c(
@@ -39509,7 +39582,17 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _vm._m(2)
+    _c("div", { staticClass: "up-next text-right" }, [
+      _c("span", { staticClass: "legend text" }, [_vm._v("UP NEXT")]),
+      _vm._v(" "),
+      _c("p", { staticClass: "my-0" }, [
+        _vm._v(
+          _vm._s(_vm.playback.next_track.title) +
+            " - " +
+            _vm._s(_vm.playback.next_track.artist)
+        )
+      ])
+    ])
   ])
 }
 var staticRenderFns = [
@@ -39517,45 +39600,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "current-song" }, [
-      _c("img", {
-        staticClass: "current-song-img",
-        attrs: { src: "https://via.placeholder.com/44", alt: "" }
-      }),
-      _vm._v(" "),
-      _c("span", [
-        _c("span", { staticClass: "text highlight" }, [
-          _vm._v("Ibuki - Hishou Version")
-        ]),
-        _vm._v(" "),
-        _c("span", { staticClass: "text" }, [_vm._v("Yoshida Brothers")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "playback-timer" }, [
-      _c("span", { staticClass: "text-small" }, [_vm._v("0:00")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "progress-bar" }, [
-        _c("span", { staticClass: "progress-bar-tracker" })
-      ]),
-      _vm._v(" "),
-      _c("span", { staticClass: "text-small" }, [_vm._v("0:00")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "up-next text-right" }, [
-      _c("span", { staticClass: "legend text" }, [_vm._v("UP NEXT")]),
-      _vm._v(" "),
-      _c("p", { staticClass: "my-0" }, [
-        _vm._v("Stay Scheming - Rick Ross, Drake")
-      ])
+    return _c("div", { staticClass: "progress-bar" }, [
+      _c("span", { staticClass: "progress-bar-tracker" })
     ])
   }
 ]
@@ -39600,14 +39646,7 @@ var render = function() {
         _vm._v(" "),
         _c(
           "button",
-          {
-            staticClass: "btn-play material-icons",
-            on: {
-              click: function($event) {
-                return _vm.playSong(_vm.uri)
-              }
-            }
-          },
+          { staticClass: "btn-play material-icons", on: { click: _vm.play } },
           [_vm._v("\n            play_arrow\n        ")]
         )
       ],
@@ -39707,7 +39746,6 @@ var render = function() {
                     img: playlist.images,
                     name: playlist.name,
                     uri: playlist.uri,
-                    "song-msto-seconds": _vm.songMstoSeconds,
                     "get-playlist-info": _vm.getPlaylistInfo
                   }
                 })
@@ -39888,46 +39926,48 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("aside", [
+    _vm._m(0),
+    _vm._v(" "),
+    _vm.currentPlaylist != null
+      ? _c("div", { staticClass: "playlist-playing-container" }, [
+          _c("div", [
+            _c("span", { staticClass: "legend" }, [
+              _vm._v("\n                NOW PLAYING\n            ")
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "d-flex align-items-center justify-content-between"
+              },
+              [
+                _c("b", [_vm._v(_vm._s(_vm.currentPlaylist.title))]),
+                _vm._v(" "),
+                _c("span", [_vm._v("50/" + _vm._s(_vm.currentPlaylist.tracks))])
+              ]
+            )
+          ]),
+          _vm._v(" "),
+          _c("img", { attrs: { src: _vm.currentPlaylist.cover, alt: "" } })
+        ])
+      : _vm._e()
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("aside", [
-      _c("div", { staticClass: "nav-container" }, [
-        _c("a", { staticClass: "nav-item active", attrs: { href: "#" } }, [
-          _c("i", { staticClass: "nav-item-icon playlist" }),
-          _vm._v("\n            My playlists\n        ")
-        ]),
-        _vm._v(" "),
-        _c("a", { staticClass: "nav-item ", attrs: { href: "#" } }, [
-          _c("i", { staticClass: "nav-item-icon songs" }),
-          _vm._v("\n            My songs\n        ")
-        ])
+    return _c("div", { staticClass: "nav-container" }, [
+      _c("a", { staticClass: "nav-item active", attrs: { href: "#" } }, [
+        _c("i", { staticClass: "nav-item-icon playlist" }),
+        _vm._v("\n            My playlists\n        ")
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "playlist-playing-container" }, [
-        _c("div", [
-          _c("span", { staticClass: "legend" }, [
-            _vm._v("\n                NOW PLAYING\n            ")
-          ]),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "d-flex align-items-center justify-space-between" },
-            [
-              _c("b", [_vm._v("This is Romeo Santos")]),
-              _vm._v(" "),
-              _c("span", [_vm._v("50/200")])
-            ]
-          )
-        ]),
-        _vm._v(" "),
-        _c("img", {
-          attrs: { src: "https://via.placeholder.com/220", alt: "" }
-        })
+      _c("a", { staticClass: "nav-item ", attrs: { href: "#" } }, [
+        _c("i", { staticClass: "nav-item-icon songs" }),
+        _vm._v("\n            My songs\n        ")
       ])
     ])
   }
@@ -54214,24 +54254,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.player.togglePlay();
       }
     },
-    songMstoSeconds: function songMstoSeconds(song) {
-      var ms = song;
-      var seconds = ms / 1000;
-      var min = seconds / 60;
-      var r = min % 1;
-      var sec = r * 60;
-
-      if (sec < 10) {
-        sec = '0' + sec;
-      }
-
-      min = Math.floor(min);
-      sec = Math.floor(sec);
-      return {
-        min: min,
-        sec: sec
-      };
-    },
+    // songMstoSeconds(song){
+    //   let ms = song;
+    //   let seconds = (ms / 1000 );
+    //   let min = seconds / 60;
+    //   let r = min % 1;
+    //   let sec = (r * 60);
+    //   if (sec < 10) {
+    //       sec = '0'+sec;
+    //   }
+    //   min = Math.floor(min);
+    //   sec = Math.floor(sec);
+    //   return {
+    //     min:min,
+    //     sec:sec
+    //   }
+    // },
     playTrack: function playTrack() {
       if (activePlaylist == false) {
         this.player.togglePlay().then(function () {
@@ -54274,8 +54312,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           var _state$track_window = state.track_window,
               current_track = _state$track_window.current_track,
               next_tracks = _state$track_window.next_tracks;
+          var position = state.position;
 
           _this4.$store.commit('setCurrentPlayback', {
+            position: position,
             current_track: current_track,
             next_tracks: next_tracks
           });
@@ -54360,6 +54400,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       } else {
         this.player.togglePlay();
       }
+    },
+    songMstoSeconds: function songMstoSeconds(song) {
+      var ms = song;
+      var seconds = ms / 1000;
+      var min = seconds / 60;
+      var r = min % 1;
+      var sec = r * 60;
+
+      if (sec < 10) {
+        sec = '0' + sec;
+      }
+
+      min = Math.floor(min);
+      sec = Math.floor(sec);
+      return {
+        min: min,
+        sec: sec
+      };
     }
   }
 });
@@ -54387,6 +54445,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist: false,
+    currentPlaylist: null,
     device_id: null,
     playlists: [],
     isModalOpen: false,
@@ -54409,8 +54468,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     setUserData: function setUserData(state, payload) {
       state.user = payload;
     },
+    setCurrentPlaylist: function setCurrentPlaylist(state, payload) {
+      state.currentPlaylist = payload;
+    },
     setPlaylistPlaying: function setPlaylistPlaying(state) {
-      state.activePlaylist ? state.activePlaylist = false : state.activePlaylist = true;
+      state.activePlaylist == false ? state.activePlaylist = true : '';
     },
     setUserOnline: function setUserOnline(state) {
       state.isUserLoaded = true;
