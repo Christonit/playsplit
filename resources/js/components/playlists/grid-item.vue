@@ -5,7 +5,8 @@
                 <img src=" https://via.placeholder.com/88"  :alt="name+' - cover'">
             </template>
             <img v-else :src="img[0].url" :alt="name+' - cover'">
-            <button class="btn-play material-icons">
+            <button class="btn-play material-icons" 
+                @click="playSong( uri)">
                 play_arrow
             </button>
         </div>
@@ -33,11 +34,11 @@
 </template>
 
 <script>
-import spotify from '../../spotify/core.js'
+import functions from '../../spotify/function.js'
 export default {
     name:'grid-item',
-    props:['id','uri', 'name', 'img','tracks-total'],
-    mixins:[spotify],
+    props:['id','uri', 'name', 'img','tracks-total','songMstoSeconds','getPlaylistInfo'],
+    mixins:[functions],
     data(){
         return{
             playlist:null,
@@ -57,6 +58,35 @@ export default {
                 let minutes = Math.floor((r * 60));
 
             return {hours: hours, min: minutes };
+        },
+        
+         playlistsTracks(){
+            let track_list = [];
+
+            if(this.tracksTotal > 0  & this.playlist != null  ){
+                let item = this.playlist.tracks.items;
+                item.map( track => {
+                    
+                    let obj = {
+                        id : track.track.id,
+                        title: track.track.name,
+                        uri: track.track.uri,
+                        duration: this.songMstoSeconds(track.track.duration_ms),
+                        artists: track.track.artists
+                    }
+                    track_list.push(obj)
+                })
+            } 
+
+           return track_list;
+
+        },
+        tracksURIS(){
+                let arr = []
+                if(this.playlistsTracks.length > 0){
+                    this.playlistsTracks.map( item =>arr.push(item.uri) );
+                }
+                return arr;
         }
     },
     mounted(){
@@ -71,9 +101,14 @@ export default {
                this.duration = total_ms;
             }
             
+        }).then( () =>{
+
+            
         })
         
-
+    },
+    methods:{
+        
     }
 }
 </script>

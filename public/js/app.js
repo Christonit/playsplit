@@ -1954,8 +1954,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-/* harmony import */ var _spotify_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../spotify/core.js */ "./resources/js/spotify/core.js");
-/* harmony import */ var _spotify_spotify_sdk_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../spotify/spotify-sdk.js */ "./resources/js/spotify/spotify-sdk.js");
+/* harmony import */ var _spotify_function_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../spotify/function.js */ "./resources/js/spotify/function.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2000,104 +1999,56 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'playback-controller',
-  mixins: [_spotify_core_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
   data: function data() {
     return {
-      isSpotifyOnline: false,
-      player: null
+      isSpotifyOnline: false
     };
   },
-  created: function created() {
-    var _this = this;
-
-    var promise = new Promise(function (resolve, reject) {
-      var timer = setInterval(function () {
-        if (_this.isUserLoaded == true && _this.user !== '' && _this.isSDKLoaded == true) {
-          // this.setPlayer();
-          resolve('User info is loaded');
-          clearInterval(timer);
-        }
-      }, 10);
-    }).then(function () {
-      return _this.getPlaylists(_this.user.spotify_id);
-    }).then(function () {
-      return _this.setPlayer();
-    }).then(function () {
-      return _this.player.connect();
-    }).then(function () {
-      return _this.setPlayerId();
-    });
-  },
+  created: function created() {},
   mounted: function mounted() {// Connect to the player!
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded', 'activePlaylist'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded', 'activePlaylist', 'player', 'current_playback']), {
+    playback: function playback() {
+      // if(current_playback != ''){
+      // let current_track_sp = this.current_playback.current_track;
+      // let next_track_sp = this.current_playback.next_tracks[0];
+      // let artists = []
+      // current_track_sp.map( artist => artists.push( artist.name) )
+      // artist = artists.join(', ');
+      // let cover = current_track_sp.album.images[0].url;
+      // let next_artists = [];
+      // next_track_sp.map( artist => next_artists.push( artist.name) )
+      // next_artists = next_artists.join(', ');
+      // let next_track = {
+      //     artist : next_artists,
+      //     title: next_track_sp.name
+      // }
+      // let current_track = {
+      //     artist : artist,
+      //     title: current_track_sp.name,
+      //     image: cover,
+      //     duration: duration_ms
+      // }
+      // return {current_track,next_track}
+      // }
+      return 'hola';
+    }
+  }),
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setPlaylistPlaying']), {
-    playTrack: function playTrack() {
-      if (activePlaylist == false) {
-        this.player.togglePlay().then(function () {
-          console.log('Toggled playback!');
-        });
-      }
+    playStop: function playStop() {
+      // if(activePlaylist == false){
+      this.player.togglePlay().then(function () {
+        console.log('Toggled playback!');
+      }); // }
     },
-    setPlayer: function setPlayer() {
-      var token = this.user.access_token;
-      this.player = new Spotify.Player({
-        name: 'Playsplit',
-        getOAuthToken: function getOAuthToken(cb) {
-          cb(token);
-        },
-        volume: 0.9
-      }); // return player;
-      // Error handling
-
-      this.player.addListener('initialization_error', function (_ref) {
-        var message = _ref.message;
-        console.error(message);
-      });
-      this.player.addListener('authentication_error', function (_ref2) {
-        var message = _ref2.message;
-        console.error(message);
-      });
-      this.player.addListener('account_error', function (_ref3) {
-        var message = _ref3.message;
-        console.error(message);
-      });
-      this.player.addListener('playback_error', function (_ref4) {
-        var message = _ref4.message;
-        console.error(message);
-      }); // Playback status updates
-
-      this.player.addListener('player_state_changed', function (state) {
-        console.log(state);
-      }); // this.player.connect().then( success => {
-      // });
-      // Ready
-      // this.player.addListener('ready', ({ device_id }) => {
-      //     console.log('Ready with Device ID', device_id);
-      //     this.$store.commit('setDeviceId', device_id);
-      //     this.isSpotifyOnline = true;
-      // });
-      // Not Ready
-      // this.player.addListener('not_ready', ({ device_id }) => {
-      //     console.log('Device ID has gone offline', device_id);
-      // });
-      // Connect to the player!
-      // this.player.connect();
+    nextTrack: function nextTrack() {
+      return fetch('https://api.spotify.com/v1/me/player/next', this._POST);
     },
-    setPlayerId: function setPlayerId() {
-      var _this2 = this;
-
-      this.player.addListener('ready', function (_ref5) {
-        var device_id = _ref5.device_id;
-        console.log('Ready with Device ID', device_id);
-
-        _this2.$store.commit('setDeviceId', device_id);
-
-        _this2.isSpotifyOnline = true;
-      });
+    prevTrack: function prevTrack() {
+      return fetch('https://api.spotify.com/v1/me/player/previous', this._POST).then(function () {});
     }
   })
 });
@@ -2113,7 +2064,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _spotify_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../spotify/core.js */ "./resources/js/spotify/core.js");
+/* harmony import */ var _spotify_function_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../spotify/function.js */ "./resources/js/spotify/function.js");
+//
 //
 //
 //
@@ -2151,8 +2103,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'grid-item',
-  props: ['id', 'uri', 'name', 'img', 'tracks-total'],
-  mixins: [_spotify_core_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  props: ['id', 'uri', 'name', 'img', 'tracks-total', 'songMstoSeconds', 'getPlaylistInfo'],
+  mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
   data: function data() {
     return {
       playlist: null,
@@ -2170,25 +2122,58 @@ __webpack_require__.r(__webpack_exports__);
         hours: hours,
         min: minutes
       };
+    },
+    playlistsTracks: function playlistsTracks() {
+      var _this = this;
+
+      var track_list = [];
+
+      if (this.tracksTotal > 0 & this.playlist != null) {
+        var item = this.playlist.tracks.items;
+        item.map(function (track) {
+          var obj = {
+            id: track.track.id,
+            title: track.track.name,
+            uri: track.track.uri,
+            duration: _this.songMstoSeconds(track.track.duration_ms),
+            artists: track.track.artists
+          };
+          track_list.push(obj);
+        });
+      }
+
+      return track_list;
+    },
+    tracksURIS: function tracksURIS() {
+      var arr = [];
+
+      if (this.playlistsTracks.length > 0) {
+        this.playlistsTracks.map(function (item) {
+          return arr.push(item.uri);
+        });
+      }
+
+      return arr;
     }
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     this.getPlaylistInfo(this.id).then(function (res) {
-      return _this.playlist = res;
+      return _this2.playlist = res;
     }).then(function () {
       var total_ms = 0;
-      var tracks_array = _this.playlist.tracks.items;
+      var tracks_array = _this2.playlist.tracks.items;
 
       if (tracks_array.length > 0) {
         tracks_array.map(function (track) {
           return total_ms += track.track.duration_ms;
         });
-        _this.duration = total_ms;
+        _this2.duration = total_ms;
       }
-    });
-  }
+    }).then(function () {});
+  },
+  methods: {}
 });
 
 /***/ }),
@@ -2273,10 +2258,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'playlist-dashboard',
+  props: ['songMstoSeconds', 'getPlaylistInfo'],
   components: {
     GridItem: _grid_item_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
@@ -39494,17 +39489,23 @@ var render = function() {
       _vm._m(1),
       _vm._v(" "),
       _c("div", { staticClass: "playback-btn-container" }, [
-        _c("button", { staticClass: "material-icons" }, [
-          _vm._v("skip_previous")
-        ]),
+        _c(
+          "button",
+          { staticClass: "material-icons", on: { click: _vm.prevTrack } },
+          [_vm._v("skip_previous")]
+        ),
         _vm._v(" "),
         _c(
           "button",
-          { staticClass: "material-icons", on: { click: _vm.playSong } },
+          { staticClass: "material-icons", on: { click: _vm.playStop } },
           [_vm._v("play_arrow")]
         ),
         _vm._v(" "),
-        _c("button", { staticClass: "material-icons" }, [_vm._v("skip_next")])
+        _c(
+          "button",
+          { staticClass: "material-icons", on: { click: _vm.nextTrack } },
+          [_vm._v("skip_next")]
+        )
       ])
     ]),
     _vm._v(" "),
@@ -39597,9 +39598,18 @@ var render = function() {
               attrs: { src: _vm.img[0].url, alt: _vm.name + " - cover" }
             }),
         _vm._v(" "),
-        _c("button", { staticClass: "btn-play material-icons" }, [
-          _vm._v("\n            play_arrow\n        ")
-        ])
+        _c(
+          "button",
+          {
+            staticClass: "btn-play material-icons",
+            on: {
+              click: function($event) {
+                return _vm.playSong(_vm.uri)
+              }
+            }
+          },
+          [_vm._v("\n            play_arrow\n        ")]
+        )
       ],
       2
     ),
@@ -39696,7 +39706,9 @@ var render = function() {
                     "tracks-total": playlist.tracks.total,
                     img: playlist.images,
                     name: playlist.name,
-                    uri: playlist.uri
+                    uri: playlist.uri,
+                    "song-msto-seconds": _vm.songMstoSeconds,
+                    "get-playlist-info": _vm.getPlaylistInfo
                   }
                 })
               })
@@ -54114,13 +54126,21 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       apiROOT: "https://api.spotify.com"
     };
   },
-  computed: {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded', 'activePlaylist']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
     header_GET: function header_GET() {
       return {
         method: 'GET',
@@ -54128,15 +54148,29 @@ __webpack_require__.r(__webpack_exports__);
           Authorization: "Bearer ".concat(this.$store.state.user.access_token)
         }
       };
-    },
-    authorization: function authorization() {
-      return {
-        'Content-Type': 'application/json',
-        'Authorization': "Bearer ".concat(this.$store.state.user.access_token)
-      };
     }
+  }),
+  created: function created() {
+    var _this = this;
+
+    var promise = new Promise(function (resolve, reject) {
+      var timer = setInterval(function () {
+        if (_this.isUserLoaded == true && _this.user !== '' && _this.isSDKLoaded == true) {
+          // this.setPlayer();
+          resolve('User info is loaded');
+          clearInterval(timer);
+        }
+      }, 10);
+    }).then(function () {
+      return _this.getPlaylists(_this.user.spotify_id);
+    }).then(function () {
+      return _this.setPlayer();
+    }).then(function () {
+      return _this.player.connect();
+    }).then(function () {
+      return _this.setPlayerId();
+    });
   },
-  created: function created() {},
   methods: {
     getPlaylistInfo: function getPlaylistInfo(playlist_id) {
       return fetch("".concat(this.apiROOT, "/v1/playlists/").concat(playlist_id), this.header_GET).then(function (response) {
@@ -54149,7 +54183,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     getPlaylists: function getPlaylists(user_id) {
-      var _this = this;
+      var _this2 = this;
 
       return fetch("".concat(this.apiROOT, "/v1/users/").concat(user_id, "/playlists"), this.header_GET).then(function (response) {
         if (response.status == 200) {
@@ -54158,24 +54192,24 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (data) {
         var payload = JSON.parse(data);
 
-        _this.$store.commit('setPlaylists', payload.items);
+        _this2.$store.commit('setPlaylists', payload.items);
 
         console.log('Playlists loaded');
       });
     },
-    playSong: function playSong(e) {
-      var _this2 = this;
+    playSong: function playSong(uri) {
+      var _this3 = this;
 
       if (this.activePlaylist == false) {
         fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
           method: 'PUT',
           headers: this.authorization,
           body: JSON.stringify({
-            uris: ["spotify:track:7xGfFoTpQ2E7fRF5lN10tr"]
+            uris: [uri]
           })
         }).then(function (res) {
-          return _this2.setPlaylistPlaying();
-        });
+          return _this3.setPlaylistPlaying();
+        }).then();
       } else {
         this.player.togglePlay();
       }
@@ -54192,82 +54226,143 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       min = Math.floor(min);
+      sec = Math.floor(sec);
       return {
         min: min,
         sec: sec
       };
+    },
+    playTrack: function playTrack() {
+      if (activePlaylist == false) {
+        this.player.togglePlay().then(function () {
+          console.log('Toggled playback!');
+        });
+      }
+    },
+    setPlayer: function setPlayer() {
+      var _this4 = this;
+
+      var token = this.user.access_token;
+      this.player = new Spotify.Player({
+        name: 'Playsplit',
+        getOAuthToken: function getOAuthToken(cb) {
+          cb(token);
+        },
+        volume: 0.9
+      });
+      this.$store.dispatch('setPlayer', this.player); // Error handling
+
+      this.player.addListener('initialization_error', function (_ref) {
+        var message = _ref.message;
+        console.error(message);
+      });
+      this.player.addListener('authentication_error', function (_ref2) {
+        var message = _ref2.message;
+        console.error(message);
+      });
+      this.player.addListener('account_error', function (_ref3) {
+        var message = _ref3.message;
+        console.error(message);
+      });
+      this.player.addListener('playback_error', function (_ref4) {
+        var message = _ref4.message;
+        console.error(message);
+      }); // Playback status updates
+
+      this.player.addListener('player_state_changed', function (state) {
+        if (state != null) {
+          var _state$track_window = state.track_window,
+              current_track = _state$track_window.current_track,
+              next_tracks = _state$track_window.next_tracks;
+
+          _this4.$store.commit('setCurrentPlayback', {
+            current_track: current_track,
+            next_tracks: next_tracks
+          });
+        }
+      });
+    },
+    setPlayerId: function setPlayerId() {
+      var _this5 = this;
+
+      this.player.addListener('ready', function (_ref5) {
+        var device_id = _ref5.device_id;
+        console.log('Ready with Device ID', device_id);
+
+        _this5.$store.commit('setDeviceId', device_id);
+
+        _this5.isSpotifyOnline = true;
+      });
     }
   }
 });
 
 /***/ }),
 
-/***/ "./resources/js/spotify/spotify-sdk.js":
-/*!*********************************************!*\
-  !*** ./resources/js/spotify/spotify-sdk.js ***!
-  \*********************************************/
+/***/ "./resources/js/spotify/function.js":
+/*!******************************************!*\
+  !*** ./resources/js/spotify/function.js ***!
+  \******************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var createSpotifyPlayer = function createSpotifyPlayer(name, getOAuthToken) {
-  var Player = /*#__PURE__*/function () {
-    function Player() {
-      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          name = _ref.name,
-          getOAuthToken = _ref.getOAuthToken;
 
-      _classCallCheck(this, Player);
-
-      this.name = name;
-      this.callback = getOAuthToken;
-      this.listeners = [];
-      this.device_id = "5def083a-a0b0-447c-9e47-1d0123f1453d";
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'functions',
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['player']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
+    _PUT: function _PUT() {
+      return {
+        method: 'PUT',
+        headers: this.authorization
+      };
+    },
+    _POST: function _POST() {
+      return {
+        method: 'POST',
+        headers: this.authorization
+      };
     }
+  }),
+  methods: {
+    playSong: function playSong(context) {
+      var _this = this;
 
-    _createClass(Player, [{
-      key: "addListener",
-      value: function addListener(eventName, callback) {
-        this.listeners[eventName] = [callback];
-      }
-    }, {
-      key: "trigger",
-      value: function trigger(eventName) {
-        var _this = this;
+      if (this.$store.state.activePlaylist == false) {
+        fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
+          method: 'PUT',
+          headers: this.authorization,
+          body: JSON.stringify({
+            context_uri: context
+          })
+        }).then(function () {
+          _this.player.getCurrentState().then(function (state) {
+            var _state$track_window = state.track_window,
+                current_track = _state$track_window.current_track,
+                next_tracks = _state$track_window.next_tracks,
+                previous_tracks = _state$track_window.previous_tracks;
 
-        this.listeners[eventName].forEach(function (cb) {
-          return cb({
-            device_id: _this.device_id
+            _this.$store.commit('setCurrentPlayback', {
+              current_track: current_track,
+              next_tracks: next_tracks,
+              previous_tracks: previous_tracks
+            });
           });
         });
+      } else {
+        this.player.togglePlay();
       }
-    }, {
-      key: "getCurrentState",
-      value: function getCurrentState() {
-        return Promise.resolve();
-      }
-    }, {
-      key: "connect",
-      value: function connect() {}
-    }]);
-
-    return Player;
-  }();
-
-  return new Player({
-    name: name,
-    getOAuthToken: getOAuthToken
-  });
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (createSpotifyPlayer);
+    }
+  }
+});
 
 /***/ }),
 
@@ -54295,9 +54390,22 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     device_id: null,
     playlists: [],
     isModalOpen: false,
-    openModal: 'edit-name'
+    openModal: 'edit-name',
+    player: null,
+    current_playback: ''
+  },
+  getters: {
+    authorization: function authorization(state) {
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer ".concat(state.user.access_token)
+      };
+    }
   },
   mutations: {
+    setPlayer: function setPlayer(state, payload) {
+      state.player = payload;
+    },
     setUserData: function setUserData(state, payload) {
       state.user = payload;
     },
@@ -54320,6 +54428,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.isModalOpen ? state.isModalOpen = false : state.isModalOpen = true; // state.openModal = payload;
 
       state.openModal = 'edit-name';
+    },
+    setCurrentPlayback: function setCurrentPlayback(state, payload) {
+      state.current_playback = payload;
     }
   },
   actions: {
@@ -54332,7 +54443,13 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         var user_data = JSON.parse(data);
         context.commit('setUserData', user_data);
       }).then(context.commit('setUserOnline'));
-    }
+    },
+    setPlayer: function setPlayer(context, payload) {
+      context.commit('setPlayer', payload);
+    } //   getCurrentPlayback(context,payload){
+    //       context.commit('setCurrentPlayback',payload)
+    //   }
+
   }
 });
 /* harmony default export */ __webpack_exports__["default"] = (store);

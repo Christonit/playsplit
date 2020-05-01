@@ -19,9 +19,9 @@
             </div>
 
             <div class="playback-btn-container">
-                <button class="material-icons">skip_previous</button>
-                <button class="material-icons" @click="playSong">play_arrow</button>
-                <button class="material-icons">skip_next</button>
+                <button class="material-icons" @click="prevTrack">skip_previous</button>
+                <button class="material-icons" @click="playStop">play_arrow</button>
+                <button class="material-icons" @click="nextTrack">skip_next</button>
             </div>
             
 
@@ -37,34 +37,18 @@
 <script>    
 
     import {mapState, mapMutations} from 'vuex';
-    import spotify from '../spotify/core.js';
-    import createSpotifyPlayer from '../spotify/spotify-sdk.js';
-
+    import functions from '../spotify/function.js'
+    
     export default {
         name:'playback-controller',
-        mixins:[spotify],
+        mixins:[functions],
         data(){
             return {
                 isSpotifyOnline:false,
-                player:null
             }
         },
         created(){
         
-                let promise = new Promise( (resolve,reject) => {
-                   let timer =  setInterval(()=>{
-                        if( this.isUserLoaded == true && this.user !== '' && this.isSDKLoaded == true){
-                            // this.setPlayer();
-
-                            resolve('User info is loaded');
-                            clearInterval(timer)
-                        }
-                    },10);
-
-                }).then(() => this.getPlaylists(this.user.spotify_id))
-                .then(() => this.setPlayer())
-                .then(() => this.player.connect())
-                .then(() => this.setPlayerId())         
 
         },
         mounted() {
@@ -73,8 +57,46 @@
 
         },
         computed:{
-            ...mapState(['user','isUserLoaded','isSDKLoaded','activePlaylist']),
-          
+            ...mapState(['user','isUserLoaded','isSDKLoaded','activePlaylist','player','current_playback']),
+            playback(){
+                // if(current_playback != ''){
+                // let current_track_sp = this.current_playback.current_track;
+                // let next_track_sp = this.current_playback.next_tracks[0];
+
+                // let artists = []
+                // current_track_sp.map( artist => artists.push( artist.name) )
+
+                // artist = artists.join(', ');
+
+                // let cover = current_track_sp.album.images[0].url;
+                
+
+                // let next_artists = [];
+
+                // next_track_sp.map( artist => next_artists.push( artist.name) )
+
+                // next_artists = next_artists.join(', ');
+
+                // let next_track = {
+                //     artist : next_artists,
+                //     title: next_track_sp.name
+                // }
+
+                // let current_track = {
+                //     artist : artist,
+                //     title: current_track_sp.name,
+                //     image: cover,
+                //     duration: duration_ms
+                // }
+
+                // return {current_track,next_track}
+                // }
+
+                                return 'hola'
+
+
+
+            }
         },
         methods:{
             // setTrack(){
@@ -86,66 +108,30 @@
             //     })
             // },
             ...mapMutations(['setPlaylistPlaying']),
-            playTrack(){
-                if(activePlaylist == false){
+            playStop(){
+                // if(activePlaylist == false){
                     this.player.togglePlay().then(() => {
                         console.log('Toggled playback!');
                     });
-                }
+            
+                // }
                 
             },
-            setPlayer(){
-                const token = this.user.access_token;
-                this.player = new Spotify.Player({
-                    name: 'Playsplit',
-                    getOAuthToken: cb => { cb(token); },
-                    volume:0.9
-                });
 
-                // return player;
-
-                // Error handling
-                this.player.addListener('initialization_error', ({ message }) => { console.error(message); });
-                this.player.addListener('authentication_error', ({ message }) => { console.error(message); });
-                this.player.addListener('account_error', ({ message }) => { console.error(message); });
-                this.player.addListener('playback_error', ({ message }) => { console.error(message); });
-
-                // Playback status updates
-                this.player.addListener('player_state_changed', state => { console.log(state); });
-
-                // this.player.connect().then( success => {
-                    
-                // });
-                // Ready
-                // this.player.addListener('ready', ({ device_id }) => {
-                //     console.log('Ready with Device ID', device_id);
-                //     this.$store.commit('setDeviceId', device_id);
-                //     this.isSpotifyOnline = true;
-                    
-                // });
-
-                // Not Ready
-                // this.player.addListener('not_ready', ({ device_id }) => {
-                //     console.log('Device ID has gone offline', device_id);
-                // });
-
-                // Connect to the player!
-                // this.player.connect();
-
-
-
-
-
-
+            nextTrack(){
+                return fetch('https://api.spotify.com/v1/me/player/next',
+                    this._POST
+                )
             },
-            setPlayerId(){
-                this.player.addListener('ready', ({ device_id }) => {
-                    console.log('Ready with Device ID', device_id);
-                    this.$store.commit('setDeviceId', device_id);
-                    this.isSpotifyOnline = true;
-                    
-                });
+
+            prevTrack(){
+                return fetch('https://api.spotify.com/v1/me/player/previous',
+                    this._POST
+                ).then(()=>{
+                   
+                })
             }
+        
         }
     }
 </script>

@@ -16,7 +16,16 @@
             <div class="section-body">
                 <template v-if='playlists.length != 0'>
                     
-                    <grid-item v-for='playlist in playlists' :key='playlist.id' :id="playlist.id" :tracks-total='playlist.tracks.total' :img="playlist.images" :name="playlist.name" :uri="playlist.uri"></grid-item>
+                    <grid-item v-for='playlist in playlists' 
+                        :key='playlist.id' 
+                        :id="playlist.id" 
+                        :tracks-total='playlist.tracks.total' 
+                        :img="playlist.images" 
+                        :name="playlist.name" 
+                        :uri="playlist.uri" 
+                        :song-msto-seconds='songMstoSeconds' 
+                        :get-playlist-info='getPlaylistInfo'>
+                    </grid-item>
 
                 </template>
 
@@ -68,6 +77,7 @@ import {mapState} from 'vuex';
 
 export default {
     name:'playlist-dashboard',
+    props:['songMstoSeconds','getPlaylistInfo'],
     components:{
         GridItem
     },

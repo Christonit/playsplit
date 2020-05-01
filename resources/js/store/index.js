@@ -12,9 +12,19 @@ const store = new Vuex.Store({
     device_id:null,
     playlists: [],
     isModalOpen:false,
-    openModal:'edit-name'
+    openModal:'edit-name',
+    player:null,
+    current_playback:''
+  },
+  getters:{
+    authorization(state){
+        return { 'Content-Type': 'application/json','Authorization':`Bearer ${state.user.access_token}`}          
+    }
   },
   mutations: {
+    setPlayer(state, payload){
+        state.player = payload;
+    },
     setUserData(state, payload){
         state.user = payload;
     },
@@ -38,6 +48,9 @@ const store = new Vuex.Store({
         // state.openModal = payload;
         state.openModal = 'edit-name';
 
+    },
+    setCurrentPlayback(state,payload){
+        state.current_playback = payload;
     }
   },
   actions:{
@@ -51,7 +64,13 @@ const store = new Vuex.Store({
            context.commit('setUserData',user_data)
         })
         .then(context.commit('setUserOnline'))
-      }
+      },
+      setPlayer(context,payload){
+          context.commit('setPlayer', payload)
+      },
+    //   getCurrentPlayback(context,payload){
+    //       context.commit('setCurrentPlayback',payload)
+    //   }
   }
 })
 

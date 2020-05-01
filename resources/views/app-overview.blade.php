@@ -4,7 +4,7 @@
     <top-nav></top-nav>
     <sidebar-comp></sidebar-comp>
     <div class="app-container">
-        <playlist-dashboard></playlist-dashboard>
+        <playlist-dashboard :song-msto-seconds='songMstoSeconds' :get-playlist-info='getPlaylistInfo'></playlist-dashboard>
     </div>
     <stats-table></stats-table>
     <quickmerge></quickmerge>
