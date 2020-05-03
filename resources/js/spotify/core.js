@@ -1,4 +1,5 @@
 import {mapState, mapMutations, mapGetters} from 'vuex';
+import {songMstoSeconds} from './lib.js';
 
 export default {
     data() {
@@ -6,9 +7,8 @@ export default {
           apiROOT: "https://api.spotify.com"
       };
     },
-  
     computed: {            
-      ...mapState(['user','isUserLoaded','isSDKLoaded','activePlaylist']),
+      ...mapState(['user','isUserLoaded','isSDKLoaded','activePlaylist','passed_time','passed_time_ms']),
       ...mapGetters(['authorization']),
       header_GET(){
             return {
@@ -41,6 +41,7 @@ export default {
     },
   
     methods: {
+      ...mapMutations(['setPassedTimeMs', 'setPassedTime']),
       getPlaylistInfo(playlist_id){
         return fetch(`${this.apiROOT}/v1/playlists/${playlist_id}`, this.header_GET).then( response => {
           if(response.status == 200){
@@ -77,8 +78,10 @@ export default {
               method: 'PUT',
               headers: this.authorization,
               body:JSON.stringify({uris: [uri]})
-            }).then( (res)=> this.setPlaylistPlaying() ).then()
-        }else{
+            })
+            .then( (res)=> this.$store.commit('setPlaylistPlaying', true) )
+
+          }else{
 
           this.player.togglePlay()
 
@@ -86,24 +89,6 @@ export default {
                               
                             
       },
-      // songMstoSeconds(song){
-      //   let ms = song;
-      //   let seconds = (ms / 1000 );
-      //   let min = seconds / 60;
-      //   let r = min % 1;
-      //   let sec = (r * 60);
-      //   if (sec < 10) {
-      //       sec = '0'+sec;
-      //   }
-      //   min = Math.floor(min);
-      //   sec = Math.floor(sec);
-
-
-      //   return {
-      //     min:min,
-      //     sec:sec
-      //   }
-      // },
       playTrack(){
         if(activePlaylist == false){
             this.player.togglePlay().then(() => {
@@ -130,7 +115,9 @@ export default {
 
         // Playback status updates
         this.player.addListener('player_state_changed', state => { 
+          
           if(state != null){
+
             let { 
                 current_track,
                 next_tracks 
@@ -158,8 +145,35 @@ export default {
             this.isSpotifyOnline = true;
             
         });
+    },
+    setTime(tracked = 0, pressed = false){
+
+      let interval = setInterval( ()=>{
+          console.log('timer')
+          let time = 0;
+          if( this.passed_time_ms >= tracked  || pressed == true  ){
+
+              this.setPassedTimeMs(0)
+              this.setPassedTime(0) 
+              
+              return clearInterval(interval)
+
+          }
+          if(this.isPlayPaused == true){
+
+              return clearInterval(interval)
+
+          }
+          
+            time += 1000 
+            this.setPassedTimeMs(time)
+            this.setPassedTime( songMstoSeconds(this.passed_time_ms)  )  
+
+        },1000)
+
     }
 
     }
+    
   };
   

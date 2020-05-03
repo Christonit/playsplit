@@ -60,17 +60,47 @@ export default {
             let min = seconds / 60;
             let r = min % 1;
             let sec = (r * 60);
-            if (sec < 10) {
-                sec = '0'+sec;
-            }
+
             min = Math.floor(min);
             sec = Math.floor(sec);
     
+            if (sec < 10) {
+                sec = '0'+sec;
+            }
+            if (min < 10) {
+                min = '0'+min;
+            }
+
     
             return {
               min:min,
               sec:sec
             }
           },
+          trackMsToHrs(duration){
+
+            let ms = duration;
+            let seconds = (ms / 1000 );
+            let min = seconds / 60;
+
+            min = Math.floor(min);
+
+            let hours = min / 60;
+
+            let r = hours % 1;
+
+            hours = Math.floor(hours);
+            let minutes = Math.floor((r * 60));
+
+            if (hours < 10) {
+                hours = '0'+hours;
+            }
+            if (minutes < 10) {
+                minutes = '0'+minutes;
+            }
+
+
+            return {hours, minutes };
+        }
     }
 }

@@ -1935,9 +1935,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "edit-name-pop-up",
+  data: function data() {
+    return {
+      name: ''
+    };
+  },
   methods: {
-    openModal: function openModal() {
+    closeModal: function closeModal() {
       this.$store.commit('openCloseModal', 0);
+    },
+    saveName: function saveName() {
+      this.$store.commit('setMergeName', this.name);
+      this.$store.commit('openCloseModal', 0);
+      this.name = '';
     }
   }
 });
@@ -2004,13 +2014,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
   data: function data() {
     return {
-      isSpotifyOnline: false
+      isSpotifyOnline: false,
+      passed_time: 0,
+      passed_time_ms: 0
     };
   },
   created: function created() {},
-  mounted: function mounted() {// Connect to the player!
-  },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded', 'activePlaylist', 'player', 'current_playback']), {
+  mounted: function mounted() {},
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isPlayPaused', 'isSDKLoaded', 'timer', 'activePlaylist', 'player', 'current_playback']), {
     playback: function playback() {
       var next_track = {
         artist: '',
@@ -2054,17 +2065,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
     }
   }),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setPlaylistPlaying']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setPlaylistPlaying', 'setCurrentTime', 'setIfPlaylitPaused']), {
     playStop: function playStop() {
+      var _this = this;
+
       this.player.togglePlay().then(function () {
         console.log('Toggled playback!');
+
+        _this.setIfPlaylitPaused(true);
       });
     },
     nextTrack: function nextTrack() {
-      return fetch('https://api.spotify.com/v1/me/player/next', this._POST);
+      var _this2 = this;
+
+      return fetch('https://api.spotify.com/v1/me/player/next', this._POST).then(function () {
+        _this2.setTime(undefined, true);
+      });
     },
     prevTrack: function prevTrack() {
-      return fetch('https://api.spotify.com/v1/me/player/previous', this._POST).then(function () {});
+      var _this3 = this;
+
+      return fetch('https://api.spotify.com/v1/me/player/previous', this._POST).then(function () {
+        _this3.setTime(undefined, true);
+      });
     }
   })
 });
@@ -2081,6 +2104,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _spotify_function_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../spotify/function.js */ "./resources/js/spotify/function.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
 //
 //
 //
@@ -2117,6 +2148,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'grid-item',
   props: ['id', 'uri', 'name', 'img', 'tracks-total', 'getPlaylistInfo'],
@@ -2124,11 +2156,13 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       playlist: null,
-      duration: null
+      playlistMergeData: null,
+      duration: null,
+      queueId: null
     };
   },
-  computed: {
-    getTotalDuration: function getTotalDuration() {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['current_playback', 'timer', 'mergeActive', 'playlistToMerge']), {
+    totalDuration: function totalDuration() {
       var totalInMinutes = this.songMstoSeconds(this.duration);
       var hours = totalInMinutes.min / 60;
       var r = hours % 1;
@@ -2171,7 +2205,7 @@ __webpack_require__.r(__webpack_exports__);
 
       return arr;
     }
-  },
+  }),
   mounted: function mounted() {
     var _this2 = this;
 
@@ -2189,16 +2223,62 @@ __webpack_require__.r(__webpack_exports__);
       }
     }).then(function () {});
   },
-  methods: {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'substractMergeDurationMs']), {
+    expandOrMerge: function expandOrMerge() {
+      var _this3 = this;
+
+      if (this.mergeActive) {
+        var el = this.$refs.playlist_preview;
+
+        if (el.classList.contains('active')) {
+          this.removePlaylistToMerge(this.queueId);
+          this.substractMergeDurationMs(this.duration);
+          el.classList.remove('active');
+        } else {
+          el.classList.add('active');
+          var mergeLength = this.playlistToMerge.length;
+          this.queueId = mergeLength;
+          this.selectToMerge().then(function (playlist) {
+            _this3.setPlaylistToMerge(playlist);
+
+            _this3.addMergeDurationMs(_this3.duration);
+          });
+        }
+      } else {
+        console.log('Expaaaaand');
+      }
+    },
+    activateMerge: function activateMerge() {
+      this.$store.commit('setMergeActive', true);
+    },
+    selectToMerge: function selectToMerge() {
+      var _this4 = this;
+
+      return new Promise(function (resolve) {
+        var playlist = {
+          id: _this4.playlist.id,
+          tracks: _this4.sortTracks()
+        };
+        return resolve(playlist);
+      }); // return;
+    },
+    sortTracks: function sortTracks() {
+      var tracks = [];
+      var el = this.playlist.tracks;
+      el.items.map(function (track) {
+        return tracks.push(track.track.uri);
+      });
+      return tracks;
+    },
     play: function play() {
       this.playSong(this.uri);
-      this.$store.commit('setCurrentPlaylist', {
+      this.$store.dispatch('getCurrentPlaylist', {
         title: this.name,
         tracks: this.tracksTotal,
         cover: this.playlist.images[0].url
       });
     }
-  }
+  })
 });
 
 /***/ }),
@@ -2291,6 +2371,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2300,10 +2382,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     GridItem: _grid_item_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   mounted: function mounted() {},
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['playlists'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['playlists', 'mergeActive'])),
   methods: {
     openModal: function openModal() {
       this.$store.commit('openCloseModal', 0);
+    },
+    cancelMerge: function cancelMerge() {
+      var el = document.querySelectorAll('.grid-list-item.active');
+      console.log(el);
+      el.forEach(function (item) {
+        return item.classList.remove('active');
+      });
+      this.$store.commit('emptyPlaylistToMerge');
+      this.$store.commit('setMergeActive', false);
+      this.$store.commit('setMergeName', '');
     }
   }
 });
@@ -2319,6 +2411,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _spotify_function_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../spotify/function.js */ "./resources/js/spotify/function.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2332,13 +2432,46 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'quickmerge',
-  methods: {
+  mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['playlistToMerge', 'mergeDurationMs', 'mergeName']), {
+    totalPlaylists: function totalPlaylists() {
+      return this.playlistToMerge.length;
+    },
+    playlistTrackCount: function playlistTrackCount() {
+      var tracks = this.playlistToMerge;
+      var counter = 0;
+      tracks.map(function (el) {
+        return counter += el.tracks.length;
+      });
+      return counter;
+    },
+    totalTime: function totalTime() {
+      return this.trackMsToHrs(this.mergeDurationMs);
+    }
+  }),
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['emptyPlaylistToMerge']), {
     openModal: function openModal() {
       this.$store.commit('openCloseModal', 0);
+    },
+    clearMerge: function clearMerge() {
+      var el = document.querySelectorAll('.grid-list-item.active');
+      el.forEach(function (item) {
+        return item.classList.remove('active');
+      });
+      this.$store.commit('emptyMergeDurationMs');
+      this.$store.commit('emptyPlaylistToMerge');
     }
-  }
+  })
 });
 
 /***/ }),
@@ -39463,36 +39596,51 @@ var render = function() {
         _vm._v(" "),
         _c(
           "button",
-          { staticClass: "close material-icons", on: { click: _vm.openModal } },
+          {
+            staticClass: "close material-icons",
+            on: { click: _vm.closeModal }
+          },
           [_vm._v("close")]
         )
       ]),
       _vm._v(" "),
-      _vm._m(0)
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "pop-up-overlay", on: { click: _vm.openModal } })
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "pop-up-body app-form" }, [
-      _c("input", {
-        staticClass: "input input-large my-0",
-        attrs: { type: "text", name: "playlist-name" }
-      }),
-      _vm._v(" "),
-      _c("div", { staticClass: "btn-container mt--32 w-100" }, [
-        _c("button", { staticClass: "btn btn-primary" }, [
-          _vm._v("Save changes")
+      _c("div", { staticClass: "pop-up-body app-form" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.name,
+              expression: "name"
+            }
+          ],
+          staticClass: "input input-large my-0",
+          attrs: { type: "text", name: "playlist-name" },
+          domProps: { value: _vm.name },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.name = $event.target.value
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c("div", { staticClass: "btn-container mt--32 w-100" }, [
+          _c(
+            "button",
+            { staticClass: "btn btn-primary", on: { click: _vm.saveName } },
+            [_vm._v("Save changes")]
+          )
         ])
       ])
-    ])
-  }
-]
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "pop-up-overlay", on: { click: _vm.closeModal } })
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -39540,13 +39688,15 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "playback-controller" }, [
       _c("div", { staticClass: "playback-timer" }, [
-        _c("span", { staticClass: "text-small" }, [
-          _vm._v(
-            _vm._s(
-              _vm.playback.current_pos.min + ":" + _vm.playback.current_pos.sec
-            )
-          )
-        ]),
+        _vm.passed_time != 0
+          ? _c("span", { staticClass: "text-small" }, [
+              _vm._v(
+                _vm._s(_vm.passed_time.min) +
+                  " : " +
+                  _vm._s(_vm.passed_time.sec)
+              )
+            ])
+          : _vm._e(),
         _vm._v(" "),
         _vm._m(0),
         _vm._v(" "),
@@ -39626,85 +39776,90 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "grid-list-item" }, [
-    _c(
-      "div",
-      { staticClass: "grid-list-img" },
-      [
-        _vm.img.length == 0 || _vm.img == undefined
-          ? [
-              _c("img", {
-                attrs: {
-                  src: " https://via.placeholder.com/88",
-                  alt: _vm.name + " - cover"
-                }
-              })
-            ]
-          : _c("img", {
-              attrs: { src: _vm.img[0].url, alt: _vm.name + " - cover" }
-            }),
+  return _c(
+    "div",
+    {
+      ref: "playlist_preview",
+      staticClass: "grid-list-item",
+      on: { click: _vm.expandOrMerge }
+    },
+    [
+      _c(
+        "div",
+        { staticClass: "grid-list-img" },
+        [
+          _vm.img.length == 0 || _vm.img == undefined
+            ? [
+                _c("img", {
+                  attrs: {
+                    src: " https://via.placeholder.com/88",
+                    alt: _vm.name + " - cover"
+                  }
+                })
+              ]
+            : _c("img", {
+                attrs: { src: _vm.img[0].url, alt: _vm.name + " - cover" }
+              }),
+          _vm._v(" "),
+          _c(
+            "button",
+            { staticClass: "btn-play material-icons", on: { click: _vm.play } },
+            [_vm._v("\n            play_arrow\n        ")]
+          )
+        ],
+        2
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "grid-cell" }, [
+        _c("a", { staticClass: "grid-list-heading", attrs: { href: "#" } }, [
+          _vm._v(_vm._s(_vm.name))
+        ]),
         _vm._v(" "),
-        _c(
-          "button",
-          { staticClass: "btn-play material-icons", on: { click: _vm.play } },
-          [_vm._v("\n            play_arrow\n        ")]
-        )
-      ],
-      2
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "grid-cell" }, [
-      _c("a", { staticClass: "grid-list-heading", attrs: { href: "#" } }, [
-        _vm._v(_vm._s(_vm.name))
+        _c("span", { staticClass: "grid-list-text" }, [
+          _vm._v("New age, synthwave, hip hop...")
+        ])
       ]),
       _vm._v(" "),
-      _c("span", { staticClass: "grid-list-text" }, [
-        _vm._v("New age, synthwave, hip hop...")
+      _c("div", { staticClass: "grid-cell" }, [
+        _c("span", { staticClass: "grid-list-text" }, [
+          _vm._v(_vm._s(_vm.tracksTotal) + " tracks")
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "grid-cell" }, [
+        _c("span", { staticClass: "grid-list-text" }, [
+          _vm._v(
+            _vm._s(
+              _vm.totalDuration.hours > 0
+                ? _vm.totalDuration.hours + " hours"
+                : ""
+            ) +
+              "  " +
+              _vm._s(_vm.totalDuration.min) +
+              " min"
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "grid-actions-container" }, [
+        !_vm.mergeActive
+          ? _c("div", { staticClass: "btn-container" }, [
+              _c("button", { on: { click: _vm.activateMerge } }, [
+                _vm._v("merge")
+              ]),
+              _vm._v(" "),
+              _c("button", [_vm._v("split")])
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _c("span", { staticClass: "material-icons btn-options" }, [
+          _vm._v("more_horiz")
+        ])
       ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "grid-cell" }, [
-      _c("span", { staticClass: "grid-list-text" }, [
-        _vm._v(_vm._s(_vm.tracksTotal) + " tracks")
-      ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "grid-cell" }, [
-      _c("span", { staticClass: "grid-list-text" }, [
-        _vm._v(
-          _vm._s(
-            _vm.getTotalDuration.hours > 0
-              ? _vm.getTotalDuration.hours + " hours"
-              : ""
-          ) +
-            "  " +
-            _vm._s(_vm.getTotalDuration.min) +
-            " min"
-        )
-      ])
-    ]),
-    _vm._v(" "),
-    _vm._m(0)
-  ])
+    ]
+  )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "grid-actions-container" }, [
-      _c("div", { staticClass: "btn-container" }, [
-        _c("button", [_vm._v("merge")]),
-        _vm._v(" "),
-        _c("button", [_vm._v("split")])
-      ]),
-      _vm._v(" "),
-      _c("span", { staticClass: "material-icons btn-options" }, [
-        _vm._v("more_horiz")
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -39730,7 +39885,28 @@ var render = function() {
     "section",
     { staticClass: "section-container", attrs: { id: "playlists-list" } },
     [
-      _vm._m(0),
+      _c("div", { staticClass: "section-header" }, [
+        _c("h2", { staticClass: "title" }, [_vm._v("My playlists")]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "btn-container d-inline-flex align-items-center" },
+          [
+            _vm.mergeActive
+              ? _c(
+                  "button",
+                  {
+                    staticClass: " mx-3 btn btn-secondary",
+                    on: { click: _vm.cancelMerge }
+                  },
+                  [_vm._v("Cancel merge")]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm._m(0)
+          ]
+        )
+      ]),
       _vm._v(" "),
       _c(
         "div",
@@ -39764,28 +39940,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "section-header" }, [
-      _c("h2", { staticClass: "title" }, [_vm._v("My playlists")]),
+    return _c("div", { staticClass: "view-type-toggle" }, [
+      _c("button", { staticClass: "material-icons" }, [_vm._v("view_list")]),
       _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "btn-container d-inline-flex align-items-center" },
-        [
-          _c("button", { staticClass: " mx-3 btn btn-secondary" }, [
-            _vm._v("Cancel merge")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "view-type-toggle" }, [
-            _c("button", { staticClass: "material-icons" }, [
-              _vm._v("view_list")
-            ]),
-            _vm._v(" "),
-            _c("button", { staticClass: "material-icons" }, [
-              _vm._v("view_module")
-            ])
-          ])
-        ]
-      )
+      _c("button", { staticClass: "material-icons" }, [_vm._v("view_module")])
     ])
   },
   function() {
@@ -39871,40 +40029,44 @@ var render = function() {
   return _c("div", { attrs: { id: "quickmerge" } }, [
     _c("div", { staticClass: "merge-info-review" }, [
       _c("span", { staticClass: "merge-title", on: { click: _vm.openModal } }, [
-        _vm._v("Type playlist name")
+        _vm._v(
+          _vm._s(_vm.mergeName != "" ? _vm.mergeName : "Type playlist name")
+        )
       ]),
       _vm._v(" "),
-      _vm._m(0)
+      _c("p", { staticClass: "text mb-0" }, [
+        _vm.totalPlaylists == 0
+          ? _c("span", { staticClass: "highlight" }, [
+              _vm._v("Select one or more playlits to merge")
+            ])
+          : _vm.totalPlaylists == 1
+          ? _c("span", { staticClass: "highlight" }, [
+              _vm._v("Select one more playlit to merge")
+            ])
+          : _c("span", { staticClass: "highlight" }, [
+              _vm._v(" " + _vm._s(_vm.totalPlaylists) + " playlists selected")
+            ]),
+        _vm._v(
+          "\n                    \n                     | " +
+            _vm._s(_vm.playlistTrackCount) +
+            " tracks, " +
+            _vm._s(_vm.totalTime.hours + ":" + _vm.totalTime.minutes)
+        )
+      ])
     ]),
     _vm._v(" "),
-    _vm._m(1)
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("p", { staticClass: "text mb-0" }, [
-      _c("span", { staticClass: "highlight" }, [
-        _vm._v("Select one more playlit")
-      ]),
-      _vm._v(" | 127 songs, 3:25 durations")
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "btn-container" }, [
-      _c("button", { staticClass: "btn btn-secondary" }, [
-        _vm._v("Clear selected")
-      ]),
+    _c("div", { staticClass: "btn-container" }, [
+      _c(
+        "button",
+        { staticClass: "btn btn-secondary", on: { click: _vm.clearMerge } },
+        [_vm._v("Clear selected")]
+      ),
       _vm._v(" "),
       _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Merge")])
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -53479,7 +53641,7 @@ var app = new Vue({
     EditNamePopUp: _components_modals_edit_name_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
     Quickmerge: _components_quickmerge_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['isModalOpen'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['isModalOpen', 'mergeActive'])),
   created: function created() {
     this.$store.dispatch('getUserData');
   }
@@ -54167,11 +54329,13 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _lib_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lib.js */ "./resources/js/spotify/lib.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -54180,7 +54344,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       apiROOT: "https://api.spotify.com"
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded', 'activePlaylist']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'isUserLoaded', 'isSDKLoaded', 'activePlaylist', 'passed_time', 'passed_time_ms']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
     header_GET: function header_GET() {
       return {
         method: 'GET',
@@ -54211,7 +54375,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return _this.setPlayerId();
     });
   },
-  methods: {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setPassedTimeMs', 'setPassedTime']), {
     getPlaylistInfo: function getPlaylistInfo(playlist_id) {
       return fetch("".concat(this.apiROOT, "/v1/playlists/").concat(playlist_id), this.header_GET).then(function (response) {
         if (response.status == 200) {
@@ -54248,28 +54412,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             uris: [uri]
           })
         }).then(function (res) {
-          return _this3.setPlaylistPlaying();
-        }).then();
+          return _this3.$store.commit('setPlaylistPlaying', true);
+        });
       } else {
         this.player.togglePlay();
       }
     },
-    // songMstoSeconds(song){
-    //   let ms = song;
-    //   let seconds = (ms / 1000 );
-    //   let min = seconds / 60;
-    //   let r = min % 1;
-    //   let sec = (r * 60);
-    //   if (sec < 10) {
-    //       sec = '0'+sec;
-    //   }
-    //   min = Math.floor(min);
-    //   sec = Math.floor(sec);
-    //   return {
-    //     min:min,
-    //     sec:sec
-    //   }
-    // },
     playTrack: function playTrack() {
       if (activePlaylist == false) {
         this.player.togglePlay().then(function () {
@@ -54333,8 +54481,36 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this5.isSpotifyOnline = true;
       });
+    },
+    setTime: function setTime() {
+      var _this6 = this;
+
+      var tracked = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      var pressed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var interval = setInterval(function () {
+        console.log('timer');
+        var time = 0;
+
+        if (_this6.passed_time_ms >= tracked || pressed == true) {
+          _this6.setPassedTimeMs(0);
+
+          _this6.setPassedTime(0);
+
+          return clearInterval(interval);
+        }
+
+        if (_this6.isPlayPaused == true) {
+          return clearInterval(interval);
+        }
+
+        time += 1000;
+
+        _this6.setPassedTimeMs(time);
+
+        _this6.setPassedTime(Object(_lib_js__WEBPACK_IMPORTED_MODULE_1__["songMstoSeconds"])(_this6.passed_time_ms));
+      }, 1000);
     }
-  }
+  })
 });
 
 /***/ }),
@@ -54407,20 +54583,84 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var min = seconds / 60;
       var r = min % 1;
       var sec = r * 60;
+      min = Math.floor(min);
+      sec = Math.floor(sec);
 
       if (sec < 10) {
         sec = '0' + sec;
       }
 
-      min = Math.floor(min);
-      sec = Math.floor(sec);
+      if (min < 10) {
+        min = '0' + min;
+      }
+
       return {
         min: min,
         sec: sec
       };
+    },
+    trackMsToHrs: function trackMsToHrs(duration) {
+      var ms = duration;
+      var seconds = ms / 1000;
+      var min = seconds / 60;
+      min = Math.floor(min);
+      var hours = min / 60;
+      var r = hours % 1;
+      hours = Math.floor(hours);
+      var minutes = Math.floor(r * 60);
+
+      if (hours < 10) {
+        hours = '0' + hours;
+      }
+
+      if (minutes < 10) {
+        minutes = '0' + minutes;
+      }
+
+      return {
+        hours: hours,
+        minutes: minutes
+      };
     }
   }
 });
+
+/***/ }),
+
+/***/ "./resources/js/spotify/lib.js":
+/*!*************************************!*\
+  !*** ./resources/js/spotify/lib.js ***!
+  \*************************************/
+/*! exports provided: songMstoSeconds */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "songMstoSeconds", function() { return songMstoSeconds; });
+function songMstoSeconds(song) {
+  var ms = song;
+  var seconds = ms / 1000;
+  var min = seconds / 60;
+  var r = min % 1;
+  var sec = r * 60;
+  min = Math.floor(min);
+  sec = Math.floor(sec);
+
+  if (sec < 10) {
+    sec = '0' + sec;
+  }
+
+  if (min < 10) {
+    min = '0' + min;
+  }
+
+  return {
+    min: min,
+    sec: sec
+  };
+}
+
+
 
 /***/ }),
 
@@ -54445,13 +54685,20 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist: false,
+    isPlayPaused: false,
     currentPlaylist: null,
     device_id: null,
     playlists: [],
     isModalOpen: false,
     openModal: 'edit-name',
     player: null,
-    current_playback: ''
+    current_playback: '',
+    passed_time: 0,
+    passed_time_ms: 0,
+    mergeActive: false,
+    playlistToMerge: [],
+    mergeDurationMs: 0,
+    mergeName: ''
   },
   getters: {
     authorization: function authorization(state) {
@@ -54462,6 +54709,36 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     }
   },
   mutations: {
+    setMergeActive: function setMergeActive(state, payload) {
+      state.mergeActive = payload;
+    },
+    setMergeName: function setMergeName(state, payload) {
+      state.mergeName = payload;
+    },
+    setPlaylistToMerge: function setPlaylistToMerge(state, payload) {
+      state.playlistToMerge.push(payload);
+    },
+    addMergeDurationMs: function addMergeDurationMs(state, payload) {
+      state.mergeDurationMs += payload;
+    },
+    substractMergeDurationMs: function substractMergeDurationMs(state, payload) {
+      state.mergeDurationMs -= payload;
+    },
+    emptyMergeDurationMs: function emptyMergeDurationMs(state) {
+      state.mergeDurationMs = 0;
+    },
+    removePlaylistToMerge: function removePlaylistToMerge(state, queueId) {
+      state.playlistToMerge.splice(queueId, 1);
+    },
+    emptyPlaylistToMerge: function emptyPlaylistToMerge(state) {
+      state.playlistToMerge = [];
+    },
+    setPassedTime: function setPassedTime(state, payload) {
+      state.passed_time = payload;
+    },
+    setPassedTimeMs: function setPassedTimeMs(state, payload) {
+      state.passed_time_ms = payload;
+    },
     setPlayer: function setPlayer(state, payload) {
       state.player = payload;
     },
@@ -54471,8 +54748,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     setCurrentPlaylist: function setCurrentPlaylist(state, payload) {
       state.currentPlaylist = payload;
     },
-    setPlaylistPlaying: function setPlaylistPlaying(state) {
-      state.activePlaylist == false ? state.activePlaylist = true : '';
+    setIfPlaylitPaused: function setIfPlaylitPaused(state, payload) {
+      state.isPlayPaused = payload;
+    },
+    setPlaylistPlaying: function setPlaylistPlaying(state, payload) {
+      state.activePlaylist = payload;
     },
     setUserOnline: function setUserOnline(state) {
       state.isUserLoaded = true;
@@ -54508,10 +54788,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     setPlayer: function setPlayer(context, payload) {
       context.commit('setPlayer', payload);
-    } //   getCurrentPlayback(context,payload){
-    //       context.commit('setCurrentPlayback',payload)
-    //   }
-
+    },
+    getCurrentPlaylist: function getCurrentPlaylist(context, payload) {
+      context.commit('setCurrentPlaylist', payload);
+      context.commit('setPlaylistPlaying', true);
+    }
   }
 });
 /* harmony default export */ __webpack_exports__["default"] = (store);

@@ -4,10 +4,10 @@
     <top-nav></top-nav>
     <sidebar-comp></sidebar-comp>
     <div class="app-container">
-        <playlist-dashboard :song-msto-seconds='songMstoSeconds' :get-playlist-info='getPlaylistInfo'></playlist-dashboard>
+        <playlist-dashboard  :get-playlist-info='getPlaylistInfo'></playlist-dashboard>
     </div>
     <stats-table></stats-table>
-    <quickmerge></quickmerge>
+    <quickmerge v-if="mergeActive"></quickmerge>
     <playback-controller></playback-controller>
 
     <edit-name-pop-up v-if="isModalOpen"></edit-name-pop-up>

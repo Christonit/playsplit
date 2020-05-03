@@ -9,13 +9,20 @@ const store = new Vuex.Store({
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist:false,
+    isPlayPaused:false,
     currentPlaylist:null,
     device_id:null,
     playlists: [],
     isModalOpen:false,
     openModal:'edit-name',
     player:null,
-    current_playback:''
+    current_playback:'',
+    passed_time:0,
+    passed_time_ms:0,
+    mergeActive:false,
+    playlistToMerge:[],
+    mergeDurationMs:0,
+    mergeName:''
   },
   getters:{
     authorization(state){
@@ -23,6 +30,36 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    setMergeActive(state, payload){
+        state.mergeActive = payload
+    },
+    setMergeName(state, payload){
+        state.mergeName = payload
+    },
+    setPlaylistToMerge(state,payload){
+        state.playlistToMerge.push(payload)
+    },
+    addMergeDurationMs(state,payload){
+        state.mergeDurationMs += payload
+    },
+    substractMergeDurationMs(state,payload){
+        state.mergeDurationMs -= payload
+    },
+    emptyMergeDurationMs(state){
+        state.mergeDurationMs = 0
+    },
+    removePlaylistToMerge(state,queueId){
+        state.playlistToMerge.splice(queueId,1)
+    },
+    emptyPlaylistToMerge(state){
+        state.playlistToMerge = []
+    },
+    setPassedTime(state, payload){
+        state.passed_time = payload
+    },
+    setPassedTimeMs(state, payload){
+        state.passed_time_ms = payload
+    },
     setPlayer(state, payload){
         state.player = payload;
     },
@@ -32,8 +69,11 @@ const store = new Vuex.Store({
     setCurrentPlaylist(state, payload){
         state.currentPlaylist = payload;
     },
-    setPlaylistPlaying(state){
-        state.activePlaylist == false ? state.activePlaylist = true : '';
+    setIfPlaylitPaused(state, payload){
+        state.isPlayPaused = payload;
+    },
+    setPlaylistPlaying(state, payload){
+        state.activePlaylist = payload;
     },
     setUserOnline(state){
         state.isUserLoaded = true;
@@ -72,9 +112,12 @@ const store = new Vuex.Store({
       setPlayer(context,payload){
           context.commit('setPlayer', payload)
       },
-    //   getCurrentPlayback(context,payload){
-    //       context.commit('setCurrentPlayback',payload)
-    //   }
+      getCurrentPlaylist(context,payload){
+        context.commit('setCurrentPlaylist', payload)
+        context.commit('setPlaylistPlaying', true)
+
+      }
+
   }
 })
 

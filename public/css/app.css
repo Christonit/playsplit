@@ -11225,6 +11225,11 @@ input {
   margin: 8px 0;
 }
 
+.grid-list-item.active {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
 .grid-list-item:hover {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }

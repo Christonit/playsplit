@@ -59,7 +59,7 @@ const app = new Vue({
         Quickmerge
     },
     computed:{
-        ...mapState(['isModalOpen'])
+        ...mapState(['isModalOpen','mergeActive'])
     },
     created(){
      

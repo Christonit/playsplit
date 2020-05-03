@@ -11,7 +11,7 @@
         <div class="playback-controller">
 
             <div class="playback-timer">
-                <span class="text-small">{{ `${playback.current_pos.min}:${playback.current_pos.sec}` }}</span>
+                <span class="text-small" v-if="passed_time != 0">{{ passed_time.min}} : {{ passed_time.sec}}</span>
                 <div class="progress-bar">
                     <span class="progress-bar-tracker"></span>
                 </div>
@@ -38,26 +38,29 @@
 
     import {mapState, mapMutations} from 'vuex';
     import functions from '../spotify/function.js'
-    
+
     export default {
         name:'playback-controller',
         mixins:[functions],
         data(){
             return {
                 isSpotifyOnline:false,
+                passed_time:0,
+                passed_time_ms:0,
+
+
             }
         },
         created(){
-        
+            
 
         },
         mounted() {
-            // Connect to the player!
-
 
         },
         computed:{
-            ...mapState(['user','isUserLoaded','isSDKLoaded','activePlaylist','player','current_playback']),
+            ...mapState(['user','isUserLoaded','isPlayPaused','isSDKLoaded','timer','activePlaylist','player','current_playback']),
+    
             playback(){
 
                 let next_track = {
@@ -104,7 +107,7 @@
                     current_track.image = cover
                     current_track.duration = this.songMstoSeconds(current_track_sp.duration_ms)
                 
-                }
+                }   
 
                 return {current_track,next_track, current_pos}
 
@@ -112,12 +115,15 @@
         },
         methods:{
 
-            ...mapMutations(['setPlaylistPlaying']),
-
+            ...mapMutations(['setPlaylistPlaying','setCurrentTime','setIfPlaylitPaused']),
+            
             playStop(){
                     this.player.togglePlay().then(() => {
                         console.log('Toggled playback!');
-                    });
+                        this.setIfPlaylitPaused(true)
+                    })
+
+
             
                 
             },
@@ -125,14 +131,17 @@
             nextTrack(){
                 return fetch('https://api.spotify.com/v1/me/player/next',
                     this._POST
-                )
+                ).then( ()=>{
+                    this.setTime(undefined, true)
+                })
             },
 
             prevTrack(){
                 return fetch('https://api.spotify.com/v1/me/player/previous',
                     this._POST
                 ).then(()=>{
-                   
+                    this.setTime(undefined, true)
+ 
                 })
             }
         

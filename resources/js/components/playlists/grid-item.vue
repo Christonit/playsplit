@@ -1,5 +1,6 @@
 <template>
-    <div class="grid-list-item">
+    <div class="grid-list-item" ref="playlist_preview" 
+        @click="expandOrMerge">
         <div class="grid-list-img">
             <template v-if="img.length == 0 || img == undefined">
                 <img src=" https://via.placeholder.com/88"  :alt="name+' - cover'">
@@ -20,12 +21,12 @@
             <span class="grid-list-text">{{tracksTotal}} tracks</span>
         </div>
         <div class="grid-cell">
-            <span class="grid-list-text">{{getTotalDuration.hours > 0 ? `${getTotalDuration.hours} hours` : ''}}  {{getTotalDuration.min}} min</span>
+            <span class="grid-list-text">{{totalDuration.hours > 0 ? `${totalDuration.hours} hours` : ''}}  {{totalDuration.min}} min</span>
         </div>
 
         <div class="grid-actions-container">
-            <div class="btn-container">
-                <button>merge</button>
+            <div class="btn-container" v-if="!mergeActive">
+                <button @click="activateMerge">merge</button>
                 <button>split</button>
             </div>
             <span  class="material-icons btn-options">more_horiz</span>
@@ -34,7 +35,9 @@
 </template>
 
 <script>
-import functions from '../../spotify/function.js'
+import functions from '../../spotify/function.js';
+import {mapState,mapMutations} from 'vuex';
+
 export default {
     name:'grid-item',
     props:['id','uri', 'name', 'img','tracks-total','getPlaylistInfo'],
@@ -42,12 +45,14 @@ export default {
     data(){
         return{
             playlist:null,
-            duration:null
+            playlistMergeData:null,
+            duration:null,
+            queueId:null
         }
     },
     computed:{
-
-        getTotalDuration(){
+        ...mapState(['current_playback','timer','mergeActive','playlistToMerge']),
+        totalDuration(){
             let totalInMinutes = this.songMstoSeconds(this.duration);
 
                 let hours = totalInMinutes.min / 60;
@@ -109,14 +114,76 @@ export default {
         
     },
     methods:{
+        ...mapMutations([
+        'setPlaylistToMerge',
+        'removePlaylistToMerge',
+        'addMergeDurationMs',
+        'substractMergeDurationMs'
+        ]),
+        expandOrMerge(){
 
+            if(this.mergeActive){
+                 let el = this.$refs.playlist_preview
+
+                if(el.classList.contains('active')){
+                    this.removePlaylistToMerge(this.queueId)
+                    this.substractMergeDurationMs(this.duration)
+                    el.classList.remove('active')
+
+                }else{
+
+                    el.classList.add('active')
+                    let mergeLength = this.playlistToMerge.length;
+
+                    this.queueId = mergeLength;
+
+                    this.selectToMerge().then( playlist =>{
+                        this.setPlaylistToMerge(playlist)
+                        this.addMergeDurationMs(this.duration)
+                    })
+
+
+                }
+
+            }else{
+                console.log('Expaaaaand')
+            }
+        },
+        activateMerge(){
+
+            this.$store.commit('setMergeActive', true)
+        },
+        selectToMerge(){
+            return new Promise((resolve)=> {
+                        let playlist = {
+                            id: this.playlist.id,
+                            tracks: this.sortTracks()
+                        }
+
+
+                        return resolve(playlist);
+            })
+
+            // return;
+            
+        },
+        sortTracks(){
+            let tracks = []
+
+            let el = this.playlist.tracks;
+
+            el.items.map( track => tracks.push( track.track.uri) );
+            
+            return tracks;
+        },
          play(){
             this.playSong(this.uri)
-            this.$store.commit('setCurrentPlaylist', 
-            {title:this.name, 
-            tracks:this.tracksTotal,
-            cover: this.playlist.images[0].url
-            })
+            this.$store.dispatch('getCurrentPlaylist',{
+                    title:this.name, 
+                    tracks:this.tracksTotal,
+                    cover: this.playlist.images[0].url
+                })
+            
         }
         
     }

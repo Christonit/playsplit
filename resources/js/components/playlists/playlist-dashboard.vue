@@ -3,7 +3,9 @@
             <div class="section-header">
                 <h2 class="title">My playlists</h2>
                 <div class="btn-container d-inline-flex align-items-center">
-                    <button class=" mx-3 btn btn-secondary">Cancel merge</button>
+                    <button class=" mx-3 btn btn-secondary" 
+                        v-if="mergeActive"
+                        @click="cancelMerge">Cancel merge</button>
                     
                     <div class="view-type-toggle">
                         <button class="material-icons">view_list</button>
@@ -84,11 +86,20 @@ export default {
 
     },
     computed:{
-        ...mapState(['playlists'])
+        ...mapState(['playlists','mergeActive'])
     },
     methods:{
+        
         openModal(){
             this.$store.commit('openCloseModal',0)
+        },
+        cancelMerge(){
+            let el = document.querySelectorAll('.grid-list-item.active')
+            console.log(el)
+            el.forEach(item => item.classList.remove('active'));
+            this.$store.commit('emptyPlaylistToMerge');
+            this.$store.commit('setMergeActive',false);
+            this.$store.commit('setMergeName','');
         }
     }
 }

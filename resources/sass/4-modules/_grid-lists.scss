@@ -8,6 +8,10 @@
     height: 76px;
     margin: 8px 0;
 }
+.grid-list-item.active{
+    background: $el-1;
+    border-color: $white500;
+}
 .grid-list-item:hover{
     border: 1px solid $white300;
 }
