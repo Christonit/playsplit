@@ -81,7 +81,7 @@ export default {
         }
     },
     methods:{
-        ...mapMutations(['emptyPlaylistToMerge']),
+        ...mapMutations(['emptyPlaylistToMerge','removePlaylist']),
         openModal(){
             this.$store.commit('openCloseModal',0)
         },
@@ -124,9 +124,20 @@ export default {
                 let data = JSON.parse(response)
                 if(this.playlistsToDelete.length != 0){
                     let arr = this.playlistsToDelete;
-                    console.log(arr)
-                    arr.map( item => this.deletePlaylist(item))
+                    let playlists = this.$store.state.playlists;
 
+                    arr.map( item => {
+                        
+                        this.deletePlaylist(item)
+                        playlists.forEach( (old, key) => {
+                            if(old.id == item){
+                                this.removePlaylist(key);
+                            }
+                        })
+
+                    })
+
+                    
                 }
                 return data.id
 

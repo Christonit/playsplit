@@ -43,6 +43,9 @@ const store = new Vuex.Store({
     addLatestPlaylist(state,payload){
         state.playlists.unshift(payload)
     },
+    removePlaylist(state,payload){
+        state.playlists.splice(payload,1)
+    },
     //Merge related mutations
     addMergeDurationMs(state,payload){
         state.mergeDurationMs += payload

@@ -2531,7 +2531,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return payload;
     }
   }),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['emptyPlaylistToMerge']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['emptyPlaylistToMerge', 'removePlaylist']), {
     openModal: function openModal() {
       this.$store.commit('openCloseModal', 0);
     },
@@ -2574,9 +2574,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (_this.playlistsToDelete.length != 0) {
           var arr = _this.playlistsToDelete;
-          console.log(arr);
+          var playlists = _this.$store.state.playlists;
           arr.map(function (item) {
-            return _this.deletePlaylist(item);
+            _this.deletePlaylist(item);
+
+            playlists.forEach(function (old, key) {
+              if (old.id == item) {
+                _this.removePlaylist(key);
+              }
+            });
           });
         }
 
@@ -55012,6 +55018,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     addLatestPlaylist: function addLatestPlaylist(state, payload) {
       state.playlists.unshift(payload);
+    },
+    removePlaylist: function removePlaylist(state, payload) {
+      state.playlists.splice(payload, 1);
     },
     //Merge related mutations
     addMergeDurationMs: function addMergeDurationMs(state, payload) {
