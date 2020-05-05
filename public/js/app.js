@@ -2103,8 +2103,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _spotify_function_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../spotify/function.js */ "./resources/js/spotify/function.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _utilities_toggle_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utilities/toggle.vue */ "./resources/js/components/utilities/toggle.vue");
+/* harmony import */ var _spotify_function_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../spotify/function.js */ "./resources/js/spotify/function.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2147,21 +2148,37 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'grid-item',
   props: ['id', 'uri', 'name', 'img', 'tracks-total', 'getPlaylistInfo'],
-  mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  components: {
+    toggleBtn: _utilities_toggle_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       playlist: null,
       playlistMergeData: null,
       duration: null,
-      queueId: null
+      queueId: null,
+      isActive: false
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['current_playback', 'timer', 'mergeActive', 'playlistToMerge']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['current_playback', 'timer', 'mergeActive', 'playlistToMerge', 'selectedToMerge']), {
     totalDuration: function totalDuration() {
       var totalInMinutes = this.songMstoSeconds(this.duration);
       var hours = totalInMinutes.min / 60;
@@ -2204,6 +2221,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       return arr;
+    },
+    toggleCheck: function toggleCheck() {
+      var el = this.$refs.playlist_preview;
+
+      if (el.classList.contains('to-merge')) {
+        return true;
+      }
+
+      if (!el.classList.contains('to-merge')) {
+        return false;
+      }
     }
   }),
   mounted: function mounted() {
@@ -2223,25 +2251,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     }).then(function () {});
   },
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'substractMergeDurationMs']), {
-    expandOrMerge: function expandOrMerge() {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'setSelectedToMerge', 'substractMergeDurationMs']), {
+    preservationControl: function preservationControl($event) {
+      if ($event == true) {
+        this.restoreFromDeletePlaylistBatch(); // el.filter((element,key) => {
+        //     if(element == this.id){
+        //         return this.$store.commit('preservePlaylist',key)
+        //     }
+        // });
+      } else if ($event == false) {
+        this.$store.commit('unpreservePlaylist', this.id);
+      }
+
+      return;
+    },
+    restoreFromDeletePlaylistBatch: function restoreFromDeletePlaylistBatch() {
       var _this3 = this;
+
+      var el = this.$store.state.playlistsToDelete;
+      el.filter(function (element, key) {
+        if (element == _this3.id) {
+          return _this3.$store.commit('preservePlaylist', key);
+        }
+      });
+    },
+    expandOrMerge: function expandOrMerge() {
+      var _this4 = this;
 
       if (this.mergeActive) {
         var el = this.$refs.playlist_preview;
 
-        if (el.classList.contains('active')) {
+        if (el.classList.contains('to-merge')) {
+          this.restoreFromDeletePlaylistBatch();
           this.removePlaylistToMerge(this.queueId);
           this.substractMergeDurationMs(this.duration);
-          el.classList.remove('active');
+          this.isActive = false;
+          el.classList.remove('to-merge');
         } else {
-          el.classList.add('active');
+          this.setSelectedToMerge();
+          el.classList.add('to-merge');
           var mergeLength = this.playlistToMerge.length;
           this.queueId = mergeLength;
+          this.isActive = true;
           this.selectToMerge().then(function (playlist) {
-            _this3.setPlaylistToMerge(playlist);
+            _this4.setPlaylistToMerge(playlist);
 
-            _this3.addMergeDurationMs(_this3.duration);
+            _this4.addMergeDurationMs(_this4.duration);
           });
         }
       } else {
@@ -2252,12 +2307,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$store.commit('setMergeActive', true);
     },
     selectToMerge: function selectToMerge() {
-      var _this4 = this;
+      var _this5 = this;
 
       return new Promise(function (resolve) {
         var playlist = {
-          id: _this4.playlist.id,
-          tracks: _this4.sortTracks()
+          id: _this5.playlist.id,
+          tracks: _this5.sortTracks()
         };
         return resolve(playlist);
       }); // return;
@@ -2270,13 +2325,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
       return tracks;
     },
-    play: function play() {
+    play: function play(e) {
       this.playSong(this.uri);
       this.$store.dispatch('getCurrentPlaylist', {
         title: this.name,
         tracks: this.tracksTotal,
         cover: this.playlist.images[0].url
       });
+      e.stopPropagation();
     }
   })
 });
@@ -2339,40 +2395,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2383,21 +2405,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   mounted: function mounted() {},
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['playlists', 'mergeActive'])),
-  methods: {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapMutations"])(['emptyPlaylistToMerge', 'setMergeActive', 'setMergeName', 'openCloseModal', 'unsetSelectedToMerge', 'emptyPlaylistToDelete']), {
     openModal: function openModal() {
-      this.$store.commit('openCloseModal', 0);
+      this.openCloseModal(0);
     },
     cancelMerge: function cancelMerge() {
-      var el = document.querySelectorAll('.grid-list-item.active');
+      var el = document.querySelectorAll('.grid-list-item.to-merge');
       console.log(el);
       el.forEach(function (item) {
-        return item.classList.remove('active');
+        return item.classList.remove('to-merge');
       });
-      this.$store.commit('emptyPlaylistToMerge');
-      this.$store.commit('setMergeActive', false);
-      this.$store.commit('setMergeName', '');
+      this.emptyPlaylistToMerge();
+      this.emptyPlaylistToDelete();
+      this.setMergeActive(false);
+      this.setMergeName('');
+      this.unsetSelectedToMerge();
     }
-  }
+  })
 });
 
 /***/ }),
@@ -2438,12 +2462,33 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'quickmerge',
+  data: function data() {
+    return {
+      errors: {
+        to_many_tracks: false
+      }
+    };
+  },
   mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['playlistToMerge', 'mergeDurationMs', 'mergeName']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['playlistToMerge', 'mergeDurationMs', 'mergeName', 'user']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
     totalPlaylists: function totalPlaylists() {
       return this.playlistToMerge.length;
     },
@@ -2453,10 +2498,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       tracks.map(function (el) {
         return counter += el.tracks.length;
       });
+
+      if (counter >= 100) {
+        this.errors.to_many_tracks = true;
+      } else {
+        this.errors.to_many_tracks = false;
+      }
+
       return counter;
     },
     totalTime: function totalTime() {
       return this.trackMsToHrs(this.mergeDurationMs);
+    },
+    concatToMerge: function concatToMerge() {
+      var forConcat = this.playlistToMerge;
+      var payload = [];
+      forConcat.map(function (item) {
+        payload = payload.concat(item.tracks);
+      });
+      return payload;
     }
   }),
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['emptyPlaylistToMerge']), {
@@ -2464,12 +2524,76 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$store.commit('openCloseModal', 0);
     },
     clearMerge: function clearMerge() {
-      var el = document.querySelectorAll('.grid-list-item.active');
+      var el = document.querySelectorAll('.grid-list-item.to-merge');
       el.forEach(function (item) {
-        return item.classList.remove('active');
+        return item.classList.remove('to-merge');
       });
       this.$store.commit('emptyMergeDurationMs');
       this.$store.commit('emptyPlaylistToMerge');
+      this.$store.commit('emptyPlaylistToDelete');
+      this.$store.commit('unsetSelectedToMerge');
+    },
+    close: function close() {
+      //    let el = document.querySelector('.callout.alert')
+      //    el.classList.add('hide')
+      this.error.to_many_tracks = false;
+    },
+    createMergedPlaylist: function createMergedPlaylist() {
+      var _this = this;
+
+      fetch("https://api.spotify.com/v1/users/".concat(this.user.spotify_id, "/playlists"), {
+        method: 'POST',
+        headers: this.authorization,
+        body: JSON.stringify({
+          name: this.mergeName
+        })
+      }).then(function (response) {
+        var status = response.status;
+
+        if (status == 200 || status == 201) {
+          return response.text();
+        } else {}
+      }).then(function (response) {
+        var data = JSON.parse(response);
+        return data.id;
+      }).then(function (id) {
+        //    This request add tracks payload to new playlist 
+        var addTracksStatus = fetch("https://api.spotify.com/v1/playlists/".concat(id, "/tracks"), {
+          method: 'POST',
+          headers: _this.authorization,
+          body: JSON.stringify({
+            uris: _this.concatToMerge
+          })
+        }).then(function (res) {
+          var status = res.status; // This condition gere is for what to do 
+          // after successfull track adding or error handling
+
+          if (status == 200 || status == 201) {
+            // Force rerender for last added playlist or force a page reload.
+            _this.fetchLatestMerge(id);
+          }
+        });
+      });
+    },
+    fetchLatestMerge: function fetchLatestMerge(id) {
+      var _this2 = this;
+
+      fetch("https://api.spotify.com/v1/playlists/".concat(id), {
+        method: 'GET',
+        headers: this.authorization
+      }).then(function (response) {
+        var status = response.status;
+
+        if (status == 200 || status == 201) {
+          return response.text();
+        }
+
+        ;
+      }).then(function (data) {
+        var playlist = JSON.parse(data);
+
+        _this2.$store.commit('addLatestPlaylist', playlist);
+      });
     }
   })
 });
@@ -2639,6 +2763,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'top-nav',
   mounted: function mounted() {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/toggle.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/utilities/toggle.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'toggle-btn',
+  methods: {
+    toggle: function toggle(e) {
+      var el = e.target;
+
+      if (el.classList.contains('active')) {
+        this.$emit('toggle', false);
+        el.classList.remove('active');
+      } else {
+        el.classList.add('active');
+        this.$emit('toggle', true);
+      }
+
+      e.stopPropagation();
+    }
+  }
 });
 
 /***/ }),
@@ -39841,21 +40002,35 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "grid-actions-container" }, [
-        !_vm.mergeActive
-          ? _c("div", { staticClass: "btn-container" }, [
-              _c("button", { on: { click: _vm.activateMerge } }, [
-                _vm._v("merge")
-              ]),
-              _vm._v(" "),
-              _c("button", [_vm._v("split")])
-            ])
-          : _vm._e(),
-        _vm._v(" "),
-        _c("span", { staticClass: "material-icons btn-options" }, [
-          _vm._v("more_horiz")
-        ])
-      ])
+      _c(
+        "div",
+        { staticClass: "grid-actions-container" },
+        [
+          !_vm.mergeActive
+            ? _c("div", { staticClass: "btn-container" }, [
+                _c("button", { on: { click: _vm.activateMerge } }, [
+                  _vm._v("merge")
+                ]),
+                _vm._v(" "),
+                _c("button", [_vm._v("split")])
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.isActive & _vm.mergeActive & _vm.selectedToMerge
+            ? _c(
+                "toggle-btn",
+                { on: { toggle: _vm.preservationControl } },
+                [_c("template", { slot: "title" }, [_vm._v(" Preserve")])],
+                2
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _c("span", { staticClass: "material-icons btn-options" }, [
+            _vm._v("more_horiz")
+          ])
+        ],
+        1
+      )
     ]
   )
 }
@@ -39926,9 +40101,7 @@ var render = function() {
                   }
                 })
               })
-            : _vm._e(),
-          _vm._v(" "),
-          _vm._m(1)
+            : _vm._e()
         ],
         2
       )
@@ -39944,64 +40117,6 @@ var staticRenderFns = [
       _c("button", { staticClass: "material-icons" }, [_vm._v("view_list")]),
       _vm._v(" "),
       _c("button", { staticClass: "material-icons" }, [_vm._v("view_module")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "grid-list-item to-merge" }, [
-      _c("div", { staticClass: "grid-list-img" }, [
-        _c("img", {
-          attrs: {
-            src: "https://via.placeholder.com/88",
-            alt: "Playlist title - cover"
-          }
-        }),
-        _vm._v(" "),
-        _c("button", { staticClass: "btn-play material-icons" }, [
-          _vm._v("\n                        play_arrow\n                    ")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "grid-cell" }, [
-        _c("a", { staticClass: "grid-list-heading", attrs: { href: "#" } }, [
-          _vm._v("Hate it or love it")
-        ]),
-        _vm._v(" "),
-        _c("span", { staticClass: "grid-list-text" }, [
-          _vm._v("New age, synthwave, hip hop...")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "grid-cell" }, [
-        _c("span", { staticClass: "grid-list-text" }, [_vm._v("172 songs")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "grid-cell" }, [
-        _c("span", { staticClass: "grid-list-text" }, [
-          _vm._v("3 hours 25 min")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "grid-actions-container" }, [
-        _c("label", { staticClass: "toggle-label", attrs: { for: "toggle" } }, [
-          _vm._v(
-            "\n                        Preserve\n                        "
-          ),
-          _c("button", { staticClass: "btn-toggle active" }, [_c("hr")])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "btn-container" }, [
-          _c("button", [_vm._v("merge")]),
-          _vm._v(" "),
-          _c("button", [_vm._v("split")])
-        ]),
-        _vm._v(" "),
-        _c("span", { staticClass: "material-icons btn-options" }, [
-          _vm._v("more_horiz")
-        ])
-      ])
     ])
   }
 ]
@@ -40026,44 +40141,78 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { attrs: { id: "quickmerge" } }, [
-    _c("div", { staticClass: "merge-info-review" }, [
-      _c("span", { staticClass: "merge-title", on: { click: _vm.openModal } }, [
-        _vm._v(
-          _vm._s(_vm.mergeName != "" ? _vm.mergeName : "Type playlist name")
-        )
+  return _c("div", [
+    _c("div", { attrs: { id: "quickmerge" } }, [
+      _c("div", { staticClass: "merge-info-review" }, [
+        _c(
+          "span",
+          { staticClass: "merge-title", on: { click: _vm.openModal } },
+          [
+            _vm._v(
+              _vm._s(_vm.mergeName != "" ? _vm.mergeName : "Type playlist name")
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c("p", { staticClass: "text mb-0" }, [
+          _vm.totalPlaylists == 0
+            ? _c("span", { staticClass: "highlight" }, [
+                _vm._v("Select one or more playlits to merge")
+              ])
+            : _vm.totalPlaylists == 1
+            ? _c("span", { staticClass: "highlight" }, [
+                _vm._v("Select one more playlit to merge")
+              ])
+            : _c("span", { staticClass: "highlight" }, [
+                _vm._v(" " + _vm._s(_vm.totalPlaylists) + " playlists selected")
+              ]),
+          _vm._v(
+            "\n                        \n                        | " +
+              _vm._s(_vm.playlistTrackCount) +
+              " tracks, " +
+              _vm._s(_vm.totalTime.hours + ":" + _vm.totalTime.minutes)
+          )
+        ])
       ]),
       _vm._v(" "),
-      _c("p", { staticClass: "text mb-0" }, [
-        _vm.totalPlaylists == 0
-          ? _c("span", { staticClass: "highlight" }, [
-              _vm._v("Select one or more playlits to merge")
-            ])
-          : _vm.totalPlaylists == 1
-          ? _c("span", { staticClass: "highlight" }, [
-              _vm._v("Select one more playlit to merge")
-            ])
-          : _c("span", { staticClass: "highlight" }, [
-              _vm._v(" " + _vm._s(_vm.totalPlaylists) + " playlists selected")
-            ]),
-        _vm._v(
-          "\n                    \n                     | " +
-            _vm._s(_vm.playlistTrackCount) +
-            " tracks, " +
-            _vm._s(_vm.totalTime.hours + ":" + _vm.totalTime.minutes)
+      _c("div", { staticClass: "btn-container" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-secondary",
+            attrs: { disabled: _vm.totalPlaylists == 0 },
+            on: { click: _vm.clearMerge }
+          },
+          [_vm._v("Clear selected")]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-primary",
+            attrs: {
+              disabled: _vm.errors.to_many_tracks || _vm.totalPlaylists == 0
+            },
+            on: { click: _vm.createMergedPlaylist }
+          },
+          [_vm._v("\n                            Merge\n                    ")]
         )
       ])
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "btn-container" }, [
-      _c(
-        "button",
-        { staticClass: "btn btn-secondary", on: { click: _vm.clearMerge } },
-        [_vm._v("Clear selected")]
-      ),
-      _vm._v(" "),
-      _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Merge")])
-    ])
+    _vm.errors.to_many_tracks
+      ? _c("div", { class: "callout alert" }, [
+          _c("span", { staticClass: "material-icons icon" }, [
+            _vm._v("\n            warning\n        ")
+          ]),
+          _vm._v(" "),
+          _c("span", { staticClass: "callout-message" }, [
+            _vm._v(
+              "Currently Spotify just let upload up to 100 tracks at a time. Please, reduce your selected tracks."
+            )
+          ])
+        ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -40295,6 +40444,43 @@ var staticRenderFns = [
     ])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/toggle.vue?vue&type=template&id=7cde7fc4&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/utilities/toggle.vue?vue&type=template&id=7cde7fc4& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "label",
+    { staticClass: "toggle-label", attrs: { for: "toggle" } },
+    [
+      _vm._t("title"),
+      _vm._v(" "),
+      _c(
+        "button",
+        { staticClass: "btn-toggle active", on: { click: _vm.toggle } },
+        [_c("hr")]
+      )
+    ],
+    2
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -54319,6 +54505,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/utilities/toggle.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/utilities/toggle.vue ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _toggle_vue_vue_type_template_id_7cde7fc4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./toggle.vue?vue&type=template&id=7cde7fc4& */ "./resources/js/components/utilities/toggle.vue?vue&type=template&id=7cde7fc4&");
+/* harmony import */ var _toggle_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./toggle.vue?vue&type=script&lang=js& */ "./resources/js/components/utilities/toggle.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _toggle_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _toggle_vue_vue_type_template_id_7cde7fc4___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _toggle_vue_vue_type_template_id_7cde7fc4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/utilities/toggle.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/utilities/toggle.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/utilities/toggle.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./toggle.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/toggle.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/utilities/toggle.vue?vue&type=template&id=7cde7fc4&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/utilities/toggle.vue?vue&type=template&id=7cde7fc4& ***!
+  \*************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_template_id_7cde7fc4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./toggle.vue?vue&type=template&id=7cde7fc4& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/toggle.vue?vue&type=template&id=7cde7fc4&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_template_id_7cde7fc4___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_template_id_7cde7fc4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/spotify/core.js":
 /*!**************************************!*\
   !*** ./resources/js/spotify/core.js ***!
@@ -54375,6 +54630,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return _this.setPlayerId();
     });
   },
+  mounted: function mounted() {},
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setPassedTimeMs', 'setPassedTime']), {
     getPlaylistInfo: function getPlaylistInfo(playlist_id) {
       return fetch("".concat(this.apiROOT, "/v1/playlists/").concat(playlist_id), this.header_GET).then(function (response) {
@@ -54698,7 +54954,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     mergeActive: false,
     playlistToMerge: [],
     mergeDurationMs: 0,
-    mergeName: ''
+    mergeName: '',
+    playlistsToDelete: [],
+    selectedToMerge: false
   },
   getters: {
     authorization: function authorization(state) {
@@ -54717,6 +54975,15 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     setPlaylistToMerge: function setPlaylistToMerge(state, payload) {
       state.playlistToMerge.push(payload);
+    },
+    setSelectedToMerge: function setSelectedToMerge(state) {
+      state.selectedToMerge = true;
+    },
+    unsetSelectedToMerge: function unsetSelectedToMerge(state) {
+      state.selectedToMerge = false;
+    },
+    addLatestPlaylist: function addLatestPlaylist(state, payload) {
+      state.playlists.unshift(payload);
     },
     addMergeDurationMs: function addMergeDurationMs(state, payload) {
       state.mergeDurationMs += payload;
@@ -54773,6 +55040,15 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     setCurrentPlayback: function setCurrentPlayback(state, payload) {
       state.current_playback = payload;
+    },
+    unpreservePlaylist: function unpreservePlaylist(state, payload) {
+      state.playlistsToDelete.push(payload);
+    },
+    preservePlaylist: function preservePlaylist(state, payload) {
+      state.playlistsToDelete.splice(payload, 1);
+    },
+    emptyPlaylistToDelete: function emptyPlaylistToDelete(state) {
+      state.playlistsToDelete = [];
     }
   },
   actions: {

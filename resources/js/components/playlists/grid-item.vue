@@ -29,12 +29,24 @@
                 <button @click="activateMerge">merge</button>
                 <button>split</button>
             </div>
+
+            <toggle-btn 
+                @toggle=" preservationControl"
+                v-if="isActive & mergeActive & selectedToMerge">
+                <template slot="title"> Preserve</template>
+            </toggle-btn>
+
+            <!-- <label for="toggle" class="toggle-label" v-else>
+                Preserve
+                <button class="btn-toggle active"> <hr/> </button>
+            </label> -->
             <span  class="material-icons btn-options">more_horiz</span>
         </div>
     </div>
 </template>
 
 <script>
+import toggleBtn from "../utilities/toggle.vue";
 import functions from '../../spotify/function.js';
 import {mapState,mapMutations} from 'vuex';
 
@@ -42,16 +54,20 @@ export default {
     name:'grid-item',
     props:['id','uri', 'name', 'img','tracks-total','getPlaylistInfo'],
     mixins:[functions],
+    components:{
+        toggleBtn
+    },
     data(){
         return{
             playlist:null,
             playlistMergeData:null,
             duration:null,
-            queueId:null
+            queueId:null,
+            isActive:false
         }
     },
     computed:{
-        ...mapState(['current_playback','timer','mergeActive','playlistToMerge']),
+        ...mapState(['current_playback','timer','mergeActive','playlistToMerge','selectedToMerge']),
         totalDuration(){
             let totalInMinutes = this.songMstoSeconds(this.duration);
 
@@ -93,7 +109,21 @@ export default {
                     this.playlistsTracks.map( item =>arr.push(item.uri) );
                 }
                 return arr;
+        },
+
+        toggleCheck(){
+            let el = this.$refs.playlist_preview;
+
+            if(el.classList.contains('to-merge')){
+                return true
+            }
+            
+            if(!el.classList.contains('to-merge')){
+                return false
+            }
+            
         }
+        
     },
     mounted(){
         this.getPlaylistInfo(this.id).then( res => this.playlist = res).then( ()=>{
@@ -118,25 +148,57 @@ export default {
         'setPlaylistToMerge',
         'removePlaylistToMerge',
         'addMergeDurationMs',
+        'setSelectedToMerge',
         'substractMergeDurationMs'
         ]),
+        preservationControl($event){
+
+            if( $event == true){
+
+                this.restoreFromDeletePlaylistBatch()
+
+                // el.filter((element,key) => {
+                //     if(element == this.id){
+                //         return this.$store.commit('preservePlaylist',key)
+                //     }
+                // });
+
+            }else if($event == false){
+
+                this.$store.commit('unpreservePlaylist', this.id)
+            }
+
+            return;
+
+        },
+        restoreFromDeletePlaylistBatch(){
+
+            let el = this.$store.state.playlistsToDelete;
+
+             el.filter((element,key) => {
+                    if(element == this.id){
+                        return this.$store.commit('preservePlaylist',key)
+                    }
+            });
+        },
         expandOrMerge(){
 
             if(this.mergeActive){
                  let el = this.$refs.playlist_preview
-
-                if(el.classList.contains('active')){
+                if(el.classList.contains('to-merge')){
+                    this.restoreFromDeletePlaylistBatch()
                     this.removePlaylistToMerge(this.queueId)
                     this.substractMergeDurationMs(this.duration)
-                    el.classList.remove('active')
+                    this.isActive = false
+                    el.classList.remove('to-merge')
 
                 }else{
-
-                    el.classList.add('active')
+                    this.setSelectedToMerge();
+                    el.classList.add('to-merge')
                     let mergeLength = this.playlistToMerge.length;
 
                     this.queueId = mergeLength;
-
+                    this.isActive = true
                     this.selectToMerge().then( playlist =>{
                         this.setPlaylistToMerge(playlist)
                         this.addMergeDurationMs(this.duration)
@@ -176,14 +238,14 @@ export default {
             
             return tracks;
         },
-         play(){
+         play(e){
             this.playSong(this.uri)
             this.$store.dispatch('getCurrentPlaylist',{
                     title:this.name, 
                     tracks:this.tracksTotal,
                     cover: this.playlist.images[0].url
                 })
-            
+            e.stopPropagation();   
         }
         
     }

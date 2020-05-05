@@ -37,6 +37,11 @@ export default {
      .then(() => this.setPlayer())
      .then(() => this.player.connect())
      .then(() => this.setPlayerId())      
+
+
+    
+    },
+    mounted(){
       
     },
   

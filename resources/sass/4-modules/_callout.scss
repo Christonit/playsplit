@@ -1,0 +1,47 @@
+.callout{
+    position: absolute;
+    width: 100%;
+    display: block;
+    border-radius: 4px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    //temporary
+    justify-content: center;
+    bottom: 15.5rem;
+    // end
+
+    // bottom: 7.5rem;
+    z-index: 999;
+    max-width: 960px;
+    min-width: 740px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    width: 50%;
+    overflow: hidden;
+    // min-height: 96px;
+}
+
+.callout .icon{
+    margin-right: 24px;
+    font-size: 24px;
+}
+.callout.alert{
+    background-color: $warning;
+}
+
+
+.callout .close{
+    margin-right: 8px;
+    top: 0;
+    font-size: 24px;
+    bottom: 0;
+    font-size: 20px;
+}
+
+
+
+.callout.hide{
+    display: none;
+}
