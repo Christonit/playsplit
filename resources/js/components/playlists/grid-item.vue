@@ -30,11 +30,17 @@
                 <button>split</button>
             </div>
 
-            <toggle-btn 
+
+
+            <div ref='toggleId' class="toggle-container">
+                <toggle-btn 
                 @toggle=" preservationControl"
-                v-if="isActive & mergeActive & selectedToMerge">
+                v-if="isActive & mergeActive">
                 <template slot="title"> Preserve</template>
-            </toggle-btn>
+                </toggle-btn>
+            </div>
+
+            
 
             <!-- <label for="toggle" class="toggle-label" v-else>
                 Preserve
@@ -67,7 +73,7 @@ export default {
         }
     },
     computed:{
-        ...mapState(['current_playback','timer','mergeActive','playlistToMerge','selectedToMerge']),
+        ...mapState(['current_playback','timer','mergeActive','playlistToMerge']),
         totalDuration(){
             let totalInMinutes = this.songMstoSeconds(this.duration);
 
@@ -185,15 +191,18 @@ export default {
 
             if(this.mergeActive){
                  let el = this.$refs.playlist_preview
+                 let toggle = this.$refs.toggleId;
+
                 if(el.classList.contains('to-merge')){
                     this.restoreFromDeletePlaylistBatch()
                     this.removePlaylistToMerge(this.queueId)
                     this.substractMergeDurationMs(this.duration)
                     this.isActive = false
+                    this.$emit('test')
                     el.classList.remove('to-merge')
+                    toggle.classList.add('hide')
 
                 }else{
-                    this.setSelectedToMerge();
                     el.classList.add('to-merge')
                     let mergeLength = this.playlistToMerge.length;
 
@@ -203,6 +212,8 @@ export default {
                         this.setPlaylistToMerge(playlist)
                         this.addMergeDurationMs(this.duration)
                     })
+
+                    toggle.classList.remove('hide')
 
 
                 }

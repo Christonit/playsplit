@@ -24,7 +24,6 @@ const store = new Vuex.Store({
     mergeDurationMs:0,
     mergeName:'',
     playlistsToDelete:[],
-    selectedToMerge:false
   },
   getters:{
     authorization(state){
@@ -41,15 +40,10 @@ const store = new Vuex.Store({
     setPlaylistToMerge(state,payload){
         state.playlistToMerge.push(payload)
     },
-    setSelectedToMerge(state){
-        state.selectedToMerge = true
-    },
-    unsetSelectedToMerge(state){
-        state.selectedToMerge = false
-    },
     addLatestPlaylist(state,payload){
         state.playlists.unshift(payload)
     },
+    //Merge related mutations
     addMergeDurationMs(state,payload){
         state.mergeDurationMs += payload
     },
@@ -65,6 +59,8 @@ const store = new Vuex.Store({
     emptyPlaylistToMerge(state){
         state.playlistToMerge = []
     },
+
+    // end merge
     setPassedTime(state, payload){
         state.passed_time = payload
     },

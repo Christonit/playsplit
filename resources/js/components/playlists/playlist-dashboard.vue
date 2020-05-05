@@ -18,8 +18,8 @@
             <div class="section-body">
                 <template v-if='playlists.length != 0'>
                     
-                    <grid-item v-for='playlist in playlists' 
-                        :key='playlist.id' 
+                    <grid-item v-for='(playlist,key) in playlists' 
+                        :key='key' 
                         :id="playlist.id" 
                         :tracks-total='playlist.tracks.total' 
                         :img="playlist.images" 
@@ -59,20 +59,22 @@ export default {
         'setMergeActive',
         'setMergeName',
         'openCloseModal',
-        'unsetSelectedToMerge',
         'emptyPlaylistToDelete']),
         openModal(){
             this.openCloseModal(0)
         },
         cancelMerge(){
+            // force trick to completely hide the toggle when click clear or cancel
+            let toggle = document.querySelectorAll('.grid-list-item.to-merge .toggle-container')
+            toggle.forEach(item => item.classList.add('hide'));
+
             let el = document.querySelectorAll('.grid-list-item.to-merge')
-            console.log(el)
             el.forEach(item => item.classList.remove('to-merge'));
             this.emptyPlaylistToMerge();
             this.emptyPlaylistToDelete();        
             this.setMergeActive(false);
             this.setMergeName('');
-            this.unsetSelectedToMerge();
+            
 
         }
     }

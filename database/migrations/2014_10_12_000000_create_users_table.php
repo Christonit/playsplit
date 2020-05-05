@@ -18,8 +18,8 @@ class CreateUsersTable extends Migration
             $table->string('spotify_id',1000)->unique();
             $table->string('spotify_email')->unique();
             $table->string('avatar',1000)->nullable();
-            $table->string('access_token')->nullable();
-            $table->string('refresh_token')->nullable();
+            $table->string('access_token',1000)->nullable();
+            $table->string('refresh_token',1000)->nullable();
             $table->timestamps();
         });
            

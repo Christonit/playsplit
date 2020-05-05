@@ -46,7 +46,7 @@ export default {
     },
     mixins:[functions],
     computed:{
-        ...mapState(['playlistToMerge','mergeDurationMs','mergeName','user']),
+        ...mapState(['playlistToMerge','mergeDurationMs','mergeName','user','playlistsToDelete']),
         ...mapGetters(['authorization']),
         totalPlaylists(){
             return this.playlistToMerge.length;
@@ -86,12 +86,15 @@ export default {
             this.$store.commit('openCloseModal',0)
         },
         clearMerge(){
+            // force trick to completely hide the toggle when click clear or cancel
+            let toggle = document.querySelectorAll('.grid-list-item.to-merge .toggle-container')
+            toggle.forEach(item => item.classList.add('hide'));
+
             let el = document.querySelectorAll('.grid-list-item.to-merge')
             el.forEach(item => item.classList.remove('to-merge'));
             this.$store.commit('emptyMergeDurationMs');        
             this.$store.commit('emptyPlaylistToMerge');        
             this.$store.commit('emptyPlaylistToDelete');        
-            this.$store.commit('unsetSelectedToMerge');
 
         },
         close(){
@@ -119,7 +122,12 @@ export default {
             })
             .then(response => {
                 let data = JSON.parse(response)
+                if(this.playlistsToDelete.length != 0){
+                    let arr = this.playlistsToDelete;
+                    console.log(arr)
+                    arr.map( item => this.deletePlaylist(item))
 
+                }
                 return data.id
 
             })
@@ -170,6 +178,12 @@ export default {
 
 
                         });
+        },
+        deletePlaylist(playlist_id){
+            return fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/followers`,{
+                method:'DELETE',
+                headers:this.authorization
+            }).then( res => console.log(res))
         }
     }
 }

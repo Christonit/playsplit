@@ -11085,6 +11085,20 @@ aside {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
   letter-spacing: 0.5px;
+  position: relative;
+}
+
+.toggle-label.hide {
+  top: 54px;
+}
+
+.toggle-container {
+  position: relative;
+  top: 0;
+}
+
+.toggle-container.hide {
+  top: 54px;
 }
 
 .btn-toggle {

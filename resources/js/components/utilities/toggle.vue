@@ -1,5 +1,5 @@
 <template>
-    <label for="toggle" class="toggle-label" v-else>
+    <label for="toggle" class="toggle-label">
         <slot name="title"></slot>
         <button class="btn-toggle active" @click="toggle"> <hr/> </button>
     </label>
