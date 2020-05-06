@@ -20,3 +20,32 @@ button.close{
         color: $white900;
     }
 }
+
+.split-btn{
+    @include text-14;
+    background: none;
+    @include b-radius-4;
+    color: $white500;
+    border: 1px solid $white500;
+    line-height: 1;
+    padding: 4px;
+    width: 24px;
+    margin: 0 8px;
+}
+.split-btn:focus{
+    outline: unset;
+    background: none;
+    color: $white500;
+    border: 1px solid $white500;
+}
+
+.split-btn:hover{
+    border-color: $white900;
+    color: $white900;
+}
+
+.split-btn.active{
+    background: $white500;
+    border-color: transparent;
+    color: $white900;
+}

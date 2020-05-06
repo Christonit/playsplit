@@ -24,6 +24,10 @@ const store = new Vuex.Store({
     mergeDurationMs:0,
     mergeName:'',
     playlistsToDelete:[],
+    split:{
+        isActive:false,
+        playlist:null
+    }
   },
   getters:{
     authorization(state){
@@ -31,6 +35,15 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    setSplitActive(state,{playlist,duration}){
+        state.split.isActive = true
+        state.split.playlist = playlist;
+        state.split.playlist.duration = duration;
+    },
+    cancelSplit(state){
+        state.split.isActive = false
+        state.split.playlists = null;
+    },
     setMergeActive(state, payload){
         state.mergeActive = payload
     },

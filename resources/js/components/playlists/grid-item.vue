@@ -27,7 +27,7 @@
         <div class="grid-actions-container">
             <div class="btn-container" v-if="!mergeActive">
                 <button @click="activateMerge">merge</button>
-                <button>split</button>
+                <button @click="splitThis">split</button>
             </div>
 
 
@@ -155,7 +155,8 @@ export default {
         'removePlaylistToMerge',
         'addMergeDurationMs',
         'setSelectedToMerge',
-        'substractMergeDurationMs'
+        'substractMergeDurationMs',
+        'setSplitActive'
         ]),
         preservationControl($event){
 
@@ -257,6 +258,13 @@ export default {
                     cover: this.playlist.images[0].url
                 })
             e.stopPropagation();   
+        },
+
+        splitThis(){
+
+           
+            
+            this.setSplitActive({playlist:this.playlist,duration:this.totalDuration})
         }
         
     }

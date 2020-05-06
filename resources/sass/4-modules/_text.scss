@@ -14,3 +14,8 @@
 .highlight{
     color: $white900;
 }
+
+.label{
+    @include text-14;
+    color: $white500;
+}

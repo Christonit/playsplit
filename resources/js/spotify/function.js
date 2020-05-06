@@ -1,9 +1,21 @@
 import {mapState,mapGetters} from 'vuex';
 export default {
     name:'functions',
+    data(){
+        return {
+            apiRoot:'https://api.spotify.com/v1'
+        }
+    },
     computed:{
         ...mapState(['player']),
         ...mapGetters(['authorization']),
+        _GET(){
+            return {
+                method: 'GET',
+                headers: this.authorization
+                
+              }
+        },
         _PUT(){
             return {
                 method: 'PUT',

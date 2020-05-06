@@ -159,6 +159,7 @@ export default {
                     if(status == 200 || status == 201){
                         
                         // Force rerender for last added playlist or force a page reload.
+                        this.clearMerge()
                         this.fetchLatestMerge(id);
 
                     }

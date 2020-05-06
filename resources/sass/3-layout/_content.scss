@@ -64,6 +64,25 @@ aside{
         display: none;
     }
 }
+.action-container {
+    width: 50%;
+    max-width: 960px;
+    min-width: 740px;
+    margin: auto ;
+    position: absolute;
+    background: $black;
+    min-height: 400px;
+    right: 10px;
+    left: -10px;
+    height: 100%;
+    // right: 10px;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    &::-moz-scrollbar {
+        display: none;
+    }
+}
 
 .section-body {
     position: relative;
@@ -74,4 +93,10 @@ aside{
 .section-header{
     @include flex-between-center;
     padding: 0 16px;
+    flex-wrap: wrap;
+}
+
+
+.section-header-description{
+    width: 100%;
 }
