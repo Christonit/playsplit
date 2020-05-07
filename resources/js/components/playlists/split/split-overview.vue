@@ -25,7 +25,7 @@
                         <draggable :list="playlist_og"
                             group="split"
                             :move="check"
-                            @end="checkPayload"  multi-drag>
+                            @end="checkPayload"  multi-drag selected-class="track-selected">
                             <li class="split-original-row" v-for="(playlist,key) in playlist_og" 
                                 :key="playlist.id" :data-id="playlist.id">
                                 <span class="split-original-cell">{{playlist.id}}</span>
@@ -65,7 +65,7 @@
                     </div>
 
                     <ul class="accordion-body" >
-                        <draggable :list="playlist_2" group="split"  @end="checkPayload"  multi-drag>
+                        <draggable :list="playlist_2" group="split"  @end="checkPayload" selected-class="track-selected"  multi-drag>
                             <li class='accordion-item'v-for="(playlist,key) in playlist_2" 
                                 :key="playlist.id" :data-id="playlist.id">
                                 <span class="accordion-cell">{{playlist.id}}</span>
@@ -89,10 +89,12 @@
 <script>
 import {mapState, mapMutations, mapActions} from 'vuex';
 import functions from '../../../spotify/function.js';
-import draggable,  { Sortable, MultiDrag } from 'vuedraggable'
+import  { Sortable, MultiDrag } from "sortablejs";
+import draggable from '../../../vuedraggable'
+
+// Sortable.mount(new MultiDrag());
 
 // Sortable.mount(new MultiDrag())
-
 
 export default {
     name: "split-overview",

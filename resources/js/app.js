@@ -5,10 +5,10 @@
  */
 
 require('./bootstrap');
+require('./vuedraggable');
 
 window.Vue = require('vue');
 import Vuex from 'vuex';
-
 
 /**
  * The following block of code may be used to automatically register your
