@@ -11679,6 +11679,66 @@ input {
   margin-right: 16px;
 }
 
+.splits-header {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 16px 16px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+li[draggable=true] {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.accordion {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.accordion-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.accordion-title {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.accordion-body {
+  padding: 0;
+}
+
+.accordion-item {
+  list-style: none;
+}
+
+.accordion-cell {
+  padding: 16px 0;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.5);
+  display: inline-block;
+}
+
+.accordion-cell:first-child {
+  width: 40px;
+  text-align: center;
+}
+
+.accordion-cell:nth-child(2) {
+  width: 63%;
+}
+
+.accordion-cell:last-child {
+  width: calc(35% - 40px);
+}
+
 @-webkit-keyframes fadeInDown {
   from {
     opacity: 0;

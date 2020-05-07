@@ -8,7 +8,6 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 import Vuex from 'vuex';
-import VueDraggable from 'vue-draggable'
 
 
 /**
@@ -34,7 +33,7 @@ import {mapState} from 'vuex';
 import SplitOverview from './components/playlists/split/split-overview.vue';
 
 Vue.use(Vuex);
-Vue.use(VueDraggable);
+
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
