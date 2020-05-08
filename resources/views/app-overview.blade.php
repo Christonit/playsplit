@@ -5,9 +5,9 @@
     <sidebar-comp></sidebar-comp>
     <div class="app-container">
 
-        <!-- <playlist-dashboard  :get-playlist-info='getPlaylistInfo'></playlist-dashboard> -->
-        <!-- <split-overview  v-if="split.isActive"></split-overview> -->
-        <split-overview></split-overview>
+        <playlist-dashboard  :get-playlist-info='getPlaylistInfo'></playlist-dashboard>
+        <split-overview  v-if="split.isActive"></split-overview>
+        <!-- <split-overview></split-overview> -->
         
     </div>
     <stats-table></stats-table>

@@ -13,7 +13,7 @@
             </div>            
         </div>
 
-        <div class="split-body">
+        <div class="split-body" ref="split_body">
             <div class="split-original" >
                 <div class="split-original-header">
                     <span class="split-original-cell">#</span>
@@ -21,16 +21,16 @@
                     <span class="split-original-cell">Duration</span>
                 </div>
 
-                    <ul class="split-original-body">
+                    <ul class="split-original-body" ref="og_playlist">
                         <draggable :list="playlist_og"
                             group="split"
                             :move="check"
                             @end="checkPayload"  multi-drag selected-class="track-selected">
                             <li class="split-original-row" v-for="(playlist,key) in playlist_og" 
-                                :key="playlist.id" :data-id="playlist.id">
-                                <span class="split-original-cell">{{playlist.id}}</span>
-                                <span class="split-original-cell">{{playlist.title}}...</span>
-                                <span class="split-original-cell">{{playlist.duration}}</span>
+                                :key="key" :data-id="playlist.track.id">
+                                <span class="split-original-cell">{{key + 1}}</span>
+                                <span class="split-original-cell">{{playlist.track.name}}...</span>
+                                <span class="split-original-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
                             </li>
                         </draggable> 
 
@@ -51,30 +51,93 @@
                     New playlists
                 </h4>
 
-                <div class="accordion">
-                    <div class="accordion-btn">
-                        <h3 class="accordion-title">House workout</h3>
-                        <div>
-                            <span class="accordion-info">
-                                30 songs
-                            </span>
-                            <span class="accordion-info">
-                                00:03
-                            </span>
+
+                <!-- <div class="accordion" ref="playlist_1" id="playlist_1" data-name="House workout" data-open="true"> -->
+                    <draggable v-model="playlist_2" group="split" draggable=".accordion-item" @end="checkPayload" selected-class="track-selected"  multi-drag
+                    class="accordion" ref="playlist_2" id="playlist_2" data-name="House workout" data-open="true">
+        
+                        <div class='accordion-item' v-for="(playlist,key) in playlist_2" 
+                            :key="key" :data-id="playlist.track.id">
+                            <span class="accordion-cell">{{key + 1}}</span>
+                            <span class="accordion-cell">{{playlist.track.name}}</span>
+                            <span class="accordion-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
                         </div>
+
+                        <div class="accordion-btn" slot="header" @click="accordionBtn" data-accordion="playlist_1">
+                            <h3 class="accordion-title">House test</h3>
+                            <div>
+                                <span class="accordion-info">
+                                    {{playlist_2.length}} tracks |
+                                </span>
+                                <span class="accordion-info">
+                                    {{ totalTime(playlist_2) }}
+                                </span>
+                            </div>
+                        </div>
+                    </draggable> 
+                    
+                    <draggable v-model="playlist_3" group="split" draggable=".accordion-item" @end="checkPayload" selected-class="track-selected"  multi-drag
+                    class="accordion" ref="playlist_3" id="playlist_3" data-name="House workout" data-open="true">
+        
+                        <div class='accordion-item' v-for="(playlist,key) in playlist_3" 
+                            :key="key" :data-id="playlist.track.id">
+                            <span class="accordion-cell">{{key + 1}}</span>
+                            <span class="accordion-cell">{{playlist.track.name}}</span>
+                            <span class="accordion-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
+                        </div>
+
+                        <div class="accordion-btn" slot="header" @click="accordionBtn" data-accordion="playlist_3">
+                            <h3 class="accordion-title">House test</h3>
+                            <div>
+                                <span class="accordion-info">
+                                    {{playlist_3.length}} tracks |
+                                </span>
+                                <span class="accordion-info">
+                                    {{ totalTime(playlist_3) }}
+                                </span>
+                            </div>
+                        </div>
+                    </draggable> 
+
+                    <!-- <draggable v-model="playlist_3" group="split" draggable=".accordion-item" @end="checkPayload" selected-class="track-selected"  multi-drag
+                    class="accordion" ref="playlist_2" id="playlist_2" data-name="House workout" data-open="false">
+        
+                        <div class='accordion-item' v-for="(playlist,key) in playlist_3" 
+                            :key="key" :data-id="playlist.track.id">
+                            <span class="accordion-cell">{{key + 1}}</span>
+                            <span class="accordion-cell">{{playlist.track.name}}</span>
+                            <span class="accordion-cell">{{playlist.track.duration_ms}}</span>
+                        </div>
+
+                        <div class="accordion-btn" slot="header" @click="accordionBtn" data-accordion="playlist_2">
+                            <h3 class="accordion-title">House test 2</h3>
+                            <div>
+                                <span class="accordion-info">
+                                    30 songs
+                                </span>
+                                <span class="accordion-info">
+                                    00:03
+                                </span>
+                            </div>
+                        </div>
+
+                    </draggable>  -->
+
+                <!-- </div> -->
+
+                <div id="split-footer" class="d-flex justify-content-end">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-secondary active">
+                        <input type="radio" name="options" id="option1"  checked> Move
+                    </label>
+                    <label class="btn btn-secondary">
+                        <input type="radio" name="options" id="option2" > Copy
+                    </label>
+                  
                     </div>
 
-                    <ul class="accordion-body" >
-                        <draggable :list="playlist_2" group="split"  @end="checkPayload" selected-class="track-selected"  multi-drag>
-                            <li class='accordion-item'v-for="(playlist,key) in playlist_2" 
-                                :key="playlist.id" :data-id="playlist.id">
-                                <span class="accordion-cell">{{playlist.id}}</span>
-                                <span class="accordion-cell">{{playlist.title}}</span>
-                                <span class="accordion-cell">{{playlist.duration}}</span>
-                            </li>
-                        </draggable> 
-                    </ul>
                 </div>
+                
             </div>
 
 
@@ -98,33 +161,29 @@ import draggable from '../../../vuedraggable'
 
 export default {
     name: "split-overview",
+    mounted(){
+        this.playlist_og =  this.$store.state.split.playlist.tracks.items
+        let elHeight = this.$refs.split_body.offsetHeight
+
+        this.split_body_height = elHeight;
+
+        this.$refs.og_playlist.style.maxHeight = (elHeight - (56*2)) + "px"
+        this.setHeight()
+    },
     components:{
         draggable
     },
     data(){
         return {
-                playlist_og:[
-                    {id:1,
-                    title: "So wrong",
-                    duration:'4:30'},
-                    {id:2,
-                    title: "In the end",
-                    duration:'4:30'},
-                    {id:3,
-                    title: "God damn",
-                    duration:'2:30'},
-                    {id:4,
-                    title: "Many men",
-                    duration:'1:25'},
-                ],
+                splits_active:3,
+                split_body_height:0,
+                playlist_og:[],
                 playlist_2:[
-                    {id:1,
-                    title: "Numb",
-                    duration:'4:30'},
-                    {id:2,
-                    title: "Champain Bop",
-                    duration:'4:30'}
-                ]
+                    // {track:{id:0,name:'',duration_ms:0}},
+                ],
+                playlist_3:[
+                    // {track:{id:0,name:'',duration_ms:0}},
+                ],
         }
     },
     mixins:[functions],
@@ -137,11 +196,33 @@ export default {
            return `${hours} ${this.split.playlist.duration.min} minutes`;
 
             
-        }
+        },
         
+        
+
     },
     methods:{
         ...mapMutations(['cancelSplit']),
+        totalTime(playlist){
+            let totalTimeMs = 0;
+            let time = null
+
+            playlist.forEach(item =>{
+                totalTimeMs += item.track.duration_ms;
+            })
+
+            time = this.trackMsToHrs(totalTimeMs);
+            if(time.hours < 1){
+                return `${time.minutes} min`;
+            }
+            return `${time.hours} hr ${time.minutes} min`;
+            
+        }, 
+        minutesPrinter(ms){
+            let time = this.songMstoSeconds(ms);
+
+            return `${time.min}:${time.sec}`;
+        },
         fetchGenres(id){
             fetch(`${this.apiRoot}/tracks/${id}`,this._GET).then( res => res.text() ).then(data => {
                 console.log(JSON.parse(data))
@@ -152,7 +233,65 @@ export default {
         },
         checkPayload(evt){
             console.log(evt.to)
+        },
+        accordionBtn(e){
+            let el = e.target.getAttribute('data-accordion');
+            // console.log(e.target)
+            let clickEl = document.getElementById(el);
+
+            if( clickEl.getAttribute('data-open') == true ){
+
+                return false;
+
+            }
+
+
+
+            let accordions = document.querySelectorAll('.accordion');
+
+            if(accordions.length > 1){
+
+                accordions.forEach(item => {
+
+                    item.setAttribute('data-open',false)
+
+                })
+
+                clickEl.setAttribute('data-open', true)
+                this.setHeight();
+            }
+
+            e.stopPropagation();
+        },
+        setHeight(){
+            let el = document.querySelector('.accordion[data-open=true]');
+
+            var accordions = document.querySelectorAll('.accordion');
+            if(accordions.length > 1){
+                let non_selected = document.querySelectorAll('.accordion[data-open=false]');
+
+                non_selected.map(item => {
+                    item.style.height = "52px"
+                })
+
+            }
+            if(accordions.length == 1){
+                console.log('hola')
+                el.style.height = (this.split_body_height - (56*2)) + "px"
+                
+            }
+
+            if(accordions.length == 2){
+                el.style.height = (this.split_body_height - (59*3)) + "px"
+               
+            }
+            if(accordions.length == 3){
+                el.style.height = (this.split_body_height - (59*4)) + "px"
+            }
+
+
         }
+
     }
 }
 </script>

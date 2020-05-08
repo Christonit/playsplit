@@ -8,6 +8,35 @@
     min-width: 120px;
 }
 
+.btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .show > .btn-secondary.dropdown-toggle:focus {
+    box-shadow: unset;
+}
+
+.btn-secondary:not(:disabled):not(.disabled), .btn-secondary:not(:disabled):not(.disabled), .show > .btn-secondary.dropdown-toggle {
+    background-color: $white100;
+    color: $white500;
+    border: none;
+    width: auto;
+    min-width: 80px;
+    
+}
+.btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show > .btn-secondary.dropdown-toggle {
+    border: none;
+    background-color: $white300;
+    color: $white900;
+
+}
+
+.btn-group > .btn:not(:last-child):not(.dropdown-toggle), .btn-group > .btn-group:not(:last-child) > .btn {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    left: -1px;
+
+}
+.btn-group > .btn:not(:first-child), .btn-group > .btn-group:not(:first-child) > .btn{
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
 
 button.close{
     position: absolute;

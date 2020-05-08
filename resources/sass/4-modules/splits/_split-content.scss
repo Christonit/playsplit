@@ -21,7 +21,12 @@
 .split-original-body{
     padding: 0;
     border: 1px solid $white100;
-    height: calc(100% - 120px);
+    height: auto;
+    overflow-y: scroll;
+    // height: calc(100% - 120px);
+    div{
+        height: 100%;
+    }
 }
 .split-original-row{
     text-decoration: none;
@@ -62,7 +67,7 @@
     font-weight: 500;
     padding: 16px 16px;
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 
