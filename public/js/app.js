@@ -2614,6 +2614,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2634,13 +2654,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
-      splits_active: 3,
+      splits_active: 4,
+      split_options: {
+        name: 'split',
+        pull: true
+      },
       split_body_height: 0,
       playlist_og: [],
-      playlist_2: [// {track:{id:0,name:'',duration_ms:0}},
-      ],
-      playlist_3: [// {track:{id:0,name:'',duration_ms:0}},
-      ]
+      playlist_2: [],
+      playlist_3: [],
+      playlist_4: []
     };
   },
   mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
@@ -2652,6 +2675,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['cancelSplit']), {
+    splitHeight: function splitHeight(quantity) {
+      this.splits_active = quantity;
+      this.setHeight();
+    },
     totalTime: function totalTime(playlist) {
       var totalTimeMs = 0;
       var time = null;
@@ -2677,14 +2704,32 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         console.log(JSON.parse(data));
       });
     },
-    check: function check(evt) {// console.log(evt)
+    checkMove: function checkMove(evt) {// console.log(evt)
     },
-    checkPayload: function checkPayload(evt) {
-      console.log(evt.to);
+    onStart: function onStart(evt) {
+      var el = document.querySelectorAll('.accordion-item[data-key="0"]');
+
+      if (el.length > 0) {
+        el.forEach(function (item) {
+          item.classList.add('to-drop');
+        });
+        console.log('its true');
+      }
+    },
+    onEnd: function onEnd(evt) {
+      var el = document.querySelectorAll('.accordion-item[data-key="0"]');
+
+      if (el.length > 0) {
+        setTimeout(function () {
+          el.forEach(function (item) {
+            item.classList.remove('to-drop');
+          });
+          console.log('Za warudo');
+        }, 1000);
+      }
     },
     accordionBtn: function accordionBtn(e) {
-      var el = e.target.getAttribute('data-accordion'); // console.log(e.target)
-
+      var el = e.target.getAttribute('data-accordion');
       var clickEl = document.getElementById(el);
 
       if (clickEl.getAttribute('data-open') == true) {
@@ -2709,22 +2754,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (accordions.length > 1) {
         var non_selected = document.querySelectorAll('.accordion[data-open=false]');
-        non_selected.map(function (item) {
+        non_selected.forEach(function (item) {
           item.style.height = "52px";
         });
       }
 
-      if (accordions.length == 1) {
-        console.log('hola');
+      if (this.splits_active == 2) {
+        console.log(accordions.length);
         el.style.height = this.split_body_height - 56 * 2 + "px";
       }
 
-      if (accordions.length == 2) {
-        el.style.height = this.split_body_height - 59 * 3 + "px";
+      if (this.splits_active == 3) {
+        el.style.height = this.split_body_height - 58.325 * 3 + "px";
+        console.log(accordions.length);
       }
 
-      if (accordions.length == 3) {
-        el.style.height = this.split_body_height - 59 * 4 + "px";
+      if (this.splits_active == 4) {
+        console.log(accordions.length);
+        el.style.height = this.split_body_height - 59.75 * 4 + "px";
       }
     }
   })
@@ -42912,12 +42959,12 @@ var render = function() {
                 {
                   attrs: {
                     list: _vm.playlist_og,
-                    group: "split",
-                    move: _vm.check,
+                    group: _vm.split_options,
                     "multi-drag": "",
-                    "selected-class": "track-selected"
+                    "selected-class": "track-selected",
+                    move: _vm.checkMove
                   },
-                  on: { end: _vm.checkPayload }
+                  on: { start: _vm.onStart, end: _vm.onEnd }
                 },
                 _vm._l(_vm.playlist_og, function(playlist, key) {
                   return _c(
@@ -42950,7 +42997,52 @@ var render = function() {
             1
           ),
           _vm._v(" "),
-          _vm._m(2)
+          _c("div", { staticClass: "split-controller" }, [
+            _c("span", { staticClass: "label" }, [
+              _vm._v("Divide splaylists in")
+            ]),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "split-btn active",
+                on: {
+                  click: function($event) {
+                    return _vm.splitHeight(2)
+                  }
+                }
+              },
+              [_vm._v("2")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "split-btn",
+                class: _vm.splits_active >= 3 ? "active" : "",
+                on: {
+                  click: function($event) {
+                    return _vm.splitHeight(3)
+                  }
+                }
+              },
+              [_vm._v("3")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "split-btn",
+                class: _vm.splits_active == 4 ? "active" : "",
+                on: {
+                  click: function($event) {
+                    return _vm.splitHeight(4)
+                  }
+                }
+              },
+              [_vm._v("4")]
+            )
+          ])
         ]),
         _vm._v(" "),
         _c(
@@ -42969,13 +43061,14 @@ var render = function() {
                 attrs: {
                   group: "split",
                   draggable: ".accordion-item",
+                  move: _vm.checkMove,
                   "selected-class": "track-selected",
                   "multi-drag": "",
                   id: "playlist_2",
                   "data-name": "House workout",
                   "data-open": "true"
                 },
-                on: { end: _vm.checkPayload },
+                on: { start: _vm.onStart, end: _vm.onEnd },
                 model: {
                   value: _vm.playlist_2,
                   callback: function($$v) {
@@ -42991,7 +43084,7 @@ var render = function() {
                     {
                       key: key,
                       staticClass: "accordion-item",
-                      attrs: { "data-id": playlist.track.id }
+                      attrs: { "data-id": playlist.track.id, "data-key": key }
                     },
                     [
                       _c("span", { staticClass: "accordion-cell" }, [
@@ -43015,7 +43108,11 @@ var render = function() {
                   "div",
                   {
                     staticClass: "accordion-btn",
-                    attrs: { slot: "header", "data-accordion": "playlist_1" },
+                    attrs: {
+                      slot: "header",
+                      role: "group",
+                      "data-accordion": "playlist_2"
+                    },
                     on: { click: _vm.accordionBtn },
                     slot: "header"
                   },
@@ -43027,17 +43124,17 @@ var render = function() {
                     _c("div", [
                       _c("span", { staticClass: "accordion-info" }, [
                         _vm._v(
-                          "\n                                " +
+                          "\n                            " +
                             _vm._s(_vm.playlist_2.length) +
-                            " tracks |\n                            "
+                            " tracks |\n                        "
                         )
                       ]),
                       _vm._v(" "),
                       _c("span", { staticClass: "accordion-info" }, [
                         _vm._v(
-                          "\n                                " +
+                          "\n                            " +
                             _vm._s(_vm.totalTime(_vm.playlist_2)) +
-                            "\n                            "
+                            "\n                        "
                         )
                       ])
                     ])
@@ -43046,94 +43143,259 @@ var render = function() {
               ],
               2
             ),
+            _vm._v(" "),
+            _vm.splits_active == 3 || _vm.splits_active == 4
+              ? _c(
+                  "draggable",
+                  {
+                    ref: "playlist_3",
+                    staticClass: "accordion",
+                    attrs: {
+                      group: "split",
+                      draggable: ".accordion-item",
+                      move: _vm.checkMove,
+                      "selected-class": "track-selected",
+                      "multi-drag": "",
+                      id: "playlist_3",
+                      "data-name": "House workout",
+                      "data-open": "false"
+                    },
+                    on: { start: _vm.onStart, end: _vm.onEnd },
+                    model: {
+                      value: _vm.playlist_3,
+                      callback: function($$v) {
+                        _vm.playlist_3 = $$v
+                      },
+                      expression: "playlist_3"
+                    }
+                  },
+                  [
+                    _vm._l(_vm.playlist_3, function(playlist, key) {
+                      return _c(
+                        "div",
+                        {
+                          key: key,
+                          staticClass: "accordion-item",
+                          attrs: {
+                            "data-id": playlist.track.id,
+                            "data-key": key
+                          }
+                        },
+                        [
+                          _c("span", { staticClass: "accordion-cell" }, [
+                            _vm._v(_vm._s(key + 1))
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "accordion-cell" }, [
+                            _vm._v(_vm._s(playlist.track.name))
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "accordion-cell" }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm.minutesPrinter(playlist.track.duration_ms)
+                              )
+                            )
+                          ])
+                        ]
+                      )
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "accordion-btn",
+                        attrs: {
+                          slot: "header",
+                          "data-accordion": "playlist_3",
+                          role: "group"
+                        },
+                        on: { click: _vm.accordionBtn },
+                        slot: "header"
+                      },
+                      [
+                        _c("h3", { staticClass: "accordion-title" }, [
+                          _vm._v("House test")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", [
+                          _c("span", { staticClass: "accordion-info" }, [
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(_vm.playlist_3.length) +
+                                " tracks |\n                        "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "accordion-info" }, [
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(_vm.totalTime(_vm.playlist_3)) +
+                                "\n                        "
+                            )
+                          ])
+                        ])
+                      ]
+                    )
+                  ],
+                  2
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.splits_active == 4
+              ? _c(
+                  "draggable",
+                  {
+                    ref: "playlist_4",
+                    staticClass: "accordion",
+                    attrs: {
+                      group: "split",
+                      draggable: ".accordion-item",
+                      move: _vm.checkMove,
+                      "selected-class": "track-selected",
+                      "multi-drag": "",
+                      id: "playlist_4",
+                      "data-name": "House workout",
+                      "data-open": "false"
+                    },
+                    on: { start: _vm.onStart, end: _vm.onEnd },
+                    model: {
+                      value: _vm.playlist_4,
+                      callback: function($$v) {
+                        _vm.playlist_4 = $$v
+                      },
+                      expression: "playlist_4"
+                    }
+                  },
+                  [
+                    _vm._l(_vm.playlist_4, function(playlist, key) {
+                      return _c(
+                        "div",
+                        {
+                          key: key,
+                          staticClass: "accordion-item",
+                          attrs: {
+                            "data-id": playlist.track.id,
+                            "data-key": key
+                          }
+                        },
+                        [
+                          _c("span", { staticClass: "accordion-cell" }, [
+                            _vm._v(_vm._s(key + 1))
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "accordion-cell" }, [
+                            _vm._v(_vm._s(playlist.track.name))
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "accordion-cell" }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm.minutesPrinter(playlist.track.duration_ms)
+                              )
+                            )
+                          ])
+                        ]
+                      )
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "accordion-btn",
+                        attrs: {
+                          slot: "header",
+                          "data-accordion": "playlist_4",
+                          role: "group"
+                        },
+                        on: { click: _vm.accordionBtn },
+                        slot: "header"
+                      },
+                      [
+                        _c("h3", { staticClass: "accordion-title" }, [
+                          _vm._v("House test")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", [
+                          _c("span", { staticClass: "accordion-info" }, [
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(_vm.playlist_4.length) +
+                                " tracks |\n                        "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "accordion-info" }, [
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(_vm.totalTime(_vm.playlist_4)) +
+                                "\n                        "
+                            )
+                          ])
+                        ])
+                      ]
+                    )
+                  ],
+                  2
+                )
+              : _vm._e(),
             _vm._v(" "),
             _c(
-              "draggable",
+              "div",
               {
-                ref: "playlist_3",
-                staticClass: "accordion",
-                attrs: {
-                  group: "split",
-                  draggable: ".accordion-item",
-                  "selected-class": "track-selected",
-                  "multi-drag": "",
-                  id: "playlist_3",
-                  "data-name": "House workout",
-                  "data-open": "true"
-                },
-                on: { end: _vm.checkPayload },
-                model: {
-                  value: _vm.playlist_3,
-                  callback: function($$v) {
-                    _vm.playlist_3 = $$v
-                  },
-                  expression: "playlist_3"
-                }
+                staticClass: "d-flex justify-content-end",
+                attrs: { id: "split-footer" }
               },
               [
-                _vm._l(_vm.playlist_3, function(playlist, key) {
-                  return _c(
-                    "div",
-                    {
-                      key: key,
-                      staticClass: "accordion-item",
-                      attrs: { "data-id": playlist.track.id }
-                    },
-                    [
-                      _c("span", { staticClass: "accordion-cell" }, [
-                        _vm._v(_vm._s(key + 1))
-                      ]),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "accordion-cell" }, [
-                        _vm._v(_vm._s(playlist.track.name))
-                      ]),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "accordion-cell" }, [
-                        _vm._v(
-                          _vm._s(_vm.minutesPrinter(playlist.track.duration_ms))
-                        )
-                      ])
-                    ]
-                  )
-                }),
-                _vm._v(" "),
                 _c(
                   "div",
                   {
-                    staticClass: "accordion-btn",
-                    attrs: { slot: "header", "data-accordion": "playlist_3" },
-                    on: { click: _vm.accordionBtn },
-                    slot: "header"
+                    staticClass: "btn-group btn-group-toggle",
+                    attrs: { "data-toggle": "buttons" }
                   },
                   [
-                    _c("h3", { staticClass: "accordion-title" }, [
-                      _vm._v("House test")
-                    ]),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "btn btn-secondary active",
+                        on: {
+                          click: function($event) {
+                            _vm.split_options.pull = true
+                          }
+                        }
+                      },
+                      [
+                        _c("input", {
+                          attrs: {
+                            type: "radio",
+                            name: "options",
+                            id: "option1",
+                            checked: ""
+                          }
+                        }),
+                        _vm._v(" Move\n                ")
+                      ]
+                    ),
                     _vm._v(" "),
-                    _c("div", [
-                      _c("span", { staticClass: "accordion-info" }, [
-                        _vm._v(
-                          "\n                                " +
-                            _vm._s(_vm.playlist_3.length) +
-                            " tracks |\n                            "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "accordion-info" }, [
-                        _vm._v(
-                          "\n                                " +
-                            _vm._s(_vm.totalTime(_vm.playlist_3)) +
-                            "\n                            "
-                        )
-                      ])
+                    _c("label", { staticClass: "btn btn-secondary" }, [
+                      _c("input", {
+                        attrs: {
+                          type: "radio",
+                          name: "options",
+                          id: "option2"
+                        },
+                        on: {
+                          click: function($event) {
+                            _vm.split_options.pull = "clone"
+                          }
+                        }
+                      }),
+                      _vm._v(" Copy\n                ")
                     ])
                   ]
                 )
-              ],
-              2
-            ),
-            _vm._v(" "),
-            _vm._m(3)
+              ]
+            )
           ],
           1
         )
@@ -43181,61 +43443,6 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("span", { staticClass: "split-original-cell" }, [_vm._v("Duration")])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "split-controller" }, [
-      _c("span", { staticClass: "label" }, [_vm._v("Divide splaylists in")]),
-      _vm._v(" "),
-      _c("button", { staticClass: "split-btn active" }, [_vm._v("2")]),
-      _vm._v(" "),
-      _c("button", { staticClass: "split-btn" }, [_vm._v("3")]),
-      _vm._v(" "),
-      _c("button", { staticClass: "split-btn" }, [_vm._v("4")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "d-flex justify-content-end",
-        attrs: { id: "split-footer" }
-      },
-      [
-        _c(
-          "div",
-          {
-            staticClass: "btn-group btn-group-toggle",
-            attrs: { "data-toggle": "buttons" }
-          },
-          [
-            _c("label", { staticClass: "btn btn-secondary active" }, [
-              _c("input", {
-                attrs: {
-                  type: "radio",
-                  name: "options",
-                  id: "option1",
-                  checked: ""
-                }
-              }),
-              _vm._v(" Move\n                ")
-            ]),
-            _vm._v(" "),
-            _c("label", { staticClass: "btn btn-secondary" }, [
-              _c("input", {
-                attrs: { type: "radio", name: "options", id: "option2" }
-              }),
-              _vm._v(" Copy\n                ")
-            ])
-          ]
-        )
-      ]
-    )
   }
 ]
 render._withStripped = true

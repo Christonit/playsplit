@@ -39,9 +39,17 @@ padding: 0;
 .accordion-item{
     list-style: none;
     border-bottom:1px solid $white100;
+    position: relative;
     &:last-child{
         border-bottom: none;
     }
+}
+.accordion-item.to-drop::before{
+    content: "";
+    height: 52px;
+    position: absolute;
+    width: 100%;
+    top: -52px;
 }
 
 .accordion-cell{

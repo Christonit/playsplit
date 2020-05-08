@@ -11784,10 +11784,19 @@ li[draggable=true] {
 .accordion-item {
   list-style: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
 }
 
 .accordion-item:last-child {
   border-bottom: none;
+}
+
+.accordion-item.to-drop::before {
+  content: "";
+  height: 52px;
+  position: absolute;
+  width: 100%;
+  top: -52px;
 }
 
 .accordion-cell {
