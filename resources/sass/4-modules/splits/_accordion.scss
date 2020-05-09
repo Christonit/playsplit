@@ -30,6 +30,8 @@
     color: $white500;
     font-size: 14px;
     margin-bottom: 0;
+    position: relative;
+    z-index: 5;
 }
 
 .accordion-body{

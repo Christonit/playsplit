@@ -59,7 +59,7 @@ const app = new Vue({
         SplitOverview
     },
     computed:{
-        ...mapState(['isModalOpen','mergeActive','split'])
+        ...mapState(['isModalOpen','mergeActive','split','splitPlaylistModal'])
     },
     created(){
      

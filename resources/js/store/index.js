@@ -14,6 +14,16 @@ const store = new Vuex.Store({
     device_id:null,
     playlists: [],
     isModalOpen:false,
+    splitPlaylistModal:{
+        split_1:false,
+        split_2:false,
+        split_3:false
+    },
+    splitPlaylistName:{
+        split_1:'',
+        split_2:'',
+        split_3:''
+    },
     openModal:'edit-name',
     player:null,
     current_playback:'',
@@ -115,6 +125,24 @@ const store = new Vuex.Store({
         // state.openModal = payload;
         state.openModal = 'edit-name';
 
+    },
+    openCloseSplit1(state) {
+        state.splitPlaylistModal.split_1 ? state.splitPlaylistModal.split_1 = false : state.splitPlaylistModal.split_1 = true ;
+    },
+    openCloseSplit2(state) {
+        state.splitPlaylistModal.split_2 ? state.splitPlaylistModal.split_2 = false : state.splitPlaylistModal.split_2 = true ;
+    },
+    openCloseSplit3(state) {
+        state.splitPlaylistModal.split_3 ? state.splitPlaylistModal.split_3 = false : state.splitPlaylistModal.split_3 = true ;
+    },
+    nameSplit1(state, payload) {
+        state.splitPlaylistName.split_1 = payload ;
+    },
+    nameSplit2(state, payload) {
+        state.splitPlaylistName.split_2 = payload ;
+    },
+    nameSplit3(state, payload) {
+        state.splitPlaylistName.split_3 = payload ;
     },
     setCurrentPlayback(state,payload){
         state.current_playback = payload;

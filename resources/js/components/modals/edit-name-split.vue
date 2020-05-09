@@ -24,10 +24,8 @@
 
 </template>
 <script>
-import {mapState, mapMutations} from 'vuex';
-
 export default {
-    name:"edit-name-pop-up",
+    name:"edit-name",
     data(){
         return {
             name:''
@@ -44,58 +42,19 @@ export default {
     },
     mounted(){
     },
-    computed:{
-        ...mapState(['splitPlaylistModal'])
-    },
     methods:{
-        ...mapMutations([
-            'nameSplit1',
-            'nameSplit2',
-            'nameSplit3',
-            'openCloseSplit1',
-            'openCloseSplit2',
-            'openCloseSplit3']),
         closeModal(){
-            if( this.emition == false){
-
-                this.$store.commit('openCloseModal',0)
-
-            }
-
-            if(this.emition == true){
-                
-                if(this.splitPlaylistModal.split_1){
-                    this.openCloseSplit1()
-                }
-                if(this.splitPlaylistModal.split_2){
-                    this.openCloseSplit2()
-                }
-                if(this.splitPlaylistModal.split_3){
-                    this.openCloseSplit3()
-                }
-            }
+            this.$store.commit('openCloseModal',0)
         },
         saveName(){
             if( this.emition == false){
-
+                
                 this.$store.commit(this.commitName,this.name)
                 this.$store.commit('openCloseModal',0)
             }
 
             if(this.emition == true){
-
-                if(this.splitPlaylistModal.split_1){
-                    this.nameSplit1(this.name)
-                    this.openCloseSplit1()
-                }
-                if(this.splitPlaylistModal.split_2){
-                    this.nameSplit2(this.name)
-                    this.openCloseSplit2()
-                }
-                if(this.splitPlaylistModal.split_3){
-                    this.nameSplit3(this.name)
-                    this.openCloseSplit3()
-                }
+                this.$emit('saveName', this.name)
             }
 
             this.name = ''            
