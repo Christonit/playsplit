@@ -5,7 +5,8 @@
         <div class="section-header">
             <h2 class="title">PLaylist de prueba 2</h2> 
             <div class="btn-container d-inline-flex align-items-center">
-                <button class=" mx-3 btn btn-secondary">Cancel split</button>
+                <button class=" mx-3 btn btn-secondary" @click="cancel">Cancel split</button>
+                <button class="btn btn-primary" >Save</button>
             </div>
 
             <div class="section-header-description">
@@ -78,7 +79,12 @@
                     </div>
 
                     <div class="accordion-btn" slot="header" @click="accordionBtn" role="group" data-accordion="playlist_2">
-                        <h3 class="accordion-title" @click="toggleModal">{{(splitPlaylistName.split_1 != '') ? splitPlaylistName.split_1 : 'Name 1'}}</h3>
+                        <h3 class="accordion-title">
+                            {{(splitPlaylistName.split_1 != '') ? splitPlaylistName.split_1 : 'Name 1'}}
+                            <button class="material-icons split-edit" @click="toggleModal">
+                            edit
+                            </button>    
+                        </h3>
                         <div>
                             <span class="accordion-info">
                                 {{playlist_2.content.length}} tracks |
@@ -106,7 +112,15 @@
                     </div>
 
                     <div class="accordion-btn" slot="header" @click="accordionBtn" data-accordion="playlist_3" role="group">
-                        <h3 class="accordion-title" @click="toggleModal">{{(splitPlaylistName.split_2 != '') ? splitPlaylistName.split_2 : 'Name 2'}}</h3>
+                        <h3 class="accordion-title" >
+
+                            {{(splitPlaylistName.split_2 != '') ? splitPlaylistName.split_2 : 'Name 2'}}
+
+                            <button class="material-icons split-edit" @click="toggleModal">
+                            edit
+                            </button>
+                        </h3>
+
                         <div>
                             <span class="accordion-info">
                                 {{playlist_3.content.length}} tracks |
@@ -133,7 +147,12 @@
                     </div>
 
                     <div class="accordion-btn" slot="header" @click="accordionBtn" data-accordion="playlist_4" role="group">
-                        <h3 class="accordion-title" @click="toggleModal">{{(splitPlaylistName.split_3 != '') ? splitPlaylistName.split_3 : 'Name 3'}}</h3>
+                        <h3 class="accordion-title" >
+                            {{(splitPlaylistName.split_3 != '') ? splitPlaylistName.split_3 : 'Name 3'}}
+                            <button class="material-icons split-edit" @click="toggleModal">
+                            edit
+                            </button>    
+                        </h3>
                         <div>
                             <span class="accordion-info">
                                 {{playlist_4.content.length}} tracks |
@@ -230,6 +249,16 @@ export default {
            return `${hours} ${this.split.playlist.duration.min} minutes`;
 
             
+        },
+        artistsIds(){
+            let IDs = []
+            this.playlist_og.forEach(playlist => {
+                playlist.track.artists.forEach( artist => {
+                    IDs.push(artist.id);
+                })
+            })
+
+            return IDs;
         }
         
         
@@ -241,8 +270,11 @@ export default {
            this.splits_active = quantity;
            this.setHeight();
         },
+        cancel(){
+            this.$store.commit('cancelSplit');
+        },
         toggleModal(e){
-            let accordion_name = e.target.parentNode.getAttribute("data-accordion");
+            let accordion_name = e.target.parentNode.parentNode.getAttribute("data-accordion");
                 
             if(accordion_name == "playlist_4"){
 

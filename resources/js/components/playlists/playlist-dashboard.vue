@@ -25,8 +25,7 @@
                         :img="playlist.images" 
                         :name="playlist.name" 
                         :uri="playlist.uri" 
-                        :get-playlist-info='getPlaylistInfo'
-                        >
+                        :get-playlist-info='getPlaylistInfo'>
                     </grid-item>
 
                 </template>

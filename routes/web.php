@@ -30,3 +30,5 @@ Route::get('/auth/spotify', 'HomeController@authSpotify')->name('spotify');
 
 Route::get('/auth/spotify/logout', 'HomeController@authLogout')->name('spotify-logout');
 Auth::routes(['register' => false, 'login'=> false]);
+
+Route::post('/playlist-genres', 'PlaylistInfoController@genres');

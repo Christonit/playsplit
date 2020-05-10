@@ -2536,7 +2536,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2766,6 +2765,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2816,6 +2834,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var time = this.split.playlist.duration.hours;
       var hours = time != 0 ? "".concat(time, " ").concat(time > 1 ? 'hours' : 'hour') : '';
       return "".concat(hours, " ").concat(this.split.playlist.duration.min, " minutes");
+    },
+    artistsIds: function artistsIds() {
+      var IDs = [];
+      this.playlist_og.forEach(function (playlist) {
+        playlist.track.artists.forEach(function (artist) {
+          IDs.push(artist.id);
+        });
+      });
+      return IDs;
     }
   }),
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['cancelSplit']), {
@@ -2823,8 +2850,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.splits_active = quantity;
       this.setHeight();
     },
+    cancel: function cancel() {
+      this.$store.commit('cancelSplit');
+    },
     toggleModal: function toggleModal(e) {
-      var accordion_name = e.target.parentNode.getAttribute("data-accordion");
+      var accordion_name = e.target.parentNode.parentNode.getAttribute("data-accordion");
 
       if (accordion_name == "playlist_4") {
         this.$store.commit('openCloseSplit3');
@@ -43196,7 +43226,28 @@ var render = function() {
     "section",
     { staticClass: "action-container", attrs: { id: "split-playlist" } },
     [
-      _vm._m(0),
+      _c("div", { staticClass: "section-header" }, [
+        _c("h2", { staticClass: "title" }, [_vm._v("PLaylist de prueba 2")]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "btn-container d-inline-flex align-items-center" },
+          [
+            _c(
+              "button",
+              {
+                staticClass: " mx-3 btn btn-secondary",
+                on: { click: _vm.cancel }
+              },
+              [_vm._v("Cancel split")]
+            ),
+            _vm._v(" "),
+            _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Save")])
+          ]
+        ),
+        _vm._v(" "),
+        _vm._m(0)
+      ]),
       _vm._v(" "),
       _c("div", { ref: "split_body", staticClass: "split-body" }, [
         _c("div", { staticClass: "split-original" }, [
@@ -43369,22 +43420,29 @@ var render = function() {
                     slot: "header"
                   },
                   [
-                    _c(
-                      "h3",
-                      {
-                        staticClass: "accordion-title",
-                        on: { click: _vm.toggleModal }
-                      },
-                      [
-                        _vm._v(
+                    _c("h3", { staticClass: "accordion-title" }, [
+                      _vm._v(
+                        "\n                        " +
                           _vm._s(
                             _vm.splitPlaylistName.split_1 != ""
                               ? _vm.splitPlaylistName.split_1
                               : "Name 1"
+                          ) +
+                          "\n                        "
+                      ),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "material-icons split-edit",
+                          on: { click: _vm.toggleModal }
+                        },
+                        [
+                          _vm._v(
+                            "\n                        edit\n                        "
                           )
-                        )
-                      ]
-                    ),
+                        ]
+                      )
+                    ]),
                     _vm._v(" "),
                     _c("div", [
                       _c("span", { staticClass: "accordion-info" }, [
@@ -43479,22 +43537,29 @@ var render = function() {
                         slot: "header"
                       },
                       [
-                        _c(
-                          "h3",
-                          {
-                            staticClass: "accordion-title",
-                            on: { click: _vm.toggleModal }
-                          },
-                          [
-                            _vm._v(
+                        _c("h3", { staticClass: "accordion-title" }, [
+                          _vm._v(
+                            "\n\n                        " +
                               _vm._s(
                                 _vm.splitPlaylistName.split_2 != ""
                                   ? _vm.splitPlaylistName.split_2
                                   : "Name 2"
+                              ) +
+                              "\n\n                        "
+                          ),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "material-icons split-edit",
+                              on: { click: _vm.toggleModal }
+                            },
+                            [
+                              _vm._v(
+                                "\n                        edit\n                        "
                               )
-                            )
-                          ]
-                        ),
+                            ]
+                          )
+                        ]),
                         _vm._v(" "),
                         _c("div", [
                           _c("span", { staticClass: "accordion-info" }, [
@@ -43590,22 +43655,29 @@ var render = function() {
                         slot: "header"
                       },
                       [
-                        _c(
-                          "h3",
-                          {
-                            staticClass: "accordion-title",
-                            on: { click: _vm.toggleModal }
-                          },
-                          [
-                            _vm._v(
+                        _c("h3", { staticClass: "accordion-title" }, [
+                          _vm._v(
+                            "\n                        " +
                               _vm._s(
                                 _vm.splitPlaylistName.split_3 != ""
                                   ? _vm.splitPlaylistName.split_3
                                   : "Name 3"
+                              ) +
+                              "\n                        "
+                          ),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "material-icons split-edit",
+                              on: { click: _vm.toggleModal }
+                            },
+                            [
+                              _vm._v(
+                                "\n                        edit\n                        "
                               )
-                            )
-                          ]
-                        ),
+                            ]
+                          )
+                        ]),
                         _vm._v(" "),
                         _c("div", [
                           _c("span", { staticClass: "accordion-info" }, [
@@ -43721,27 +43793,13 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "section-header" }, [
-      _c("h2", { staticClass: "title" }, [_vm._v("PLaylist de prueba 2")]),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "btn-container d-inline-flex align-items-center" },
-        [
-          _c("button", { staticClass: " mx-3 btn btn-secondary" }, [
-            _vm._v("Cancel split")
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "section-header-description" }, [
-        _c("p", { staticClass: "text" }, [
-          _vm._v("Created by "),
-          _c("b", { staticClass: "highlight" }, [
-            _vm._v(" Christopher Santana ")
-          ]),
-          _vm._v(" • 99 tracks • 3hrs 30 min")
-        ])
+    return _c("div", { staticClass: "section-header-description" }, [
+      _c("p", { staticClass: "text" }, [
+        _vm._v("Created by "),
+        _c("b", { staticClass: "highlight" }, [
+          _vm._v(" Christopher Santana ")
+        ]),
+        _vm._v(" • 99 tracks • 3hrs 30 min")
       ])
     ])
   },
@@ -58569,7 +58627,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   name: 'functions',
   data: function data() {
     return {
-      apiRoot: 'https://api.spotify.com/v1'
+      apiRoot: 'https://api.spotify.com/v1',
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     };
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['player']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
@@ -58593,8 +58652,63 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   methods: {
-    playSong: function playSong(context) {
+    getGenre: function getGenre(artist_id) {
+      return fetch("".concat(this.apiRoot, "/artists/").concat(artist_id), this._GET).then(function (response) {
+        return response.text();
+      }).then(function (data) {
+        var info = JSON.parse(data);
+        var genres = info.genres;
+        return genres;
+      });
+    },
+    prepGenresArray: function prepGenresArray(albums_ids_array) {
       var _this = this;
+
+      var arr = [];
+      albums_ids_array.forEach(function (item) {
+        _this.getGenre(item).then(function (data) {
+          arr.push(data);
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+      });
+      return arr;
+    },
+    getPlaylistGenres: function getPlaylistGenres(albums_ids_array) {
+      var _this2 = this;
+
+      var promise = new Promise(function (resolve, reject) {
+        var rawGenresList = _this2.prepGenresArray(albums_ids_array);
+
+        var genres = null;
+        var interval = setInterval(function () {
+          if (rawGenresList.length > 0) {
+            genres = {
+              genres: rawGenresList
+            };
+            clearInterval(interval);
+            resolve(genres);
+          }
+        }, 100);
+      }).then(function (data) {
+        var promise = fetch('/playlist-genres', {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': _this2.csrf
+          },
+          body: JSON.stringify(data)
+        }).then(function (response) {
+          return response.text();
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+        return promise;
+      });
+      return promise;
+    },
+    playSong: function playSong(context) {
+      var _this3 = this;
 
       if (this.$store.state.activePlaylist == false) {
         fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
@@ -58604,13 +58718,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             context_uri: context
           })
         }).then(function () {
-          _this.player.getCurrentState().then(function (state) {
+          _this3.player.getCurrentState().then(function (state) {
             var _state$track_window = state.track_window,
                 current_track = _state$track_window.current_track,
                 next_tracks = _state$track_window.next_tracks,
                 previous_tracks = _state$track_window.previous_tracks;
 
-            _this.$store.commit('setCurrentPlayback', {
+            _this3.$store.commit('setCurrentPlayback', {
               current_track: current_track,
               next_tracks: next_tracks,
               previous_tracks: previous_tracks
@@ -58781,7 +58895,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     cancelSplit: function cancelSplit(state) {
       state.split.isActive = false;
-      state.split.playlists = null;
+      state.split.playlists = [];
     },
     setMergeActive: function setMergeActive(state, payload) {
       state.mergeActive = payload;

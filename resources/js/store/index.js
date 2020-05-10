@@ -52,7 +52,7 @@ const store = new Vuex.Store({
     },
     cancelSplit(state){
         state.split.isActive = false
-        state.split.playlists = null;
+        state.split.playlists = [];
     },
     setMergeActive(state, payload){
         state.mergeActive = payload

@@ -262,8 +262,6 @@ export default {
 
         splitThis(){
 
-           
-            
             this.setSplitActive({playlist:this.playlist,duration:this.totalDuration})
         }
         

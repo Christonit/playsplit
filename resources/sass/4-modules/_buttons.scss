@@ -8,11 +8,11 @@
     min-width: 120px;
 }
 
-.btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .show > .btn-secondary.dropdown-toggle:focus {
+.btn-secondary.dropdown-toggle:focus {
     box-shadow: unset;
 }
 
-.btn-secondary:not(:disabled):not(.disabled), .btn-secondary:not(:disabled):not(.disabled), .show > .btn-secondary.dropdown-toggle {
+.btn-secondary.dropdown-toggle {
     background-color: $white100;
     color: $white500;
     border: none;

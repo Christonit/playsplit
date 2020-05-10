@@ -11206,15 +11206,11 @@ aside {
   min-width: 120px;
 }
 
-.btn-secondary:not(:disabled):not(.disabled):active:focus,
-.btn-secondary:not(:disabled):not(.disabled).active:focus,
-.show > .btn-secondary.dropdown-toggle:focus {
+.btn-secondary.dropdown-toggle:focus {
   box-shadow: unset;
 }
 
-.btn-secondary:not(:disabled):not(.disabled),
-.btn-secondary:not(:disabled):not(.disabled),
-.show > .btn-secondary.dropdown-toggle {
+.btn-secondary.dropdown-toggle {
   background-color: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.5);
   border: none;
@@ -11736,6 +11732,34 @@ li[draggable=true] {
 
 .track-selected {
   background-color: blue;
+}
+
+.split-edit {
+  position: absolute;
+  top: -6px;
+  bottom: 0;
+  font-size: 20px;
+  padding: 4px 4px 4px 16px;
+  background: none;
+  border: none;
+  display: inline-block;
+  line-height: 1;
+  height: 24px;
+  right: -12px;
+  color: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 100ms ease;
+}
+
+.accordion-title:hover .split-edit {
+  right: -40px;
+  opacity: 1;
+  pointer-events: initial;
+}
+
+.accordion-title:hover .split-edit:hover {
+  color: rgba(255, 255, 255, 0.97);
 }
 
 .accordion {

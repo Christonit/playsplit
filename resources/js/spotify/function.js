@@ -3,7 +3,8 @@ export default {
     name:'functions',
     data(){
         return {
-            apiRoot:'https://api.spotify.com/v1'
+            apiRoot:'https://api.spotify.com/v1',
+            csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     },
     computed:{
@@ -29,8 +30,72 @@ export default {
                 headers: this.authorization
               }
         }
+        
     },
     methods:{
+        getGenre(artist_id){
+            return fetch(`${this.apiRoot}/artists/${artist_id}`,this._GET)
+                    .then(response => response.text())
+                    .then(data => {
+                        let info = JSON.parse(data);
+                        const {genres} = info
+
+                        return genres;
+                    })
+        },
+        prepGenresArray(albums_ids_array){
+            let arr = [];
+            albums_ids_array.forEach( item => {
+                this.getGenre(item).then(data =>{ 
+
+                    arr.push(data);
+
+                }).catch( err => console.log(err))
+            })
+
+            return arr;
+            
+
+            
+        },
+        getPlaylistGenres(albums_ids_array){
+            let promise = new Promise( (resolve, reject) => {
+
+                let rawGenresList = this.prepGenresArray(albums_ids_array);
+                let genres = null;
+                let interval = setInterval( ()=>{
+                    if(rawGenresList.length > 0){
+                        
+                        genres = {genres: rawGenresList};
+                        clearInterval(interval)
+                        resolve(genres);
+                    }
+                },100 )
+
+            }).then( data =>{
+                let promise = fetch('/playlist-genres',{
+                            method:"POST",
+                            headers:{
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN':this.csrf
+                            },
+                            body:JSON.stringify(data)
+                        }).then( response => {
+
+                            return response.text()
+
+                        }).catch(err => console.log(err))
+
+                return promise;
+
+            })
+
+            return promise;
+            
+           
+
+           
+        },
         playSong(context){
             if(this.$store.state.activePlaylist == false){ 
               fetch('https://api.spotify.com/v1/me/player/play?device_id='+this.$store.state.device_id,{
