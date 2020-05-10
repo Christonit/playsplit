@@ -11,6 +11,9 @@
 
             <div class="section-header-description">
                 <p class="text">Created by <b class="highlight"> Christopher Santana </b> • 99 tracks • 3hrs 30 min</p>
+                <div class="top-genres-container" v-if="top5Genres.length > 1">
+                    <span class="pill" v-for="genre in top5Genres">{{genre}}</span>
+                </div>
             </div>            
         </div>
 
@@ -213,6 +216,24 @@ export default {
 
         this.$refs.og_playlist.style.maxHeight = (elHeight - (56*2)) + "px"
         this.setHeight()
+
+        this.getPlaylistGenres(this.artistsIds).then( data => {
+                
+                let genres = JSON.parse(data) 
+               return ( this.genres = genres.reverse());
+
+
+        }).then( ()=>{
+
+                for( var i = 0; i < 5; i++ ){
+                    let genres = this.genres[i].split(":");
+
+                    this.top5Genres.push(genres[0]);
+                }
+
+        });
+
+        
     },
     components:{
         draggable,
@@ -236,7 +257,9 @@ export default {
                 playlist_4:{
                     name:'Prueba',
                     content:[]
-                }
+                },
+                genres: null,
+                top5Genres: []
         }
     },
     mixins:[functions],
@@ -261,7 +284,6 @@ export default {
             return IDs;
         }
         
-        
 
     },
     methods:{
@@ -271,6 +293,7 @@ export default {
            this.setHeight();
         },
         cancel(){
+            this.playlist_og = [];
             this.$store.commit('cancelSplit');
         },
         toggleModal(e){

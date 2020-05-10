@@ -2784,6 +2784,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 
 
@@ -2794,11 +2797,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "split-overview",
   mounted: function mounted() {
+    var _this = this;
+
     this.playlist_og = this.$store.state.split.playlist.tracks.items;
     var elHeight = this.$refs.split_body.offsetHeight;
     this.split_body_height = elHeight;
     this.$refs.og_playlist.style.maxHeight = elHeight - 56 * 2 + "px";
     this.setHeight();
+    this.getPlaylistGenres(this.artistsIds).then(function (data) {
+      var genres = JSON.parse(data);
+      return _this.genres = genres.reverse();
+    }).then(function () {
+      for (var i = 0; i < 5; i++) {
+        var genres = _this.genres[i].split(":");
+
+        _this.top5Genres.push(genres[0]);
+      }
+    });
   },
   components: {
     draggable: _vuedraggable__WEBPACK_IMPORTED_MODULE_4__["default"],
@@ -2825,7 +2840,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       playlist_4: {
         name: 'Prueba',
         content: []
-      }
+      },
+      genres: null,
+      top5Genres: []
     };
   },
   mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
@@ -2851,6 +2868,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.setHeight();
     },
     cancel: function cancel() {
+      this.playlist_og = [];
       this.$store.commit('cancelSplit');
     },
     toggleModal: function toggleModal(e) {
@@ -43246,7 +43264,22 @@ var render = function() {
           ]
         ),
         _vm._v(" "),
-        _vm._m(0)
+        _c("div", { staticClass: "section-header-description" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _vm.top5Genres.length > 1
+            ? _c(
+                "div",
+                { staticClass: "top-genres-container" },
+                _vm._l(_vm.top5Genres, function(genre) {
+                  return _c("span", { staticClass: "pill" }, [
+                    _vm._v(_vm._s(genre))
+                  ])
+                }),
+                0
+              )
+            : _vm._e()
+        ])
       ]),
       _vm._v(" "),
       _c("div", { ref: "split_body", staticClass: "split-body" }, [
@@ -43793,14 +43826,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "section-header-description" }, [
-      _c("p", { staticClass: "text" }, [
-        _vm._v("Created by "),
-        _c("b", { staticClass: "highlight" }, [
-          _vm._v(" Christopher Santana ")
-        ]),
-        _vm._v(" • 99 tracks • 3hrs 30 min")
-      ])
+    return _c("p", { staticClass: "text" }, [
+      _vm._v("Created by "),
+      _c("b", { staticClass: "highlight" }, [_vm._v(" Christopher Santana ")]),
+      _vm._v(" • 99 tracks • 3hrs 30 min")
     ])
   },
   function() {
@@ -58689,7 +58718,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             clearInterval(interval);
             resolve(genres);
           }
-        }, 100);
+        }, 1000);
       }).then(function (data) {
         var promise = fetch('/playlist-genres', {
           method: "POST",

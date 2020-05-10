@@ -70,7 +70,7 @@ export default {
                         clearInterval(interval)
                         resolve(genres);
                     }
-                },100 )
+                },1000 )
 
             }).then( data =>{
                 let promise = fetch('/playlist-genres',{
@@ -92,8 +92,6 @@ export default {
 
             return promise;
             
-           
-
            
         },
         playSong(context){

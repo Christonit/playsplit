@@ -19,3 +19,16 @@
     @include text-14;
     color: $white500;
 }
+
+.pill{
+    @include text-14;
+    @include b-radius-4;
+    background: $white100;
+    color: $white500;
+    padding: 4px 12px;
+    margin: 0 8px;
+    text-transform: capitalize;
+    &:first-child{
+        margin-left: 0;
+    }
+}

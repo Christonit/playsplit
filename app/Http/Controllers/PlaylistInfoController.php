@@ -18,9 +18,12 @@ class PlaylistInfoController extends Controller
 
         $arr = array_count_values( $arr);
 
-        $arr = collect($arr)->sortDesc();
+        asort($arr);
+        foreach ($arr as $key => $value){
+            $collection[] = ucwords($key).':'.$value;
+        }
 
-        return $arr;
+        return $collection;
     }
 
 }
