@@ -6,7 +6,7 @@
             <h2 class="title">PLaylist de prueba 2</h2> 
             <div class="btn-container d-inline-flex align-items-center">
                 <button class=" mx-3 btn btn-secondary" @click="cancel">Cancel split</button>
-                <button class="btn btn-primary" >Save</button>
+                <button class="btn btn-primary" @click="createSplit">Save</button>
             </div>
 
             <div class="section-header-description">
@@ -449,6 +449,125 @@ export default {
             }
 
 
+        },
+        createSplit(){
+
+            let split_name = [];
+            let split_uris = [];
+
+            if( this.splits_active == 2){
+                let split_1 = [];
+                 this.playlist_2.content.forEach( item => {
+                    split_1.push(item.track.uri)
+                })
+                split_name.push(this.splitPlaylistName.split_1)
+                split_uris.push(split_1)         
+
+            }
+            if( this.splits_active == 3){
+
+                let split_1 = [];
+                let split_2 = [];
+
+                split_name.push(this.splitPlaylistName.split_1)
+                split_name.push(this.splitPlaylistName.split_2)
+                
+
+                this.playlist_2.content.forEach( item => {
+                    split_1.push(item.track.uri)
+                })
+                this.playlist_3.content.forEach( item => {
+                    split_2.push(item.track.uri)
+                })
+
+                split_uris.push(split_1,split_2)         
+
+
+            }
+            if( this.splits_active == 4){
+
+                let split_1 = [];
+                let split_2 = [];
+                let split_3 = [];
+
+                split_name.push(this.splitPlaylistName.split_1)
+                split_name.push(this.splitPlaylistName.split_2)
+                split_name.push(this.splitPlaylistName.split_3)
+
+
+                this.playlist_2.content.forEach( item => {
+                    split_1.push(item.track.uri)
+                })
+                this.playlist_3.content.forEach( item => {
+                    split_2.push(item.track.uri)
+                })
+                this.playlist_4.content.forEach( item => {
+                    split_3.push(item.track.uri)
+                })
+
+                split_uris.push(split_1,split_2,split_3)
+
+
+
+            }
+
+            split_name.forEach((split, index) => {
+                this.createPlaylist(split).then(id => {
+                    this.addTracksToPlaylist(id,split_uris[index])
+                })
+                // console.log(split);
+                // console.log(split_uris[index]);
+
+            });
+
+            return split_name;
+        },
+        createPlaylist(split_name){
+           return fetch(`https://api.spotify.com/v1/users/${this.$store.state.user.spotify_id}/playlists`,{
+                method:'POST',
+                headers:this.authorization,
+                body:JSON.stringify({
+                    name: split_name
+                })
+            })
+            .then(response => {
+                let status = response.status;
+                if( status == 200 || status == 201 ){
+                    return response.text()
+                }else{
+
+                }
+
+            })
+            .then(response => {
+                let data = JSON.parse(response)
+               
+                return data.id
+
+            })
+        
+
+        },
+        addTracksToPlaylist(playlist_id,playlist_uris){
+            //    This request add tracks payload to new playlist 
+            return  fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,{
+                    method:'POST',
+                    headers:this.authorization,
+                    body:JSON.stringify({
+                        uris: playlist_uris 
+                    })
+                    }).then( res => {
+                        let status = res.status;
+
+                        // This condition gere is for what to do 
+                        // after successfull track adding or error handling
+                        if(status == 200 || status == 201){
+                            
+                            // Force rerender for last added playlist or force a page reload.
+
+                        }
+
+                    })
         }
 
     }

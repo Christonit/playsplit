@@ -2998,6 +2998,97 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         console.log(accordions.length);
         el.style.height = this.split_body_height - 59.75 * 4 + "px";
       }
+    },
+    createSplit: function createSplit() {
+      var _this2 = this;
+
+      var split_name = [];
+      var split_uris = [];
+
+      if (this.splits_active == 2) {
+        var split_1 = [];
+        this.playlist_2.content.forEach(function (item) {
+          split_1.push(item.track.uri);
+        });
+        split_name.push(this.splitPlaylistName.split_1);
+        split_uris.push(split_1);
+      }
+
+      if (this.splits_active == 3) {
+        var _split_ = [];
+        var split_2 = [];
+        split_name.push(this.splitPlaylistName.split_1);
+        split_name.push(this.splitPlaylistName.split_2);
+        this.playlist_2.content.forEach(function (item) {
+          _split_.push(item.track.uri);
+        });
+        this.playlist_3.content.forEach(function (item) {
+          split_2.push(item.track.uri);
+        });
+        split_uris.push(_split_, split_2);
+      }
+
+      if (this.splits_active == 4) {
+        var _split_2 = [];
+        var _split_3 = [];
+        var split_3 = [];
+        split_name.push(this.splitPlaylistName.split_1);
+        split_name.push(this.splitPlaylistName.split_2);
+        split_name.push(this.splitPlaylistName.split_3);
+        this.playlist_2.content.forEach(function (item) {
+          _split_2.push(item.track.uri);
+        });
+        this.playlist_3.content.forEach(function (item) {
+          _split_3.push(item.track.uri);
+        });
+        this.playlist_4.content.forEach(function (item) {
+          split_3.push(item.track.uri);
+        });
+        split_uris.push(_split_2, _split_3, split_3);
+      }
+
+      split_name.forEach(function (split, index) {
+        _this2.createPlaylist(split).then(function (id) {
+          _this2.addTracksToPlaylist(id, split_uris[index]);
+        }); // console.log(split);
+        // console.log(split_uris[index]);
+
+      });
+      return split_name;
+    },
+    createPlaylist: function createPlaylist(split_name) {
+      return fetch("https://api.spotify.com/v1/users/".concat(this.$store.state.user.spotify_id, "/playlists"), {
+        method: 'POST',
+        headers: this.authorization,
+        body: JSON.stringify({
+          name: split_name
+        })
+      }).then(function (response) {
+        var status = response.status;
+
+        if (status == 200 || status == 201) {
+          return response.text();
+        } else {}
+      }).then(function (response) {
+        var data = JSON.parse(response);
+        return data.id;
+      });
+    },
+    addTracksToPlaylist: function addTracksToPlaylist(playlist_id, playlist_uris) {
+      //    This request add tracks payload to new playlist 
+      return fetch("https://api.spotify.com/v1/playlists/".concat(playlist_id, "/tracks"), {
+        method: 'POST',
+        headers: this.authorization,
+        body: JSON.stringify({
+          uris: playlist_uris
+        })
+      }).then(function (res) {
+        var status = res.status; // This condition gere is for what to do 
+        // after successfull track adding or error handling
+
+        if (status == 200 || status == 201) {// Force rerender for last added playlist or force a page reload.
+        }
+      });
     }
   })
 });
@@ -43260,7 +43351,14 @@ var render = function() {
               [_vm._v("Cancel split")]
             ),
             _vm._v(" "),
-            _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Save")])
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                on: { click: _vm.createSplit }
+              },
+              [_vm._v("Save")]
+            )
           ]
         ),
         _vm._v(" "),
