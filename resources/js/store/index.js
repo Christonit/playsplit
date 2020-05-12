@@ -50,7 +50,7 @@ const store = new Vuex.Store({
         state.split.playlist = playlist;
         state.split.playlist.duration = duration;
     },
-    cancelSplit(state){
+    clearSplit(state){
         state.split.isActive = false
         state.split.playlists = [];
     },

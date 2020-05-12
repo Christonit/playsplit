@@ -14,19 +14,19 @@
                     <div class="btn-container">
                         <button class="btn btn-secondary" @click="clearMerge" :disabled='(totalPlaylists == 0)'>Clear selected</button>
                         <button class="btn btn-primary" 
-                                :disabled="errors.to_many_tracks || (totalPlaylists == 0)"
+                                :disabled="errors.to_many_tracks || (totalPlaylists == 0 ) || (totalPlaylists == 1 )"
                                 @click="createMergedPlaylist">
                                 Merge
                         </button>
                     </div>
         </div>
-        <div :class="'callout alert'" v-if="errors.to_many_tracks" >
-            <span class="material-icons icon">
-                warning
-            </span>
-            <span class="callout-message">Currently Spotify just let upload up to 100 tracks at a time. Please, reduce your selected tracks.</span>
-            <!-- <button class="close material-icons" @click="close">close</button> -->
-        </div>
+
+        <callout-bottom 
+            :class="'alert'" 
+            v-if="errors.to_many_tracks" >
+            <span slot='message'>Currently Spotify just let upload up to 100 tracks at a time. Please, reduce your selected tracks.</span>
+        </callout-bottom>
+
     </div>
 
 </template>
@@ -34,6 +34,7 @@
 <script>
 import { mapMutations, mapState, mapGetters } from 'vuex';
 import functions from '../spotify/function.js';
+import CalloutBottom from "../components/utilities/callout-bottom.vue";
 
 export default {
     name:'quickmerge',
@@ -45,6 +46,9 @@ export default {
         }
     },
     mixins:[functions],
+    components:{
+        CalloutBottom
+    },
     computed:{
         ...mapState(['playlistToMerge','mergeDurationMs','mergeName','user','playlistsToDelete']),
         ...mapGetters(['authorization']),

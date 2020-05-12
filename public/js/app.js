@@ -2583,7 +2583,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _spotify_function_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../spotify/function.js */ "./resources/js/spotify/function.js");
 /* harmony import */ var sortablejs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sortablejs */ "./node_modules/sortablejs/modular/sortable.esm.js");
 /* harmony import */ var _modals_edit_name_split_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../modals/edit-name-split.vue */ "./resources/js/components/modals/edit-name-split.vue");
-/* harmony import */ var _vuedraggable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../vuedraggable */ "./resources/js/vuedraggable.js");
+/* harmony import */ var _utilities_callout_bottom_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utilities/callout-bottom.vue */ "./resources/js/components/utilities/callout-bottom.vue");
+/* harmony import */ var _vuedraggable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../vuedraggable */ "./resources/js/vuedraggable.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2787,6 +2788,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -2816,8 +2828,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     });
   },
   components: {
-    draggable: _vuedraggable__WEBPACK_IMPORTED_MODULE_4__["default"],
-    EditName: _modals_edit_name_split_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+    draggable: _vuedraggable__WEBPACK_IMPORTED_MODULE_5__["default"],
+    EditName: _modals_edit_name_split_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    CalloutBottom: _utilities_callout_bottom_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   data: function data() {
     return {
@@ -2842,7 +2855,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         content: []
       },
       genres: null,
-      top5Genres: []
+      top5Genres: [],
+      emptySplitNames: false
     };
   },
   mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
@@ -2860,16 +2874,37 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
       });
       return IDs;
+    },
+    checkIfSplitEmpty: function checkIfSplitEmpty() {
+      console.log('Init');
+
+      if (this.splits_active == 2 & this.playlist_2.content.length == 0) {
+        console.log('2');
+        return true;
+      }
+
+      if (this.splits_active == 3 & (this.playlist_2.content.length == 0 || this.playlist_3.content.length == 0)) {
+        console.log('3');
+        return true;
+      }
+
+      if (this.splits_active == 4 & (this.playlist_2.content.length == 0 || this.playlist_3.content.length == 0 || this.playlist_4.content.length == 0)) {
+        console.log('3');
+        return true;
+      }
+
+      console.log('end');
+      return false;
     }
   }),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['cancelSplit']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['clearSplit']), {
     splitHeight: function splitHeight(quantity) {
       this.splits_active = quantity;
       this.setHeight();
     },
-    cancel: function cancel() {
+    clearSplit: function clearSplit() {
       this.playlist_og = [];
-      this.$store.commit('cancelSplit');
+      this.$store.commit('clearSplit');
     },
     toggleModal: function toggleModal(e) {
       var accordion_name = e.target.parentNode.parentNode.getAttribute("data-accordion");
@@ -3006,6 +3041,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var split_uris = [];
 
       if (this.splits_active == 2) {
+        if (this.splitPlaylistName.split_1 == '') {
+          return this.emptySplitNames = true;
+        }
+
         var split_1 = [];
         this.playlist_2.content.forEach(function (item) {
           split_1.push(item.track.uri);
@@ -3015,6 +3054,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       if (this.splits_active == 3) {
+        if (this.splitPlaylistName.split_1 == '' || this.splitPlaylistName.split_2 == '') {
+          return this.emptySplitNames = true;
+        }
+
         var _split_ = [];
         var split_2 = [];
         split_name.push(this.splitPlaylistName.split_1);
@@ -3029,6 +3072,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       if (this.splits_active == 4) {
+        if (this.splitPlaylistName.split_1 == '' || this.splitPlaylistName.split_2 == '' || this.splitPlaylistName.split_3 == '') {
+          return this.emptySplitNames = true;
+        }
+
         var _split_2 = [];
         var _split_3 = [];
         var split_3 = [];
@@ -3050,6 +3097,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       split_name.forEach(function (split, index) {
         _this2.createPlaylist(split).then(function (id) {
           _this2.addTracksToPlaylist(id, split_uris[index]);
+        }).then(function () {
+          _this2.clearSplit();
         }); // console.log(split);
         // console.log(split_uris[index]);
 
@@ -3106,6 +3155,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _spotify_function_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../spotify/function.js */ "./resources/js/spotify/function.js");
+/* harmony import */ var _components_utilities_callout_bottom_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/utilities/callout-bottom.vue */ "./resources/js/components/utilities/callout-bottom.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -3147,6 +3197,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'quickmerge',
   data: function data() {
@@ -3157,6 +3208,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  components: {
+    CalloutBottom: _components_utilities_callout_bottom_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['playlistToMerge', 'mergeDurationMs', 'mergeName', 'user', 'playlistsToDelete']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
     totalPlaylists: function totalPlaylists() {
       return this.playlistToMerge.length;
@@ -3461,6 +3515,48 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'top-nav',
   mounted: function mounted() {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/callout-bottom.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/utilities/callout-bottom.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'callout-bottom',
+  props: {
+    hasCloseBtn: {
+      type: Boolean,
+      "default": false
+    }
+  },
+  methods: {
+    close: function close() {
+      this.$emit('hideMessase');
+    }
+  }
 });
 
 /***/ }),
@@ -43336,7 +43432,9 @@ var render = function() {
     { staticClass: "action-container", attrs: { id: "split-playlist" } },
     [
       _c("div", { staticClass: "section-header" }, [
-        _c("h2", { staticClass: "title" }, [_vm._v("PLaylist de prueba 2")]),
+        _c("h2", { staticClass: "title" }, [
+          _vm._v(_vm._s(_vm.split.playlist.name))
+        ]),
         _vm._v(" "),
         _c(
           "div",
@@ -43346,7 +43444,7 @@ var render = function() {
               "button",
               {
                 staticClass: " mx-3 btn btn-secondary",
-                on: { click: _vm.cancel }
+                on: { click: _vm.clearSplit }
               },
               [_vm._v("Cancel split")]
             ),
@@ -43355,6 +43453,7 @@ var render = function() {
               "button",
               {
                 staticClass: "btn btn-primary",
+                attrs: { disabled: _vm.checkIfSplitEmpty },
                 on: { click: _vm.createSplit }
               },
               [_vm._v("Save")]
@@ -43363,7 +43462,18 @@ var render = function() {
         ),
         _vm._v(" "),
         _c("div", { staticClass: "section-header-description" }, [
-          _vm._m(0),
+          _c("p", { staticClass: "text" }, [
+            _vm._v("Created by "),
+            _c("b", { staticClass: "highlight" }, [
+              _vm._v(_vm._s(_vm.split.playlist.owner.display_name))
+            ]),
+            _vm._v(
+              " • " +
+                _vm._s(_vm.playlist_og.length) +
+                " tracks • " +
+                _vm._s(_vm.totalTime(_vm.playlist_og))
+            )
+          ]),
           _vm._v(" "),
           _vm.top5Genres.length > 1
             ? _c(
@@ -43382,7 +43492,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { ref: "split_body", staticClass: "split-body" }, [
         _c("div", { staticClass: "split-original" }, [
-          _vm._m(1),
+          _vm._m(0),
           _vm._v(" "),
           _c(
             "ul",
@@ -43392,13 +43502,19 @@ var render = function() {
                 "draggable",
                 {
                   attrs: {
-                    list: _vm.playlist_og,
                     group: _vm.split_options,
                     "multi-drag": "",
                     "selected-class": "track-selected",
                     move: _vm.checkMove
                   },
-                  on: { start: _vm.onStart, end: _vm.onEnd }
+                  on: { start: _vm.onStart, end: _vm.onEnd },
+                  model: {
+                    value: _vm.playlist_og,
+                    callback: function($$v) {
+                      _vm.playlist_og = $$v
+                    },
+                    expression: "playlist_og"
+                  }
                 },
                 _vm._l(_vm.playlist_og, function(playlist, key) {
                   return _c(
@@ -43895,6 +44011,26 @@ var render = function() {
         )
       ]),
       _vm._v(" "),
+      _vm.emptySplitNames
+        ? _c(
+            "callout-bottom",
+            {
+              staticClass: "alert bottom",
+              attrs: { "has-close-btn": true },
+              on: {
+                hideMessase: function($event) {
+                  _vm.emptySplitNames = false
+                }
+              }
+            },
+            [
+              _c("span", { attrs: { slot: "message" }, slot: "message" }, [
+                _vm._v("Cannot create and upload a split without a name.")
+              ])
+            ]
+          )
+        : _vm._e(),
+      _vm._v(" "),
       _vm.playlist_4.modal
         ? _c("edit-name", {
             attrs: { emition: true },
@@ -43920,16 +44056,6 @@ var render = function() {
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("p", { staticClass: "text" }, [
-      _vm._v("Created by "),
-      _c("b", { staticClass: "highlight" }, [_vm._v(" Christopher Santana ")]),
-      _vm._v(" • 99 tracks • 3hrs 30 min")
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -43964,79 +44090,90 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", { attrs: { id: "quickmerge" } }, [
-      _c("div", { staticClass: "merge-info-review" }, [
-        _c(
-          "span",
-          { staticClass: "merge-title", on: { click: _vm.openModal } },
-          [
+  return _c(
+    "div",
+    [
+      _c("div", { attrs: { id: "quickmerge" } }, [
+        _c("div", { staticClass: "merge-info-review" }, [
+          _c(
+            "span",
+            { staticClass: "merge-title", on: { click: _vm.openModal } },
+            [
+              _vm._v(
+                _vm._s(
+                  _vm.mergeName != "" ? _vm.mergeName : "Type playlist name"
+                )
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "text mb-0" }, [
+            _vm.totalPlaylists == 0
+              ? _c("span", { staticClass: "highlight" }, [
+                  _vm._v("Select one or more playlits to merge")
+                ])
+              : _vm.totalPlaylists == 1
+              ? _c("span", { staticClass: "highlight" }, [
+                  _vm._v("Select one more playlit to merge")
+                ])
+              : _c("span", { staticClass: "highlight" }, [
+                  _vm._v(
+                    " " + _vm._s(_vm.totalPlaylists) + " playlists selected"
+                  )
+                ]),
             _vm._v(
-              _vm._s(_vm.mergeName != "" ? _vm.mergeName : "Type playlist name")
+              "\n                        \n                        | " +
+                _vm._s(_vm.playlistTrackCount) +
+                " tracks, " +
+                _vm._s(_vm.totalTime.hours + ":" + _vm.totalTime.minutes)
             )
-          ]
-        ),
+          ])
+        ]),
         _vm._v(" "),
-        _c("p", { staticClass: "text mb-0" }, [
-          _vm.totalPlaylists == 0
-            ? _c("span", { staticClass: "highlight" }, [
-                _vm._v("Select one or more playlits to merge")
-              ])
-            : _vm.totalPlaylists == 1
-            ? _c("span", { staticClass: "highlight" }, [
-                _vm._v("Select one more playlit to merge")
-              ])
-            : _c("span", { staticClass: "highlight" }, [
-                _vm._v(" " + _vm._s(_vm.totalPlaylists) + " playlists selected")
-              ]),
-          _vm._v(
-            "\n                        \n                        | " +
-              _vm._s(_vm.playlistTrackCount) +
-              " tracks, " +
-              _vm._s(_vm.totalTime.hours + ":" + _vm.totalTime.minutes)
+        _c("div", { staticClass: "btn-container" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-secondary",
+              attrs: { disabled: _vm.totalPlaylists == 0 },
+              on: { click: _vm.clearMerge }
+            },
+            [_vm._v("Clear selected")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-primary",
+              attrs: {
+                disabled:
+                  _vm.errors.to_many_tracks ||
+                  _vm.totalPlaylists == 0 ||
+                  _vm.totalPlaylists == 1
+              },
+              on: { click: _vm.createMergedPlaylist }
+            },
+            [
+              _vm._v(
+                "\n                            Merge\n                    "
+              )
+            ]
           )
         ])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "btn-container" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-secondary",
-            attrs: { disabled: _vm.totalPlaylists == 0 },
-            on: { click: _vm.clearMerge }
-          },
-          [_vm._v("Clear selected")]
-        ),
-        _vm._v(" "),
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-primary",
-            attrs: {
-              disabled: _vm.errors.to_many_tracks || _vm.totalPlaylists == 0
-            },
-            on: { click: _vm.createMergedPlaylist }
-          },
-          [_vm._v("\n                            Merge\n                    ")]
-        )
-      ])
-    ]),
-    _vm._v(" "),
-    _vm.errors.to_many_tracks
-      ? _c("div", { class: "callout alert" }, [
-          _c("span", { staticClass: "material-icons icon" }, [
-            _vm._v("\n            warning\n        ")
-          ]),
-          _vm._v(" "),
-          _c("span", { staticClass: "callout-message" }, [
-            _vm._v(
-              "Currently Spotify just let upload up to 100 tracks at a time. Please, reduce your selected tracks."
-            )
+      _vm.errors.to_many_tracks
+        ? _c("callout-bottom", { class: "alert" }, [
+            _c("span", { attrs: { slot: "message" }, slot: "message" }, [
+              _vm._v(
+                "Currently Spotify just let upload up to 100 tracks at a time. Please, reduce your selected tracks."
+              )
+            ])
           ])
-        ])
-      : _vm._e()
-  ])
+        : _vm._e()
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -44267,6 +44404,49 @@ var staticRenderFns = [
     ])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/callout-bottom.vue?vue&type=template&id=da90fe50&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/utilities/callout-bottom.vue?vue&type=template&id=da90fe50& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "callout" },
+    [
+      _c("span", { staticClass: "material-icons icon" }, [
+        _vm._v("\n        warning\n    ")
+      ]),
+      _vm._v(" "),
+      _vm._t("message"),
+      _vm._v(" "),
+      _vm.hasCloseBtn
+        ? _c(
+            "button",
+            { staticClass: "close material-icons", on: { click: _vm.close } },
+            [_vm._v("close")]
+          )
+        : _vm._e()
+    ],
+    2
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -58467,6 +58647,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/utilities/callout-bottom.vue":
+/*!**************************************************************!*\
+  !*** ./resources/js/components/utilities/callout-bottom.vue ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _callout_bottom_vue_vue_type_template_id_da90fe50___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./callout-bottom.vue?vue&type=template&id=da90fe50& */ "./resources/js/components/utilities/callout-bottom.vue?vue&type=template&id=da90fe50&");
+/* harmony import */ var _callout_bottom_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./callout-bottom.vue?vue&type=script&lang=js& */ "./resources/js/components/utilities/callout-bottom.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _callout_bottom_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _callout_bottom_vue_vue_type_template_id_da90fe50___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _callout_bottom_vue_vue_type_template_id_da90fe50___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/utilities/callout-bottom.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/utilities/callout-bottom.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/components/utilities/callout-bottom.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_callout_bottom_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./callout-bottom.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/callout-bottom.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_callout_bottom_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/utilities/callout-bottom.vue?vue&type=template&id=da90fe50&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/utilities/callout-bottom.vue?vue&type=template&id=da90fe50& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_callout_bottom_vue_vue_type_template_id_da90fe50___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./callout-bottom.vue?vue&type=template&id=da90fe50& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/callout-bottom.vue?vue&type=template&id=da90fe50&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_callout_bottom_vue_vue_type_template_id_da90fe50___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_callout_bottom_vue_vue_type_template_id_da90fe50___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/utilities/toggle.vue":
 /*!******************************************************!*\
   !*** ./resources/js/components/utilities/toggle.vue ***!
@@ -58895,11 +59144,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var minutes = Math.floor(r * 60);
 
       if (hours < 10) {
-        hours = '0' + hours;
+        hours = hours;
       }
 
       if (hours == 0) {
-        hours = '00';
+        hours = '';
       }
 
       if (minutes < 10) {
@@ -59020,7 +59269,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.split.playlist = playlist;
       state.split.playlist.duration = duration;
     },
-    cancelSplit: function cancelSplit(state) {
+    clearSplit: function clearSplit(state) {
       state.split.isActive = false;
       state.split.playlists = [];
     },

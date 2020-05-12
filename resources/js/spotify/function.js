@@ -168,10 +168,10 @@ export default {
             let minutes = Math.floor((r * 60));
 
             if (hours < 10) {
-                hours = '0'+hours;
+                hours = hours;
             }
             if (hours == 0) {
-                hours = '00';
+                hours = '';
             }
             if (minutes < 10) {
                 minutes = '0'+minutes;

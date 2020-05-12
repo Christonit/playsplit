@@ -3,14 +3,14 @@
     
     <section id="split-playlist" class='action-container'>
         <div class="section-header">
-            <h2 class="title">PLaylist de prueba 2</h2> 
+            <h2 class="title">{{split.playlist.name}}</h2> 
             <div class="btn-container d-inline-flex align-items-center">
-                <button class=" mx-3 btn btn-secondary" @click="cancel">Cancel split</button>
-                <button class="btn btn-primary" @click="createSplit">Save</button>
+                <button class=" mx-3 btn btn-secondary" @click="clearSplit">Cancel split</button>
+                <button class="btn btn-primary" @click="createSplit" :disabled="checkIfSplitEmpty">Save</button>
             </div>
 
             <div class="section-header-description">
-                <p class="text">Created by <b class="highlight"> Christopher Santana </b> • 99 tracks • 3hrs 30 min</p>
+                <p class="text">Created by <b class="highlight">{{split.playlist.owner.display_name}}</b> • {{playlist_og.length}} tracks • {{totalTime(playlist_og)}}</p>
                 <div class="top-genres-container" v-if="top5Genres.length > 1">
                     <span class="pill" v-for="genre in top5Genres">{{genre}}</span>
                 </div>
@@ -26,7 +26,7 @@
                 </div>
 
                     <ul class="split-original-body" ref="og_playlist">
-                        <draggable :list="playlist_og"
+                        <draggable v-model="playlist_og"
                             :group="split_options"                           
                             multi-drag selected-class="track-selected"
                             :move="checkMove" 
@@ -185,6 +185,16 @@
 
         </div>
 
+        <callout-bottom v-if="emptySplitNames" 
+            class="alert bottom" 
+            :has-close-btn="true" 
+            @hideMessase="emptySplitNames = false">
+
+            <span slot="message">Cannot create and upload a split without a name.</span>
+
+        </callout-bottom>
+
+
         <edit-name v-if="playlist_4.modal" :emition="true" @saveName="nameHandle"></edit-name>
         <edit-name v-if="playlist_3.modal" :emition="true" @saveName="nameHandle"></edit-name>
         <edit-name v-if="playlist_2.modal" :emition="true" @saveName="nameHandle"></edit-name>
@@ -200,6 +210,8 @@ import {mapState, mapMutations, mapActions} from 'vuex';
 import functions from '../../../spotify/function.js';
 import  { Sortable, MultiDrag } from "sortablejs";
 import EditName from '../../modals/edit-name-split.vue';
+import CalloutBottom from '../../utilities/callout-bottom.vue';
+
 import draggable from '../../../vuedraggable'
 
 // Sortable.mount(new MultiDrag());
@@ -237,7 +249,8 @@ export default {
     },
     components:{
         draggable,
-        EditName
+        EditName,
+        CalloutBottom
     },
     data(){
         return {
@@ -259,7 +272,8 @@ export default {
                     content:[]
                 },
                 genres: null,
-                top5Genres: []
+                top5Genres: [],
+                emptySplitNames:false
         }
     },
     mixins:[functions],
@@ -282,19 +296,45 @@ export default {
             })
 
             return IDs;
+        },
+
+        checkIfSplitEmpty(){
+            console.log('Init')
+            
+            if( this.splits_active == 2 & this.playlist_2.content.length == 0 ){
+                console.log('2')
+
+                return true;
+            }
+            
+            if( this.splits_active == 3 & (this.playlist_2.content.length == 0 || this.playlist_3.content.length == 0) ){
+                console.log('3')
+
+                return true;
+            }
+            if( this.splits_active == 4 & (this.playlist_2.content.length == 0 || this.playlist_3.content.length == 0 || this.playlist_4.content.length == 0) ){
+                console.log('3')
+                return true;
+            }
+            
+                console.log('end')
+
+                return false;
+            
         }
-        
+      
 
     },
     methods:{
-        ...mapMutations(['cancelSplit']),
+        ...mapMutations(['clearSplit']),
+        
         splitHeight(quantity){
            this.splits_active = quantity;
            this.setHeight();
         },
-        cancel(){
+        clearSplit(){
             this.playlist_og = [];
-            this.$store.commit('cancelSplit');
+            this.$store.commit('clearSplit');
         },
         toggleModal(e){
             let accordion_name = e.target.parentNode.parentNode.getAttribute("data-accordion");
@@ -456,6 +496,9 @@ export default {
             let split_uris = [];
 
             if( this.splits_active == 2){
+                if(this.splitPlaylistName.split_1 == ''){
+                    return (this.emptySplitNames = true)
+                }
                 let split_1 = [];
                  this.playlist_2.content.forEach( item => {
                     split_1.push(item.track.uri)
@@ -465,6 +508,9 @@ export default {
 
             }
             if( this.splits_active == 3){
+                if(this.splitPlaylistName.split_1 == '' || this.splitPlaylistName.split_2 == ''){
+                    return (this.emptySplitNames = true)
+                }
 
                 let split_1 = [];
                 let split_2 = [];
@@ -485,6 +531,10 @@ export default {
 
             }
             if( this.splits_active == 4){
+
+                if(this.splitPlaylistName.split_1 == '' || this.splitPlaylistName.split_2 == '' || this.splitPlaylistName.split_3 == ''){
+                    return (this.emptySplitNames = true)
+                }
 
                 let split_1 = [];
                 let split_2 = [];
@@ -514,6 +564,8 @@ export default {
             split_name.forEach((split, index) => {
                 this.createPlaylist(split).then(id => {
                     this.addTracksToPlaylist(id,split_uris[index])
+                }).then(()=>{
+                    this.clearSplit();
                 })
                 // console.log(split);
                 // console.log(split_uris[index]);

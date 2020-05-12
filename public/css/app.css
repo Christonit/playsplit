@@ -11653,6 +11653,10 @@ input {
   background-color: #BE3427;
 }
 
+.callout.bottom {
+  bottom: 0;
+}
+
 .callout .close {
   margin-right: 8px;
   top: 0;
