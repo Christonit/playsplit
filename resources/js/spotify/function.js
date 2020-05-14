@@ -42,15 +42,7 @@ export default {
                         return genres;
                     })
         },
-        removeTrackFromPlaylist(id,pulled_Tracks){
-            return fetch(`${this.apiRoot}/playlists/${id}/tracks`,
-                    {
-                        method: 'DELETE',
-                        headers: this.authorization,
-                        body:JSON.stringify({tracks:pulled_Tracks})
-                    })
-                    
-        },
+       
         prepGenresArray(albums_ids_array){
             let arr = [];
             albums_ids_array.forEach( item => {
@@ -95,12 +87,21 @@ export default {
                         }).catch(err => console.log(err))
 
                 return promise;
-
+                console.log('xxx')
             })
 
             return promise;
             
            
+        },
+        removeTrackFromPlaylist(id,pulled_Tracks){
+            return fetch(`${this.apiRoot}/playlists/${id}/tracks`,
+                    {
+                        method: 'DELETE',
+                        headers: this.authorization,
+                        body:JSON.stringify({tracks:pulled_Tracks})
+                    })
+                    
         },
         latestCreatedPlaylist(playlist_id){
             return fetch(`https://api.spotify.com/v1/playlists/${playlist_id}`,

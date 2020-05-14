@@ -45,10 +45,11 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
-    setSplitActive(state,{playlist,duration}){
+    setSplitActive(state,{playlist,duration, genres}){
         state.split.isActive = true
         state.split.playlist = playlist;
         state.split.playlist.duration = duration;
+        state.split.playlist.genres = genres;
     },
     clearSplit(state){
         state.split.isActive = false

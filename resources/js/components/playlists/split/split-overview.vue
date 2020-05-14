@@ -229,21 +229,6 @@ export default {
         this.$refs.og_playlist.style.maxHeight = (elHeight - (56*2)) + "px"
         this.setHeight()
 
-        this.getPlaylistGenres(this.artistsIds).then( data => {
-                
-                let genres = JSON.parse(data) 
-               return ( this.genres = genres.reverse());
-
-
-        }).then( ()=>{
-
-                for( var i = 0; i < 5; i++ ){
-                    let genres = this.genres[i].split(":");
-
-                    this.top5Genres.push(genres[0]);
-                }
-
-        });
 
         
     },
@@ -254,7 +239,7 @@ export default {
     },
     data(){
         return {
-                splits_active:4,
+                splits_active:2,
                 test:'',
                 split_options:{name:'split',pull:true},
                 split_body_height:0,
@@ -274,7 +259,6 @@ export default {
                     content:[]
                 },
                 genres: null,
-                top5Genres: [],
                 emptySplitNames:false,
         }
     },
@@ -289,16 +273,9 @@ export default {
 
             
         },
-        artistsIds(){
-            let IDs = []
-            this.playlist_og.forEach(playlist => {
-                playlist.track.artists.forEach( artist => {
-                    IDs.push(artist.id);
-                })
-            })
-
-            return IDs;
-        },
+       top5Genres(){
+            return this.split.playlist.genres
+       },
 
         checkIfSplitEmpty(){
             
@@ -611,22 +588,29 @@ export default {
 
             split_name.forEach((split, index) => {
                 this.createPlaylist(split).then(id => {
+
                     this.addTracksToPlaylist(id,split_uris[index])
+
                     return id;
+
                 }).then((playlist_id)=>{
+
                     this.latestCreatedPlaylist(playlist_id)   
+
                 }).then( ()=>{
+
                     let uris = [];
+
                     this.pulled_tracks.forEach(track => {
+
                         let uri = {uri:`spotify:track:${track}`};
                         uris.push(uri);
+
                     });
-                    // let obj = JSON.stringify({tracks:uris});
-                    // console.log(obj)
+
                     this.removeTrackFromPlaylist(this.split.playlist.id, uris);
+
                 })
-                // console.log(split);
-                // console.log(split_uris[index]);
 
             });
 

@@ -2292,6 +2292,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -2308,10 +2310,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       playlistMergeData: null,
       duration: null,
       queueId: null,
-      isActive: false
+      isActive: false,
+      genres: [],
+      top5Genres: []
     };
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['current_playback', 'timer', 'mergeActive', 'playlistToMerge']), {
+    artistsIds: function artistsIds() {
+      var IDs = [];
+
+      if (this.playlist != null) {
+        this.playlist.tracks.items.forEach(function (playlist) {
+          playlist.track.artists.forEach(function (artist) {
+            IDs.push(artist.id);
+          });
+        });
+      }
+
+      return IDs;
+    },
+    topGenres: function topGenres() {
+      return "".concat(this.top5Genres.join(', ').slice(0, 32), "...");
+    },
     totalDuration: function totalDuration() {
       var totalInMinutes = this.songMstoSeconds(this.duration);
       var hours = totalInMinutes.min / 60;
@@ -2382,7 +2402,35 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
         _this2.duration = total_ms;
       }
-    }).then(function () {});
+    });
+    var interval = setInterval(function () {
+      if (_this2.artistsIds.length > 0) {
+        _this2.getPlaylistGenres(_this2.artistsIds).then(function (data) {
+          console.log('hola');
+          var genres = JSON.parse(data);
+          return _this2.genres = genres.reverse();
+        }).then(function () {
+          for (var i = 0; i < 5; i++) {
+            var genres = _this2.genres[i].split(":");
+
+            _this2.top5Genres.push(genres[0]);
+          }
+        });
+
+        clearInterval(interval);
+      }
+    }, 100);
+    this.getPlaylistGenres(this.artistsIds).then(function (data) {
+      console.log('hola');
+      var genres = JSON.parse(data);
+      return _this2.genres = genres.reverse();
+    }).then(function () {
+      for (var i = 0; i < 5; i++) {
+        var genres = _this2.genres[i].split(":");
+
+        _this2.top5Genres.push(genres[0]);
+      }
+    });
   },
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'setSelectedToMerge', 'substractMergeDurationMs', 'setSplitActive']), {
     preservationControl: function preservationControl($event) {
@@ -2473,7 +2521,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     splitThis: function splitThis() {
       this.setSplitActive({
         playlist: this.playlist,
-        duration: this.totalDuration
+        duration: this.totalDuration,
+        genres: this.top5Genres
       });
     }
   })
@@ -2809,23 +2858,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "split-overview",
   mounted: function mounted() {
-    var _this = this;
-
     this.playlist_og = this.$store.state.split.playlist.tracks.items;
     var elHeight = this.$refs.split_body.offsetHeight;
     this.split_body_height = elHeight;
     this.$refs.og_playlist.style.maxHeight = elHeight - 56 * 2 + "px";
     this.setHeight();
-    this.getPlaylistGenres(this.artistsIds).then(function (data) {
-      var genres = JSON.parse(data);
-      return _this.genres = genres.reverse();
-    }).then(function () {
-      for (var i = 0; i < 5; i++) {
-        var genres = _this.genres[i].split(":");
-
-        _this.top5Genres.push(genres[0]);
-      }
-    });
   },
   components: {
     draggable: _vuedraggable__WEBPACK_IMPORTED_MODULE_5__["default"],
@@ -2834,7 +2871,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
-      splits_active: 4,
+      splits_active: 2,
       test: '',
       split_options: {
         name: 'split',
@@ -2857,7 +2894,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         content: []
       },
       genres: null,
-      top5Genres: [],
       emptySplitNames: false
     };
   },
@@ -2868,14 +2904,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var hours = time != 0 ? "".concat(time, " ").concat(time > 1 ? 'hours' : 'hour') : '';
       return "".concat(hours, " ").concat(this.split.playlist.duration.min, " minutes");
     },
-    artistsIds: function artistsIds() {
-      var IDs = [];
-      this.playlist_og.forEach(function (playlist) {
-        playlist.track.artists.forEach(function (artist) {
-          IDs.push(artist.id);
-        });
-      });
-      return IDs;
+    top5Genres: function top5Genres() {
+      return this.split.playlist.genres;
     },
     checkIfSplitEmpty: function checkIfSplitEmpty() {
       if (this.splits_active == 2 & this.playlist_2.content.length == 0) {
@@ -2972,7 +3002,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     onEnd: function onEnd(evt) {
-      var _this2 = this;
+      var _this = this;
 
       if (evt.pullMode == true & evt.to.parentNode.getAttribute('class') == "splits-container") {
         var pulled_el = evt.items;
@@ -2982,7 +3012,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           tracks.forEach(function (el) {
             var id = el.getAttribute('id');
 
-            _this2.pulled_tracks.push(id);
+            _this.pulled_tracks.push(id);
           });
         } else {
           var id = evt.clone.getAttribute('id');
@@ -3000,9 +3030,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _tracks.forEach(function (el) {
             var id = el.getAttribute('id');
 
-            var track = _this2.pulled_tracks.indexOf(id);
+            var track = _this.pulled_tracks.indexOf(id);
 
-            _this2.pulled_tracks.splice(id, 1);
+            _this.pulled_tracks.splice(id, 1);
           });
         }
 
@@ -3068,7 +3098,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     createSplit: function createSplit() {
-      var _this3 = this;
+      var _this2 = this;
 
       var split_name = [];
       var split_uris = [];
@@ -3128,28 +3158,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       split_name.forEach(function (split, index) {
-        _this3.createPlaylist(split).then(function (id) {
-          _this3.addTracksToPlaylist(id, split_uris[index]);
+        _this2.createPlaylist(split).then(function (id) {
+          _this2.addTracksToPlaylist(id, split_uris[index]);
 
           return id;
         }).then(function (playlist_id) {
-          _this3.latestCreatedPlaylist(playlist_id);
+          _this2.latestCreatedPlaylist(playlist_id);
         }).then(function () {
           var uris = [];
 
-          _this3.pulled_tracks.forEach(function (track) {
+          _this2.pulled_tracks.forEach(function (track) {
             var uri = {
               uri: "spotify:track:".concat(track)
             };
             uris.push(uri);
-          }); // let obj = JSON.stringify({tracks:uris});
-          // console.log(obj)
+          });
 
-
-          _this3.removeTrackFromPlaylist(_this3.split.playlist.id, uris);
-        }); // console.log(split);
-        // console.log(split_uris[index]);
-
+          _this2.removeTrackFromPlaylist(_this2.split.playlist.id, uris);
+        });
       });
       this.clearSplit();
       return split_name;
@@ -43290,7 +43316,7 @@ var render = function() {
         ]),
         _vm._v(" "),
         _c("span", { staticClass: "grid-list-text" }, [
-          _vm._v("New age, synthwave, hip hop...")
+          _vm._v("\n            " + _vm._s(_vm.topGenres) + "\n        ")
         ])
       ]),
       _vm._v(" "),
@@ -59060,15 +59086,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return genres;
       });
     },
-    removeTrackFromPlaylist: function removeTrackFromPlaylist(id, pulled_Tracks) {
-      return fetch("".concat(this.apiRoot, "/playlists/").concat(id, "/tracks"), {
-        method: 'DELETE',
-        headers: this.authorization,
-        body: JSON.stringify({
-          tracks: pulled_Tracks
-        })
-      });
-    },
     prepGenresArray: function prepGenresArray(albums_ids_array) {
       var _this = this;
 
@@ -59112,8 +59129,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           return console.log(err);
         });
         return promise;
+        console.log('xxx');
       });
       return promise;
+    },
+    removeTrackFromPlaylist: function removeTrackFromPlaylist(id, pulled_Tracks) {
+      return fetch("".concat(this.apiRoot, "/playlists/").concat(id, "/tracks"), {
+        method: 'DELETE',
+        headers: this.authorization,
+        body: JSON.stringify({
+          tracks: pulled_Tracks
+        })
+      });
     },
     latestCreatedPlaylist: function latestCreatedPlaylist(playlist_id) {
       var _this3 = this;
@@ -59313,10 +59340,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   mutations: {
     setSplitActive: function setSplitActive(state, _ref) {
       var playlist = _ref.playlist,
-          duration = _ref.duration;
+          duration = _ref.duration,
+          genres = _ref.genres;
       state.split.isActive = true;
       state.split.playlist = playlist;
       state.split.playlist.duration = duration;
+      state.split.playlist.genres = genres;
     },
     clearSplit: function clearSplit(state) {
       state.split.isActive = false;

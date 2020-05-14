@@ -13,7 +13,9 @@
         </div>
         <div class="grid-cell">
             <a href='#' class="grid-list-heading">{{name}}</a>
-            <span class="grid-list-text">New age, synthwave, hip hop...</span>
+            <span class="grid-list-text">
+                {{topGenres}}
+            </span>
         </div>
 
 
@@ -69,11 +71,29 @@ export default {
             playlistMergeData:null,
             duration:null,
             queueId:null,
-            isActive:false
+            isActive:false,
+            genres:[],
+            top5Genres:[]
         }
     },
     computed:{
         ...mapState(['current_playback','timer','mergeActive','playlistToMerge']),
+        artistsIds(){
+                        let IDs = []
+
+            if(this.playlist != null){
+            this.playlist.tracks.items.forEach(playlist => {
+                playlist.track.artists.forEach( artist => {
+                    IDs.push(artist.id);
+                })
+            })
+
+            }
+            return IDs;
+        },
+        topGenres(){
+             return `${this.top5Genres.join(', ').slice(0,32)}...`;  
+        },
         totalDuration(){
             let totalInMinutes = this.songMstoSeconds(this.duration);
 
@@ -143,10 +163,45 @@ export default {
                this.duration = total_ms;
             }
             
-        }).then( () =>{
-
-            
         })
+
+        const interval = setInterval( () => {
+            if(this.artistsIds.length > 0 ){
+                this.getPlaylistGenres(this.artistsIds).then( data => {
+                    console.log('hola')
+                    let genres = JSON.parse(data) 
+                    return ( this.genres = genres.reverse());
+                }).then( ()=>{
+
+                    for( var i = 0; i < 5; i++ ){
+                        
+                        let genres = this.genres[i].split(":");
+
+                        this.top5Genres.push(genres[0]);
+                    }
+
+                });
+
+                clearInterval(interval);
+
+            }
+        }, 100)
+
+        this.getPlaylistGenres(this.artistsIds).then( data => {
+                    console.log('hola')
+                let genres = JSON.parse(data) 
+               return ( this.genres = genres.reverse());
+                }).then( ()=>{
+
+                    for( var i = 0; i < 5; i++ ){
+                        let genres = this.genres[i].split(":");
+
+                        this.top5Genres.push(genres[0]);
+                    }
+
+        });
+
+      
         
     },
     methods:{
@@ -262,7 +317,8 @@ export default {
 
         splitThis(){
 
-            this.setSplitActive({playlist:this.playlist,duration:this.totalDuration})
+            this.setSplitActive({playlist:this.playlist,duration:this.totalDuration, genres:this.top5Genres})
+
         }
         
     }

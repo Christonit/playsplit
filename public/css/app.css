@@ -11771,13 +11771,13 @@ li[draggable=true] {
   transition: all 100ms ease;
 }
 
-.accordion-title:hover .split-edit {
+.accordion-btn:hover .split-edit {
   right: -40px;
   opacity: 1;
   pointer-events: initial;
 }
 
-.accordion-title:hover .split-edit:hover {
+.accordion-btn:hover .split-edit:hover {
   color: rgba(255, 255, 255, 0.97);
 }
 
