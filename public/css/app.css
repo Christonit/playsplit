@@ -11669,6 +11669,91 @@ input {
   display: none;
 }
 
+.tracks-container {
+  padding: 0;
+  height: auto;
+}
+
+.track-row-header {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.track-row-header .track-row-cell {
+  color: rgba(255, 255, 255, 0.97);
+}
+
+.track-row {
+  text-decoration: none;
+  list-style: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.track-row:last-child {
+  border-bottom: none;
+}
+
+.track-row .btn-options {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 8px;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 8px;
+  line-height: 0;
+  max-height: 32px;
+  font-size: 24px;
+  margin: auto;
+}
+
+.track-row .btn-options:hover {
+  color: rgba(255, 255, 255, 0.97);
+}
+
+.track-row:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.track-row:hover .track-row-cell {
+  color: rgba(255, 255, 255, 0.97);
+}
+
+.track-row-cell {
+  padding: 16px 0;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.5);
+  display: inline-block;
+}
+
+.track-rows-container {
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.track-row-cell:nth-child(1) {
+  width: 40px;
+  text-align: center;
+}
+
+.track-row-cell:nth-child(2) {
+  width: 45%;
+}
+
+.track-row-cell:nth-child(3) {
+  width: 30%;
+}
+
+.track-row-cell:nth-child(4) {
+  width: 80px;
+  text-align: center;
+}
+
 .split-body {
   display: grid;
   width: 100%;

@@ -211,7 +211,8 @@ export default {
         'addMergeDurationMs',
         'setSelectedToMerge',
         'substractMergeDurationMs',
-        'setSplitActive'
+        'setSplitActive',
+        'setDetailPlaylist'
         ]),
         preservationControl($event){
 
@@ -243,7 +244,7 @@ export default {
                     }
             });
         },
-        expandOrMerge(){
+        expandOrMerge(e){
 
             if(this.mergeActive){
                  let el = this.$refs.playlist_preview
@@ -275,7 +276,9 @@ export default {
                 }
 
             }else{
-                console.log('Expaaaaand')
+
+                this.inspectPlaylist(e);
+                
             }
         },
         activateMerge(){
@@ -315,9 +318,16 @@ export default {
             e.stopPropagation();   
         },
 
-        splitThis(){
+        splitThis(e){
 
             this.setSplitActive({playlist:this.playlist,duration:this.totalDuration, genres:this.top5Genres})
+            e.stopPropagation();
+        },
+        inspectPlaylist(e){
+            let detail = this.playlist;
+            let genres = this.top5Genres;
+            this.setDetailPlaylist({detail,genres})
+            e.stopPropagation();
 
         }
         

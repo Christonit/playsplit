@@ -31,6 +31,7 @@ import spotify from './spotify/core.js';
 import EditNamePopUp from './components/modals/edit-name.vue';
 import {mapState} from 'vuex';
 import SplitOverview from './components/playlists/split/split-overview.vue';
+import PlaylistDetail from './components/playlists/playlist-detail.vue';
 
 Vue.use(Vuex);
 
@@ -56,10 +57,11 @@ const app = new Vue({
         StatsTable,
         EditNamePopUp,
         Quickmerge,
-        SplitOverview
+        SplitOverview,
+        PlaylistDetail
     },
     computed:{
-        ...mapState(['isModalOpen','mergeActive','split','splitPlaylistModal'])
+        ...mapState(['isModalOpen','mergeActive','split','splitPlaylistModal','detailPlaylist'])
     },
     created(){
      

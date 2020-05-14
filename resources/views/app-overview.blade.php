@@ -7,7 +7,7 @@
 
         <playlist-dashboard  :get-playlist-info='getPlaylistInfo'></playlist-dashboard>
         <split-overview  v-if="split.isActive"></split-overview>
-        <!-- <split-overview></split-overview> -->
+        <playlist-detail  v-if="detailPlaylist.isActive"></playlist-detail>
         
     </div>
     <stats-table></stats-table>

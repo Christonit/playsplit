@@ -37,6 +37,11 @@ const store = new Vuex.Store({
     split:{
         isActive:false,
         playlist:null
+    },
+    detailPlaylist:{
+        isActive:false,
+        detail:null,
+        genres:null
     }
   },
   getters:{
@@ -55,6 +60,7 @@ const store = new Vuex.Store({
         state.split.isActive = false
         state.split.playlists = [];
     },
+    
     setMergeActive(state, payload){
         state.mergeActive = payload
     },
@@ -99,6 +105,14 @@ const store = new Vuex.Store({
     },
     setUserData(state, payload){
         state.user = payload;
+    },
+    setDetailPlaylist(state, payload){
+        state.detailPlaylist.isActive = true;
+        state.detailPlaylist.detail = payload.detail;
+        state.detailPlaylist.genres = payload.genres;
+    },
+    unsetDetailPlaylist(state){
+        state.detailPlaylist.isActive = false;
     },
     setCurrentPlaylist(state, payload){
         state.currentPlaylist = payload;

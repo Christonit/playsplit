@@ -1,0 +1,88 @@
+.tracks-container{
+    padding: 0;
+    height: auto;
+    // overflow-y: scroll;
+    div{
+    }
+}
+.track-row-header{
+    font-size: 16px;
+    font-weight: 500;
+    // padding: 0;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.track-row-header .track-row-cell{
+    color: $white900;
+        
+}
+
+.track-row{
+    text-decoration: none;
+    list-style: none;
+    border-bottom: 1px solid $white100;
+    position: relative;
+    
+
+    &:last-child{
+        border-bottom: none;
+    }
+    
+    .btn-options{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 8px;
+        background-color: transparent;
+        color: $white500;
+        border: none;
+        padding: 8px;
+        line-height: 0;
+        max-height: 32px;
+        font-size: 24px;
+        margin: auto;
+
+        &:hover{
+            color: $white900;
+        }
+    }
+
+}
+
+.track-row:hover{
+    background-color: $white100;
+}
+.track-row:hover .track-row-cell{
+    color: $white900;
+}
+
+.track-row-cell{
+    padding: 16px 0;
+    @include text-14;
+    color: $white500;
+    display: inline-block;
+}
+
+.track-rows-container{
+    padding: 0;
+    border: 1px solid $white100;
+
+}
+
+.track-row-cell:nth-child(1){
+    width: 40px;
+    text-align: center;
+}
+.track-row-cell:nth-child(2){
+    width: 45%;
+}
+.track-row-cell:nth-child(3){
+    // width: auto;
+    width: 30%;
+}
+.track-row-cell:nth-child(4){
+    // width: auto;
+    width: 80px;
+    text-align: center;
+}
