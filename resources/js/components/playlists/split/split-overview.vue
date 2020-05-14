@@ -34,7 +34,7 @@
                             @end="onEnd" 
                             >
                             <li class="split-original-row" v-for="(playlist,key) in playlist_og" 
-                                :key="key" :data-id="playlist.track.id">
+                                :key="key" :id="playlist.track.id">
                                 <span class="split-original-cell">{{key + 1}}</span>
                                 <span class="split-original-cell">{{playlist.track.name}}...</span>
                                 <span class="split-original-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
@@ -75,7 +75,7 @@
                 class="accordion" ref="playlist_2" id="playlist_2" data-name="House workout" data-open="true">
     
                     <div class='accordion-item' v-for="(playlist,key) in playlist_2.content" 
-                        :key="key" :data-id="playlist.track.id" :data-key="key">
+                        :key="key" :id="playlist.track.id" :data-key="key">
                         <span class="accordion-cell">{{key + 1}}</span>
                         <span class="accordion-cell">{{playlist.track.name}}</span>
                         <span class="accordion-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
@@ -108,7 +108,7 @@
                 class="accordion" ref="playlist_3" id="playlist_3" data-name="House workout" data-open="false">
                     
                     <div class='accordion-item' v-for="(playlist,key) in playlist_3.content" 
-                        :key="key" :data-id="playlist.track.id" :data-key="key">
+                        :key="key" :id="playlist.track.id" :data-key="key">
                         <span class="accordion-cell">{{key + 1}}</span>
                         <span class="accordion-cell">{{playlist.track.name}}</span>
                         <span class="accordion-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
@@ -143,7 +143,7 @@
                 class="accordion" ref="playlist_4" id="playlist_4" data-name="House workout" data-open="false">
                     
                     <div class='accordion-item' v-for="(playlist,key) in playlist_4.content" 
-                        :key="key" :data-id="playlist.track.id" :data-key="key">
+                        :key="key" :id="playlist.track.id" :data-key="key">
                         <span class="accordion-cell">{{key + 1}}</span>
                         <span class="accordion-cell">{{playlist.track.name}}</span>
                         <span class="accordion-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
@@ -255,9 +255,11 @@ export default {
     data(){
         return {
                 splits_active:4,
+                test:'',
                 split_options:{name:'split',pull:true},
                 split_body_height:0,
                 playlist_og:[],
+                pulled_tracks:[],
                 isOpen:true,
                 playlist_2:{
                     name:'',
@@ -273,7 +275,7 @@ export default {
                 },
                 genres: null,
                 top5Genres: [],
-                emptySplitNames:false
+                emptySplitNames:false,
         }
     },
     mixins:[functions],
@@ -299,26 +301,24 @@ export default {
         },
 
         checkIfSplitEmpty(){
-            console.log('Init')
             
             if( this.splits_active == 2 & this.playlist_2.content.length == 0 ){
-                console.log('2')
 
                 return true;
+
             }
             
             if( this.splits_active == 3 & (this.playlist_2.content.length == 0 || this.playlist_3.content.length == 0) ){
-                console.log('3')
 
                 return true;
+
             }
             if( this.splits_active == 4 & (this.playlist_2.content.length == 0 || this.playlist_3.content.length == 0 || this.playlist_4.content.length == 0) ){
-                console.log('3')
+                
                 return true;
+
             }
             
-                console.log('end')
-
                 return false;
             
         }
@@ -408,11 +408,63 @@ export default {
                 el.forEach(item =>{
                     item.classList.add('to-drop');
                 })
-                console.log('its true');
             }
           
         },
         onEnd(evt){
+
+
+            if(evt.pullMode == true & evt.to.parentNode.getAttribute('class') == "splits-container"){
+                let  pulled_el = evt.items;
+
+                if(pulled_el.length > 0){
+
+                    let tracks = evt.clones;
+                    
+                    tracks.forEach( el =>{
+                        let id = el.getAttribute('id');
+                        this.pulled_tracks.push(id);
+                    })
+
+
+                }else{
+
+                    let id = evt.clone.getAttribute('id');
+                    this.pulled_tracks.push(id);
+                    
+                }
+               
+            } 
+            
+            if(evt.pullMode == true & (evt.to.parentNode.getAttribute('class') == "split-original-body" & evt.from.getAttribute('class') == "accordion") ){
+                let  pulled_el = evt.newIndicies;
+
+                if(pulled_el.length >= 1){
+                        let tracks = evt.clones;
+
+                        let indexes = []
+
+                        tracks.forEach( el => {
+                            
+                            let id = el.getAttribute('id');
+                            let track = this.pulled_tracks.indexOf( id );
+                            this.pulled_tracks.splice(id,1);
+
+                        })
+
+                }
+                
+                if(pulled_el.length == 0){
+
+                    let id = evt.clone.getAttribute('id');
+
+                    let index = this.pulled_tracks.indexOf(id);
+
+                    this.pulled_tracks.splice(index,1);
+
+                }
+
+            }
 
             let el = document.querySelectorAll('.accordion-item[data-key="0"]');
             if(el.length > 0){
@@ -423,7 +475,6 @@ export default {
                         item.classList.remove('to-drop');
 
                     })
-                console.log('Za warudo');
 
                 },1000)
                
@@ -474,17 +525,14 @@ export default {
 
             }
             if(this.splits_active == 2){
-                console.log(accordions.length)
                 el.style.height = (this.split_body_height - (56 * 2)) + "px"
                 
             }
 
             if(this.splits_active == 3){
                 el.style.height = (this.split_body_height - (58.325* 3)) + "px"
-               console.log(accordions.length)
             }
             if( this.splits_active == 4){
-                console.log(accordions.length)
                 el.style.height = (this.split_body_height - (59.75 * 4)) + "px"
             }
 
@@ -564,16 +612,29 @@ export default {
             split_name.forEach((split, index) => {
                 this.createPlaylist(split).then(id => {
                     this.addTracksToPlaylist(id,split_uris[index])
-                }).then(()=>{
-                    this.clearSplit();
+                    return id;
+                }).then((playlist_id)=>{
+                    this.latestCreatedPlaylist(playlist_id)   
+                }).then( ()=>{
+                    let uris = [];
+                    this.pulled_tracks.forEach(track => {
+                        let uri = {uri:`spotify:track:${track}`};
+                        uris.push(uri);
+                    });
+                    // let obj = JSON.stringify({tracks:uris});
+                    // console.log(obj)
+                    this.removeTrackFromPlaylist(this.split.playlist.id, uris);
                 })
                 // console.log(split);
                 // console.log(split_uris[index]);
 
             });
 
+            this.clearSplit();
+
             return split_name;
         },
+        
         createPlaylist(split_name){
            return fetch(`https://api.spotify.com/v1/users/${this.$store.state.user.spotify_id}/playlists`,{
                 method:'POST',
@@ -593,7 +654,6 @@ export default {
             })
             .then(response => {
                 let data = JSON.parse(response)
-               
                 return data.id
 
             })

@@ -164,7 +164,7 @@ export default {
                         
                         // Force rerender for last added playlist or force a page reload.
                         this.clearMerge()
-                        this.fetchLatestMerge(id);
+                        this.latestCreatedPlaylist(id);
 
                     }
 
@@ -174,26 +174,6 @@ export default {
             
             })
 
-        },
-        fetchLatestMerge(id){
-                fetch(`https://api.spotify.com/v1/playlists/${id}`,{
-                        method:'GET',
-                        headers:this.authorization
-                        }).
-                        then(response => {
-                            let status = response.status
-
-                            if( status == 200  || status == 201){
-                                return response.text();
-                            };
-                        })
-                        .then( data => {
-                            let playlist = JSON.parse(data);
-
-                            this.$store.commit('addLatestPlaylist', playlist)
-
-
-                        });
         },
         deletePlaylist(playlist_id){
             return fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/followers`,{

@@ -2835,12 +2835,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       splits_active: 4,
+      test: '',
       split_options: {
         name: 'split',
         pull: true
       },
       split_body_height: 0,
       playlist_og: [],
+      pulled_tracks: [],
       isOpen: true,
       playlist_2: {
         name: '',
@@ -2876,24 +2878,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return IDs;
     },
     checkIfSplitEmpty: function checkIfSplitEmpty() {
-      console.log('Init');
-
       if (this.splits_active == 2 & this.playlist_2.content.length == 0) {
-        console.log('2');
         return true;
       }
 
       if (this.splits_active == 3 & (this.playlist_2.content.length == 0 || this.playlist_3.content.length == 0)) {
-        console.log('3');
         return true;
       }
 
       if (this.splits_active == 4 & (this.playlist_2.content.length == 0 || this.playlist_3.content.length == 0 || this.playlist_4.content.length == 0)) {
-        console.log('3');
         return true;
       }
 
-      console.log('end');
       return false;
     }
   }),
@@ -2973,10 +2969,51 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         el.forEach(function (item) {
           item.classList.add('to-drop');
         });
-        console.log('its true');
       }
     },
     onEnd: function onEnd(evt) {
+      var _this2 = this;
+
+      if (evt.pullMode == true & evt.to.parentNode.getAttribute('class') == "splits-container") {
+        var pulled_el = evt.items;
+
+        if (pulled_el.length > 0) {
+          var tracks = evt.clones;
+          tracks.forEach(function (el) {
+            var id = el.getAttribute('id');
+
+            _this2.pulled_tracks.push(id);
+          });
+        } else {
+          var id = evt.clone.getAttribute('id');
+          this.pulled_tracks.push(id);
+        }
+      }
+
+      if (evt.pullMode == true & (evt.to.parentNode.getAttribute('class') == "split-original-body" & evt.from.getAttribute('class') == "accordion")) {
+        var _pulled_el = evt.newIndicies;
+
+        if (_pulled_el.length >= 1) {
+          var _tracks = evt.clones;
+          var indexes = [];
+
+          _tracks.forEach(function (el) {
+            var id = el.getAttribute('id');
+
+            var track = _this2.pulled_tracks.indexOf(id);
+
+            _this2.pulled_tracks.splice(id, 1);
+          });
+        }
+
+        if (_pulled_el.length == 0) {
+          var _id = evt.clone.getAttribute('id');
+
+          var index = this.pulled_tracks.indexOf(_id);
+          this.pulled_tracks.splice(index, 1);
+        }
+      }
+
       var el = document.querySelectorAll('.accordion-item[data-key="0"]');
 
       if (el.length > 0) {
@@ -2984,7 +3021,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           el.forEach(function (item) {
             item.classList.remove('to-drop');
           });
-          console.log('Za warudo');
         }, 1000);
       }
     },
@@ -3020,22 +3056,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       if (this.splits_active == 2) {
-        console.log(accordions.length);
         el.style.height = this.split_body_height - 56 * 2 + "px";
       }
 
       if (this.splits_active == 3) {
         el.style.height = this.split_body_height - 58.325 * 3 + "px";
-        console.log(accordions.length);
       }
 
       if (this.splits_active == 4) {
-        console.log(accordions.length);
         el.style.height = this.split_body_height - 59.75 * 4 + "px";
       }
     },
     createSplit: function createSplit() {
-      var _this2 = this;
+      var _this3 = this;
 
       var split_name = [];
       var split_uris = [];
@@ -3095,14 +3128,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       split_name.forEach(function (split, index) {
-        _this2.createPlaylist(split).then(function (id) {
-          _this2.addTracksToPlaylist(id, split_uris[index]);
+        _this3.createPlaylist(split).then(function (id) {
+          _this3.addTracksToPlaylist(id, split_uris[index]);
+
+          return id;
+        }).then(function (playlist_id) {
+          _this3.latestCreatedPlaylist(playlist_id);
         }).then(function () {
-          _this2.clearSplit();
+          var uris = [];
+
+          _this3.pulled_tracks.forEach(function (track) {
+            var uri = {
+              uri: "spotify:track:".concat(track)
+            };
+            uris.push(uri);
+          }); // let obj = JSON.stringify({tracks:uris});
+          // console.log(obj)
+
+
+          _this3.removeTrackFromPlaylist(_this3.split.playlist.id, uris);
         }); // console.log(split);
         // console.log(split_uris[index]);
 
       });
+      this.clearSplit();
       return split_name;
     },
     createPlaylist: function createPlaylist(split_name) {
@@ -3314,29 +3363,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             // Force rerender for last added playlist or force a page reload.
             _this.clearMerge();
 
-            _this.fetchLatestMerge(id);
+            _this.latestCreatedPlaylist(id);
           }
         });
-      });
-    },
-    fetchLatestMerge: function fetchLatestMerge(id) {
-      var _this2 = this;
-
-      fetch("https://api.spotify.com/v1/playlists/".concat(id), {
-        method: 'GET',
-        headers: this.authorization
-      }).then(function (response) {
-        var status = response.status;
-
-        if (status == 200 || status == 201) {
-          return response.text();
-        }
-
-        ;
-      }).then(function (data) {
-        var playlist = JSON.parse(data);
-
-        _this2.$store.commit('addLatestPlaylist', playlist);
       });
     },
     deletePlaylist: function deletePlaylist(playlist_id) {
@@ -43522,7 +43551,7 @@ var render = function() {
                     {
                       key: key,
                       staticClass: "split-original-row",
-                      attrs: { "data-id": playlist.track.id }
+                      attrs: { id: playlist.track.id }
                     },
                     [
                       _c("span", { staticClass: "split-original-cell" }, [
@@ -43634,7 +43663,7 @@ var render = function() {
                     {
                       key: key,
                       staticClass: "accordion-item",
-                      attrs: { "data-id": playlist.track.id, "data-key": key }
+                      attrs: { id: playlist.track.id, "data-key": key }
                     },
                     [
                       _c("span", { staticClass: "accordion-cell" }, [
@@ -43746,10 +43775,7 @@ var render = function() {
                         {
                           key: key,
                           staticClass: "accordion-item",
-                          attrs: {
-                            "data-id": playlist.track.id,
-                            "data-key": key
-                          }
+                          attrs: { id: playlist.track.id, "data-key": key }
                         },
                         [
                           _c("span", { staticClass: "accordion-cell" }, [
@@ -43864,10 +43890,7 @@ var render = function() {
                         {
                           key: key,
                           staticClass: "accordion-item",
-                          attrs: {
-                            "data-id": playlist.track.id,
-                            "data-key": key
-                          }
+                          attrs: { id: playlist.track.id, "data-key": key }
                         },
                         [
                           _c("span", { staticClass: "accordion-cell" }, [
@@ -59037,6 +59060,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return genres;
       });
     },
+    removeTrackFromPlaylist: function removeTrackFromPlaylist(id, pulled_Tracks) {
+      return fetch("".concat(this.apiRoot, "/playlists/").concat(id, "/tracks"), {
+        method: 'DELETE',
+        headers: this.authorization,
+        body: JSON.stringify({
+          tracks: pulled_Tracks
+        })
+      });
+    },
     prepGenresArray: function prepGenresArray(albums_ids_array) {
       var _this = this;
 
@@ -59083,8 +59115,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
       return promise;
     },
-    playSong: function playSong(context) {
+    latestCreatedPlaylist: function latestCreatedPlaylist(playlist_id) {
       var _this3 = this;
+
+      return fetch("https://api.spotify.com/v1/playlists/".concat(playlist_id), this._GET).then(function (response) {
+        var status = response.status;
+
+        if (status == 200 || status == 201) {
+          return response.text();
+        }
+
+        ;
+      }).then(function (data) {
+        var playlist = JSON.parse(data);
+
+        _this3.$store.commit('addLatestPlaylist', playlist);
+      });
+    },
+    playSong: function playSong(context) {
+      var _this4 = this;
 
       if (this.$store.state.activePlaylist == false) {
         fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
@@ -59094,13 +59143,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             context_uri: context
           })
         }).then(function () {
-          _this3.player.getCurrentState().then(function (state) {
+          _this4.player.getCurrentState().then(function (state) {
             var _state$track_window = state.track_window,
                 current_track = _state$track_window.current_track,
                 next_tracks = _state$track_window.next_tracks,
                 previous_tracks = _state$track_window.previous_tracks;
 
-            _this3.$store.commit('setCurrentPlayback', {
+            _this4.$store.commit('setCurrentPlayback', {
               current_track: current_track,
               next_tracks: next_tracks,
               previous_tracks: previous_tracks
