@@ -25,7 +25,8 @@
                         :img="playlist.images" 
                         :name="playlist.name" 
                         :uri="playlist.uri" 
-                        :get-playlist-info='getPlaylistInfo'>
+                        :get-playlist-info='getPlaylistInfo'
+                        >
                     </grid-item>
 
                 </template>
@@ -39,26 +40,60 @@
 <script>
 
 import GridItem from './grid-item.vue';
+import functions from '../../spotify/function'
 import {mapState, mapMutations} from 'vuex';
 
 export default {
     name:'playlist-dashboard',
-    props:['getPlaylistInfo'],
+    mixins:[functions],
+    // props:['getPlaylistInfo'],
     components:{
         GridItem
     },
     mounted(){
+
+        let interval = setInterval( ()=> {
+            if(this.playlists.length > 0){
+                let first_playlist_id = this.playlists[0].id;
+
+                this.getPlaylistInfo(first_playlist_id).then( data => {
+                    let arr = [];
+
+                    data.tracks.items.map( item => {
+                        arr.push(item.track.id);
+                    })
+
+                    return arr;
+                })
+                .then( data => this.addStatPlaylist(data) ).then( ()=>{
+                    this.getAudioFeatures(this.playlistsIdString).then( data => this.setAudioFeatures(data) )
+                })
+
+                clearInterval(interval)
+            }
+        },100);
+        // let first_playlist_id = this.playlists[0].id;
+        // console.log(first_playlist_id)
+        // this.getPlaylistInfo(first_playlist_id).then( data => {
+        //     console.log(data)
+        // })
+
         
     },
     computed:{
-        ...mapState(['playlists','mergeActive'])
+        ...mapState(['playlists','mergeActive','statSelectedPlaylist']),
+        playlistsIdString(){
+            return this.statSelectedPlaylist.join(',')
+        },
     },
     methods:{
         ...mapMutations(['emptyPlaylistToMerge',
         'setMergeActive',
         'setMergeName',
         'openCloseModal',
-        'emptyPlaylistToDelete']),
+        'emptyPlaylistToDelete',
+        'addStatPlaylist',
+        'setAudioFeatures']),
         openModal(){
             this.openCloseModal(0)
         },
@@ -73,7 +108,9 @@ export default {
             this.emptyPlaylistToDelete();        
             this.setMergeActive(false);
             this.setMergeName('');
-            
+        
+        },
+        inspectAudioFeatures(){
 
         }
     }

@@ -5,7 +5,10 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    apiRoot:'https://api.spotify.com/v1',
     user: '',
+    statSelectedPlaylist:'',
+    audioFeatures:null,
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist:false,
@@ -50,6 +53,9 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    setAudioFeatures(state, payload){
+        state.audioFeatures = payload;
+    },
     setSplitActive(state,{playlist,duration, genres}){
         state.split.isActive = true
         state.split.playlist = playlist;
@@ -75,6 +81,9 @@ const store = new Vuex.Store({
     },
     removePlaylist(state,payload){
         state.playlists.splice(payload,1)
+    },
+    addStatPlaylist(state,payload){
+        state.statSelectedPlaylist = payload
     },
     //Merge related mutations
     addMergeDurationMs(state,payload){
