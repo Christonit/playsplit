@@ -5,12 +5,12 @@
     <sidebar-comp></sidebar-comp>
     <div class="app-container">
 
-        <playlist-dashboard  :get-playlist-info='getPlaylistInfo'></playlist-dashboard>
+        <playlist-dashboard  ></playlist-dashboard>
         <split-overview  v-if="split.isActive"></split-overview>
         <playlist-detail  v-if="detailPlaylist.isActive"></playlist-detail>
         
     </div>
-    <stats-table></stats-table>
+    <stats-table v-if="statSelectedPlaylist.length > 0"></stats-table>
     <quickmerge v-if="mergeActive"></quickmerge>
     <playback-controller></playback-controller>
 

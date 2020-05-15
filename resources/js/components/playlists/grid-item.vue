@@ -60,7 +60,7 @@ import {mapState,mapMutations} from 'vuex';
 
 export default {
     name:'grid-item',
-    props:['id','uri', 'name', 'img','tracks-total','getPlaylistInfo'],
+    props:['id','uri', 'name', 'img','tracks-total'],
     mixins:[functions],
     components:{
         toggleBtn
@@ -136,6 +136,13 @@ export default {
                 }
                 return arr;
         },
+        trackIDs(){
+                let arr = []
+                if(this.playlistsTracks.length > 0){
+                    this.playlistsTracks.map( item =>arr.push(item.id) );
+                }
+                return arr;
+        },
 
         toggleCheck(){
             let el = this.$refs.playlist_preview;
@@ -168,7 +175,6 @@ export default {
         const interval = setInterval( () => {
             if(this.artistsIds.length > 0 ){
                 this.getPlaylistGenres(this.artistsIds).then( data => {
-                    console.log('hola')
                     let genres = JSON.parse(data) 
                     return ( this.genres = genres.reverse());
                 }).then( ()=>{
@@ -188,7 +194,6 @@ export default {
         }, 100)
 
         this.getPlaylistGenres(this.artistsIds).then( data => {
-                    console.log('hola')
                 let genres = JSON.parse(data) 
                return ( this.genres = genres.reverse());
                 }).then( ()=>{

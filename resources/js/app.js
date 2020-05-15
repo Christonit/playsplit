@@ -61,7 +61,7 @@ const app = new Vue({
         PlaylistDetail
     },
     computed:{
-        ...mapState(['isModalOpen','mergeActive','split','splitPlaylistModal','detailPlaylist'])
+        ...mapState(['isModalOpen','mergeActive','split','splitPlaylistModal','detailPlaylist','statSelectedPlaylist'])
     },
     created(){
      

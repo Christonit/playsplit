@@ -2299,7 +2299,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'grid-item',
-  props: ['id', 'uri', 'name', 'img', 'tracks-total', 'getPlaylistInfo'],
+  props: ['id', 'uri', 'name', 'img', 'tracks-total'],
   mixins: [_spotify_function_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
   components: {
     toggleBtn: _utilities_toggle_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -2375,6 +2375,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       return arr;
     },
+    trackIDs: function trackIDs() {
+      var arr = [];
+
+      if (this.playlistsTracks.length > 0) {
+        this.playlistsTracks.map(function (item) {
+          return arr.push(item.id);
+        });
+      }
+
+      return arr;
+    },
     toggleCheck: function toggleCheck() {
       var el = this.$refs.playlist_preview;
 
@@ -2406,7 +2417,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var interval = setInterval(function () {
       if (_this2.artistsIds.length > 0) {
         _this2.getPlaylistGenres(_this2.artistsIds).then(function (data) {
-          console.log('hola');
           var genres = JSON.parse(data);
           return _this2.genres = genres.reverse();
         }).then(function () {
@@ -2421,7 +2431,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     }, 100);
     this.getPlaylistGenres(this.artistsIds).then(function (data) {
-      console.log('hola');
       var genres = JSON.parse(data);
       return _this2.genres = genres.reverse();
     }).then(function () {
@@ -2550,7 +2559,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _grid_item_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./grid-item.vue */ "./resources/js/components/playlists/grid-item.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _spotify_function__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../spotify/function */ "./resources/js/spotify/function.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2595,17 +2605,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'playlist-dashboard',
-  props: ['getPlaylistInfo'],
+  mixins: [_spotify_function__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  // props:['getPlaylistInfo'],
   components: {
     GridItem: _grid_item_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  mounted: function mounted() {},
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['playlists', 'mergeActive'])),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapMutations"])(['emptyPlaylistToMerge', 'setMergeActive', 'setMergeName', 'openCloseModal', 'emptyPlaylistToDelete']), {
+  mounted: function mounted() {
+    var _this = this;
+
+    var interval = setInterval(function () {
+      if (_this.playlists.length > 0) {
+        var first_playlist_id = _this.playlists[0].id;
+
+        _this.getPlaylistInfo(first_playlist_id).then(function (data) {
+          var arr = [];
+          data.tracks.items.map(function (item) {
+            arr.push(item.track.id);
+          });
+          return arr;
+        }).then(function (data) {
+          return _this.addStatPlaylist(data);
+        }).then(function () {
+          _this.getAudioFeatures(_this.playlistsIdString).then(function (data) {
+            return _this.setAudioFeatures(data);
+          });
+        });
+
+        clearInterval(interval);
+      }
+    }, 100); // let first_playlist_id = this.playlists[0].id;
+    // console.log(first_playlist_id)
+    // this.getPlaylistInfo(first_playlist_id).then( data => {
+    //     console.log(data)
+    // })
+  },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['playlists', 'mergeActive', 'statSelectedPlaylist']), {
+    playlistsIdString: function playlistsIdString() {
+      return this.statSelectedPlaylist.join(',');
+    }
+  }),
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['emptyPlaylistToMerge', 'setMergeActive', 'setMergeName', 'openCloseModal', 'emptyPlaylistToDelete', 'addStatPlaylist', 'setAudioFeatures']), {
     openModal: function openModal() {
       this.openCloseModal(0);
     },
@@ -2623,7 +2668,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.emptyPlaylistToDelete();
       this.setMergeActive(false);
       this.setMergeName('');
-    }
+    },
+    inspectAudioFeatures: function inspectAudioFeatures() {}
   })
 });
 
@@ -3632,6 +3678,14 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _stat_row_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stat-row.vue */ "./resources/js/components/stats-table/stat-row.vue");
+/* harmony import */ var _spotify_function__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../spotify/function */ "./resources/js/spotify/function.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -3643,10 +3697,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'stats-table',
+  data: function data() {
+    return {
+      audio_features: ''
+    };
+  },
+  mixins: [_spotify_function__WEBPACK_IMPORTED_MODULE_1__["default"]],
   components: {
     StatRow: _stat_row_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  mounted: function mounted() {},
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['statSelectedPlaylist']), {
+    playlistsIdString: function playlistsIdString() {
+      return this.statSelectedPlaylist.join(',');
+    },
+    audioFeatures: function audioFeatures() {
+      // if( this.playlistsIdString.length > 0){
+      return this.playlistsIdString;
+      return this.getFeatures(this.playlistsIdString); // }
+    }
+  }),
+  watch: {},
+  methods: {
+    getFeatures: function getFeatures(id) {
+      var features = null;
+      console.log(id);
+      this.getAudioFeatures(id).then(function (data) {
+        features = data;
+        console.log('xxx');
+      });
+      return features;
+    }
   }
 });
 
@@ -58135,7 +58220,7 @@ var app = new Vue({
     SplitOverview: _components_playlists_split_split_overview_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
     PlaylistDetail: _components_playlists_playlist_detail_vue__WEBPACK_IMPORTED_MODULE_11__["default"]
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['isModalOpen', 'mergeActive', 'split', 'splitPlaylistModal', 'detailPlaylist'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['isModalOpen', 'mergeActive', 'split', 'splitPlaylistModal', 'detailPlaylist', 'statSelectedPlaylist'])),
   created: function created() {
     this.$store.dispatch('getUserData');
   }
@@ -59376,11 +59461,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   name: 'functions',
   data: function data() {
     return {
-      apiRoot: 'https://api.spotify.com/v1',
+      // apiRoot:'https://api.spotify.com/v1',
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['player']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['player', 'apiRoot']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['authorization']), {
     _GET: function _GET() {
       return {
         method: 'GET',
@@ -59401,6 +59486,35 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   methods: {
+    getAudioFeatures: function getAudioFeatures(tracks) {
+      return fetch("".concat(this.apiRoot, "/audio-features/?ids=").concat(tracks), this._GET).then(function (res) {
+        if (res.status == 200) {
+          var data = res.text();
+          return data;
+        }
+      }).then(function (data) {
+        return JSON.parse(data);
+      });
+    },
+    getPlaylistInfo: function getPlaylistInfo(playlist_id) {
+      var _this = this;
+
+      return fetch("".concat(this.apiRoot, "/playlists/").concat(playlist_id), {
+        method: 'GET',
+        headers: {
+          Authorization: "Bearer ".concat(this.$store.state.user.access_token)
+        }
+      }).then(function (response) {
+        console.log(_this.apiRoot);
+
+        if (response.status == 200) {
+          return response.text();
+        }
+      }).then(function (data) {
+        var payload = JSON.parse(data);
+        return payload;
+      });
+    },
     getGenre: function getGenre(artist_id) {
       return fetch("".concat(this.apiRoot, "/artists/").concat(artist_id), this._GET).then(function (response) {
         return response.text();
@@ -59411,11 +59525,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     prepGenresArray: function prepGenresArray(albums_ids_array) {
-      var _this = this;
+      var _this2 = this;
 
       var arr = [];
       albums_ids_array.forEach(function (item) {
-        _this.getGenre(item).then(function (data) {
+        _this2.getGenre(item).then(function (data) {
           arr.push(data);
         })["catch"](function (err) {
           return console.log(err);
@@ -59424,10 +59538,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return arr;
     },
     getPlaylistGenres: function getPlaylistGenres(albums_ids_array) {
-      var _this2 = this;
+      var _this3 = this;
 
       var promise = new Promise(function (resolve, reject) {
-        var rawGenresList = _this2.prepGenresArray(albums_ids_array);
+        var rawGenresList = _this3.prepGenresArray(albums_ids_array);
 
         var genres = null;
         var interval = setInterval(function () {
@@ -59444,7 +59558,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': _this2.csrf
+            'X-CSRF-TOKEN': _this3.csrf
           },
           body: JSON.stringify(data)
         }).then(function (response) {
@@ -59467,7 +59581,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     latestCreatedPlaylist: function latestCreatedPlaylist(playlist_id) {
-      var _this3 = this;
+      var _this4 = this;
 
       return fetch("https://api.spotify.com/v1/playlists/".concat(playlist_id), this._GET).then(function (response) {
         var status = response.status;
@@ -59480,11 +59594,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }).then(function (data) {
         var playlist = JSON.parse(data);
 
-        _this3.$store.commit('addLatestPlaylist', playlist);
+        _this4.$store.commit('addLatestPlaylist', playlist);
       });
     },
     playSong: function playSong(context) {
-      var _this4 = this;
+      var _this5 = this;
 
       if (this.$store.state.activePlaylist == false) {
         fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
@@ -59494,13 +59608,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             context_uri: context
           })
         }).then(function () {
-          _this4.player.getCurrentState().then(function (state) {
+          _this5.player.getCurrentState().then(function (state) {
             var _state$track_window = state.track_window,
                 current_track = _state$track_window.current_track,
                 next_tracks = _state$track_window.next_tracks,
                 previous_tracks = _state$track_window.previous_tracks;
 
-            _this4.$store.commit('setCurrentPlayback', {
+            _this5.$store.commit('setCurrentPlayback', {
               current_track: current_track,
               next_tracks: next_tracks,
               previous_tracks: previous_tracks
@@ -59619,7 +59733,10 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
 var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   state: {
+    apiRoot: 'https://api.spotify.com/v1',
     user: '',
+    statSelectedPlaylist: '',
+    audioFeatures: null,
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist: false,
@@ -59667,6 +59784,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     }
   },
   mutations: {
+    setAudioFeatures: function setAudioFeatures(state, payload) {
+      state.audioFeatures = payload;
+    },
     setSplitActive: function setSplitActive(state, _ref) {
       var playlist = _ref.playlist,
           duration = _ref.duration,
@@ -59694,6 +59814,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     removePlaylist: function removePlaylist(state, payload) {
       state.playlists.splice(payload, 1);
+    },
+    addStatPlaylist: function addStatPlaylist(state, payload) {
+      state.statSelectedPlaylist = payload;
     },
     //Merge related mutations
     addMergeDurationMs: function addMergeDurationMs(state, payload) {

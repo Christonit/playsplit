@@ -3,12 +3,12 @@ export default {
     name:'functions',
     data(){
         return {
-            apiRoot:'https://api.spotify.com/v1',
+            // apiRoot:'https://api.spotify.com/v1',
             csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     },
     computed:{
-        ...mapState(['player']),
+        ...mapState(['player','apiRoot']),
         ...mapGetters(['authorization']),
         _GET(){
             return {
@@ -32,6 +32,38 @@ export default {
         
     },
     methods:{
+        getAudioFeatures(tracks){
+            return fetch(`${this.apiRoot}/audio-features/?ids=${tracks}`,this._GET)
+                    .then(res => {
+                        
+                        if(res.status == 200){
+                            let data = res.text();
+                            return data;
+                        }
+
+                    }).then( data => JSON.parse(data))
+        },
+        getPlaylistInfo(playlist_id){
+            return fetch(`${this.apiRoot}/playlists/${playlist_id}`, {
+                method: 'GET',
+                headers:{
+                    Authorization:`Bearer ${this.$store.state.user.access_token}`
+                }
+            }).then( response => {
+                
+                console.log(this.apiRoot)
+
+              if(response.status == 200){
+                return response.text()
+              }
+                
+            }).then(data => {
+                let payload = JSON.parse(data);
+                return payload;
+    
+            })
+    
+          },
         getGenre(artist_id){
             return fetch(`${this.apiRoot}/artists/${artist_id}`,this._GET)
                     .then(response => response.text())
