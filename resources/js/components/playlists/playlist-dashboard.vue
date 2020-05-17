@@ -66,17 +66,20 @@ export default {
                     return arr;
                 })
                 .then( data => this.addStatPlaylist(data) ).then( ()=>{
-                    this.getAudioFeatures(this.playlistsIdString).then( data => this.setAudioFeatures(data) )
+                        // console.log(this.playlistsIdString);
+                    this.getAudioFeatures(this.playlistsIdString).then( data => {
+
+                        this.setAudioFeatures({
+                            name: this.playlists[0].name,
+                            content: data.audio_features
+                            }) 
+                        
+                    })
                 })
 
                 clearInterval(interval)
             }
         },100);
-        // let first_playlist_id = this.playlists[0].id;
-        // console.log(first_playlist_id)
-        // this.getPlaylistInfo(first_playlist_id).then( data => {
-        //     console.log(data)
-        // })
 
         
     },

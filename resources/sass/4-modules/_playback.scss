@@ -1,10 +1,9 @@
 #playback{
-    @include flex-between-center;
+    display: block;
     background-color: $el-1;
-    position: fixed;
     bottom: 0;
     width: 100%;
-    padding: 16px 24px;
+    margin: 16px 0;
 }
 
 .current-song{
@@ -12,15 +11,20 @@
 }
 
 .current-song-img{
-    height: 48px;
+    height: auto;
     @include b-radius-4;
-    width: 48px;
+    width: 32px;
     margin-right: 16px;
 }
 
 .playback-controller{
     width: 666px;
     @include flex-between-center
+}
+.playback-btn-container{
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
 }
 .playback-timer{
     @include flex-align-center;

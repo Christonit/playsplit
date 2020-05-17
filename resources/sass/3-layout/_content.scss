@@ -13,10 +13,9 @@ aside{
     padding: 24px;
     max-width: 268px;
     width: 100%;
-    height: calc(100vh - 10.5rem);
+    height: calc(100vh - 4.5rem);
     position: fixed;
     top: 66px;
-    background-color: $black;
     z-index: 10;
 
 }
@@ -26,7 +25,7 @@ aside{
     bottom: 24px;
     width: 240px;
 
-    img{
+    .current-playlist-img{
         width: 100%;
         @include b-radius-4;
     }
@@ -37,7 +36,7 @@ aside{
     margin-right: auto;
     position: fixed;
     top: 72px;
-    height: calc(100vh - 11rem);
+    height: calc(100vh - 5rem);
     overflow-y: scroll;
     width: 100%;
 }

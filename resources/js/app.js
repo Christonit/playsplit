@@ -24,7 +24,6 @@ import TopNav from './components/top-nav.vue';
 import SidebarComp from './components/sidebar.vue';
 import Quickmerge from './components/quickmerge.vue';
 import PlaylistDashboard from './components/playlists/playlist-dashboard.vue';
-import PlaybackController from './components/playback-component.vue';
 import StatsTable from './components/stats-table/stats-table.vue';
 import store from './store/index.js';
 import spotify from './spotify/core.js';
@@ -52,7 +51,6 @@ const app = new Vue({
     components:{
         TopNav,
         SidebarComp,
-        PlaybackController,
         PlaylistDashboard,
         StatsTable,
         EditNamePopUp,

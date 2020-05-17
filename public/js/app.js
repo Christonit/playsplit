@@ -2124,16 +2124,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2290,10 +2280,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
 
 
 
@@ -2320,11 +2306,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var IDs = [];
 
       if (this.playlist != null) {
-        this.playlist.tracks.items.forEach(function (playlist) {
-          playlist.track.artists.forEach(function (artist) {
-            IDs.push(artist.id);
+        if (this.playlist.tracks.total > 0) {
+          this.playlist.tracks.items.forEach(function (playlist) {
+            playlist.track.artists.forEach(function (artist) {
+              IDs.push(artist.id);
+            });
           });
-        });
+        }
       }
 
       return IDs;
@@ -2420,28 +2408,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           var genres = JSON.parse(data);
           return _this2.genres = genres.reverse();
         }).then(function () {
-          for (var i = 0; i < 5; i++) {
-            var genres = _this2.genres[i].split(":");
+          _this2.genres.map(function (genre, key) {
+            if (key < 5) {
+              var genres = genre.split(":");
 
-            _this2.top5Genres.push(genres[0]);
-          }
+              _this2.top5Genres.push(genres[0]);
+            }
+          });
         });
 
         clearInterval(interval);
       }
     }, 100);
-    this.getPlaylistGenres(this.artistsIds).then(function (data) {
-      var genres = JSON.parse(data);
-      return _this2.genres = genres.reverse();
-    }).then(function () {
-      for (var i = 0; i < 5; i++) {
-        var genres = _this2.genres[i].split(":");
-
-        _this2.top5Genres.push(genres[0]);
-      }
-    });
   },
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'setSelectedToMerge', 'substractMergeDurationMs', 'setSplitActive', 'setDetailPlaylist']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'setSelectedToMerge', 'substractMergeDurationMs', 'setSplitActive', 'setDetailPlaylist', 'setAudioFeatures']), {
     preservationControl: function preservationControl($event) {
       if ($event == true) {
         this.restoreFromDeletePlaylistBatch(); // el.filter((element,key) => {
@@ -2543,6 +2523,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         genres: genres
       });
       e.stopPropagation();
+    },
+    inspectStats: function inspectStats(e) {
+      var _this6 = this;
+
+      var track_ids = this.trackIDs.join(',');
+      this.getAudioFeatures(track_ids).then(function (data) {
+        _this6.setAudioFeatures({
+          name: _this6.playlist.name,
+          content: data.audio_features
+        });
+      });
+      e.stopPropagation();
     }
   })
 });
@@ -2632,18 +2624,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }).then(function (data) {
           return _this.addStatPlaylist(data);
         }).then(function () {
+          // console.log(this.playlistsIdString);
           _this.getAudioFeatures(_this.playlistsIdString).then(function (data) {
-            return _this.setAudioFeatures(data);
+            _this.setAudioFeatures({
+              name: _this.playlists[0].name,
+              content: data.audio_features
+            });
           });
         });
 
         clearInterval(interval);
       }
-    }, 100); // let first_playlist_id = this.playlists[0].id;
-    // console.log(first_playlist_id)
-    // this.getPlaylistInfo(first_playlist_id).then( data => {
-    //     console.log(data)
-    // })
+    }, 100);
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['playlists', 'mergeActive', 'statSelectedPlaylist']), {
     playlistsIdString: function playlistsIdString() {
@@ -3589,7 +3581,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/playback-component.vue */ "./resources/js/components/playback-component.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -3630,10 +3623,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'sidebar-comp',
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['currentPlaylist'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['currentPlaylist'])),
+  components: {
+    PlaybackController: _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   mounted: function mounted() {}
 });
 
@@ -3663,7 +3663,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'stat-row'
+  name: 'stat-row',
+  props: ['featureValue', 'feature'],
+  computed: {
+    percentage: function percentage() {
+      if (this.feature == 'tempo') {
+        var min = 20;
+        var max = 200;
+        return (this.featureValue - min) * 100 / (max - min);
+      }
+
+      return this.featureValue * 100;
+    }
+  }
 });
 
 /***/ }),
@@ -3696,43 +3708,126 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'stats-table',
   data: function data() {
-    return {
-      audio_features: ''
-    };
+    return {};
   },
   mixins: [_spotify_function__WEBPACK_IMPORTED_MODULE_1__["default"]],
   components: {
     StatRow: _stat_row_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  mounted: function mounted() {},
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['statSelectedPlaylist']), {
-    playlistsIdString: function playlistsIdString() {
-      return this.statSelectedPlaylist.join(',');
-    },
-    audioFeatures: function audioFeatures() {
-      // if( this.playlistsIdString.length > 0){
-      return this.playlistsIdString;
-      return this.getFeatures(this.playlistsIdString); // }
+  mounted: function mounted() {// this.getFeatures(this.playlistsIdString);
+  },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['playlist_analisys']), {
+    features: function features() {
+      var acoustic = 0;
+      var danceability = 0;
+      var energy = 0;
+      var vocals = 0;
+      var valence = 0;
+      var tempo = 0;
+      var total = this.playlist_analisys.audio_features.length;
+      this.playlist_analisys.audio_features.forEach(function (audio) {
+        acoustic += audio.acousticness;
+        danceability += audio.danceability;
+        energy += audio.energy;
+        vocals += audio.instrumentalness;
+        valence += audio.valence;
+        tempo += audio.tempo;
+      });
+      return {
+        acoustic: acoustic / total,
+        danceability: danceability / total,
+        energy: energy / total,
+        vocals: vocals / total,
+        valence: valence / total,
+        tempo: tempo / total
+      };
     }
   }),
   watch: {},
-  methods: {
-    getFeatures: function getFeatures(id) {
-      var features = null;
-      console.log(id);
-      this.getAudioFeatures(id).then(function (data) {
-        features = data;
-        console.log('xxx');
-      });
-      return features;
-    }
-  }
+  methods: {}
 });
 
 /***/ }),
@@ -43398,53 +43493,27 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "playback-controller" }, [
-      _c("div", { staticClass: "playback-timer" }, [
-        _vm.passed_time != 0
-          ? _c("span", { staticClass: "text-small" }, [
-              _vm._v(
-                _vm._s(_vm.passed_time.min) +
-                  " : " +
-                  _vm._s(_vm.passed_time.sec)
-              )
-            ])
-          : _vm._e(),
-        _vm._v(" "),
-        _vm._m(0),
-        _vm._v(" "),
-        _c("span", { staticClass: "text-small" }, [
-          _vm._v(
-            _vm._s(
-              _vm.playback.current_track.duration.min +
-                ":" +
-                _vm.playback.current_track.duration.sec
-            )
-          )
-        ])
-      ]),
+    _c("div", { staticClass: "playback-btn-container" }, [
+      _c(
+        "button",
+        { staticClass: "material-icons", on: { click: _vm.prevTrack } },
+        [_vm._v("skip_previous")]
+      ),
       _vm._v(" "),
-      _c("div", { staticClass: "playback-btn-container" }, [
-        _c(
-          "button",
-          { staticClass: "material-icons", on: { click: _vm.prevTrack } },
-          [_vm._v("skip_previous")]
-        ),
-        _vm._v(" "),
-        _c(
-          "button",
-          { staticClass: "material-icons", on: { click: _vm.playStop } },
-          [_vm._v("play_arrow")]
-        ),
-        _vm._v(" "),
-        _c(
-          "button",
-          { staticClass: "material-icons", on: { click: _vm.nextTrack } },
-          [_vm._v("skip_next")]
-        )
-      ])
+      _c(
+        "button",
+        { staticClass: "material-icons", on: { click: _vm.playStop } },
+        [_vm._v("play_arrow")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        { staticClass: "material-icons", on: { click: _vm.nextTrack } },
+        [_vm._v("skip_next")]
+      )
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "up-next text-right" }, [
+    _c("div", { staticClass: "up-next" }, [
       _c("span", { staticClass: "legend text" }, [_vm._v("UP NEXT")]),
       _vm._v(" "),
       _c("p", { staticClass: "my-0" }, [
@@ -43457,16 +43526,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "progress-bar" }, [
-      _c("span", { staticClass: "progress-bar-tracker" })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -43556,11 +43616,30 @@ var render = function() {
       _c("div", { staticClass: "grid-actions-container" }, [
         !_vm.mergeActive
           ? _c("div", { staticClass: "btn-container" }, [
-              _c("button", { on: { click: _vm.activateMerge } }, [
-                _vm._v("merge")
-              ]),
+              _c(
+                "button",
+                {
+                  attrs: { name: "btn-merge" },
+                  on: { click: _vm.activateMerge }
+                },
+                [_vm._v("merge")]
+              ),
               _vm._v(" "),
-              _c("button", { on: { click: _vm.splitThis } }, [_vm._v("split")])
+              _c(
+                "button",
+                { attrs: { name: "btn-split" }, on: { click: _vm.splitThis } },
+                [_vm._v("split")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn-action material-icons",
+                  attrs: { name: "btn-inspect-stats" },
+                  on: { click: _vm.inspectStats }
+                },
+                [_vm._v("bar_chart")]
+              )
             ])
           : _vm._e(),
         _vm._v(" "),
@@ -44587,8 +44666,10 @@ var render = function() {
     _vm._m(0),
     _vm._v(" "),
     _vm.currentPlaylist != null
-      ? _c("div", { staticClass: "playlist-playing-container" }, [
-          _c("div", [
+      ? _c(
+          "div",
+          { staticClass: "playlist-playing-container" },
+          [
             _c("span", { staticClass: "legend" }, [
               _vm._v("\n                NOW PLAYING\n            ")
             ]),
@@ -44603,11 +44684,17 @@ var render = function() {
                 _vm._v(" "),
                 _c("span", [_vm._v("50/" + _vm._s(_vm.currentPlaylist.tracks))])
               ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("img", { attrs: { src: _vm.currentPlaylist.cover, alt: "" } })
-        ])
+            ),
+            _vm._v(" "),
+            _c("img", {
+              staticClass: "current-playlist-img",
+              attrs: { src: _vm.currentPlaylist.cover, alt: "" }
+            }),
+            _vm._v(" "),
+            _c("playback-controller")
+          ],
+          1
+        )
       : _vm._e()
   ])
 }
@@ -44650,32 +44737,34 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "stats-row" }, [
-      _c("span", { staticClass: " text" }, [_vm._v("Energy")]),
+  return _c("div", { staticClass: "stats-row" }, [
+    _c("span", { staticClass: " text" }, [_vm._t("feauture-name")], 2),
+    _vm._v(" "),
+    _c("div", { staticClass: "d-flex justify-content-between flex-wrap" }, [
+      _c("div", { staticClass: "stat-bar" }, [
+        _c("hr", {
+          staticClass: "stat-position-tracker",
+          style: "left:" + _vm.percentage + "%"
+        })
+      ]),
       _vm._v(" "),
-      _c("div", { staticClass: "d-flex justify-content-between flex-wrap" }, [
-        _c("div", { staticClass: "stat-bar" }, [
-          _c("hr", { staticClass: "stat-position-tracker" })
-        ]),
-        _vm._v(" "),
-        _c("b", { staticClass: " label text-left highlight" }, [
-          _vm._v("Chill")
-        ]),
-        _vm._v(" "),
-        _c("b", { staticClass: " label text-right highlight" }, [
-          _vm._v("No chill")
-        ])
-      ])
+      _c(
+        "b",
+        { staticClass: " label text-left highlight" },
+        [_vm._t("feauture-left-treshold")],
+        2
+      ),
+      _vm._v(" "),
+      _c(
+        "b",
+        { staticClass: " label text-right highlight" },
+        [_vm._t("feauture-right-treshold")],
+        2
+      )
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -44700,7 +44789,163 @@ var render = function() {
   return _c("div", { attrs: { id: "music-stats" } }, [
     _c("h3", { staticClass: "subtitle" }, [_vm._v("Playlists stats")]),
     _vm._v(" "),
-    _c("div", { staticClass: "stats-table" }, [_c("stat-row")], 1)
+    _vm.playlist_analisys.audio_features != null
+      ? _c(
+          "div",
+          { staticClass: "stats-table" },
+          [
+            _c("div", { staticClass: "stats-row" }, [
+              _c("span", { staticClass: "text" }, [_vm._v("Inspecting")]),
+              _vm._v(" "),
+              _c("b", { staticClass: "highlight" }, [
+                _vm._v(_vm._s(_vm.playlist_analisys.name))
+              ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "stat-row",
+              {
+                attrs: {
+                  feature: "acoustic",
+                  "feature-value": _vm.features.acoustic
+                }
+              },
+              [
+                _c("template", { slot: "feauture-name" }, [
+                  _vm._v("\n                Acousticness\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-left-treshold" }, [
+                  _vm._v("\n                Electric\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-right-treshold" }, [
+                  _vm._v("\n                Acoustic\n            ")
+                ])
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "stat-row",
+              {
+                attrs: {
+                  feature: "vocals",
+                  "feature-value": _vm.features.vocals
+                }
+              },
+              [
+                _c("template", { slot: "feauture-name" }, [
+                  _vm._v("\n                Vocals\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-left-treshold" }, [
+                  _vm._v("\n                A lot\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-right-treshold" }, [
+                  _vm._v("\n                Instrumental\n            ")
+                ])
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "stat-row",
+              {
+                attrs: {
+                  feature: "danceability",
+                  "feature-value": _vm.features.danceability
+                }
+              },
+              [
+                _c("template", { slot: "feauture-name" }, [
+                  _vm._v("\n                Danceability\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-left-treshold" }, [
+                  _vm._v("\n                Not danceable\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-right-treshold" }, [
+                  _vm._v("\n                Danceable\n            ")
+                ])
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "stat-row",
+              {
+                attrs: {
+                  feature: "energy",
+                  "feature-value": _vm.features.energy
+                }
+              },
+              [
+                _c("template", { slot: "feauture-name" }, [
+                  _vm._v("\n                Energy\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-left-treshold" }, [
+                  _vm._v("\n                Chill\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-right-treshold" }, [
+                  _vm._v("\n                Energetic\n            ")
+                ])
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "stat-row",
+              {
+                attrs: { feature: "tempo", "feature-value": _vm.features.tempo }
+              },
+              [
+                _c("template", { slot: "feauture-name" }, [
+                  _vm._v("\n                Tempo\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-left-treshold" }, [
+                  _vm._v("\n                Slow\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-right-treshold" }, [
+                  _vm._v("\n                Fast\n            ")
+                ])
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "stat-row",
+              {
+                attrs: {
+                  feature: "valence",
+                  "feature-value": _vm.features.valence
+                }
+              },
+              [
+                _c("template", { slot: "feauture-name" }, [
+                  _vm._v("\n                Mood\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-left-treshold" }, [
+                  _vm._v("\n                Down\n            ")
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "feauture-right-treshold" }, [
+                  _vm._v("\n                Uplifting\n            ")
+                ])
+              ],
+              2
+            )
+          ],
+          1
+        )
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -58151,13 +58396,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_sidebar_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/sidebar.vue */ "./resources/js/components/sidebar.vue");
 /* harmony import */ var _components_quickmerge_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/quickmerge.vue */ "./resources/js/components/quickmerge.vue");
 /* harmony import */ var _components_playlists_playlist_dashboard_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/playlists/playlist-dashboard.vue */ "./resources/js/components/playlists/playlist-dashboard.vue");
-/* harmony import */ var _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/playback-component.vue */ "./resources/js/components/playback-component.vue");
-/* harmony import */ var _components_stats_table_stats_table_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/stats-table/stats-table.vue */ "./resources/js/components/stats-table/stats-table.vue");
-/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./store/index.js */ "./resources/js/store/index.js");
-/* harmony import */ var _spotify_core_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./spotify/core.js */ "./resources/js/spotify/core.js");
-/* harmony import */ var _components_modals_edit_name_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/modals/edit-name.vue */ "./resources/js/components/modals/edit-name.vue");
-/* harmony import */ var _components_playlists_split_split_overview_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/playlists/split/split-overview.vue */ "./resources/js/components/playlists/split/split-overview.vue");
-/* harmony import */ var _components_playlists_playlist_detail_vue__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/playlists/playlist-detail.vue */ "./resources/js/components/playlists/playlist-detail.vue");
+/* harmony import */ var _components_stats_table_stats_table_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/stats-table/stats-table.vue */ "./resources/js/components/stats-table/stats-table.vue");
+/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./store/index.js */ "./resources/js/store/index.js");
+/* harmony import */ var _spotify_core_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./spotify/core.js */ "./resources/js/spotify/core.js");
+/* harmony import */ var _components_modals_edit_name_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/modals/edit-name.vue */ "./resources/js/components/modals/edit-name.vue");
+/* harmony import */ var _components_playlists_split_split_overview_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/playlists/split/split-overview.vue */ "./resources/js/components/playlists/split/split-overview.vue");
+/* harmony import */ var _components_playlists_playlist_detail_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/playlists/playlist-detail.vue */ "./resources/js/components/playlists/playlist-detail.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -58196,7 +58440,6 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 
 
-
 Vue.use(vuex__WEBPACK_IMPORTED_MODULE_0__["default"]); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 /**
@@ -58207,18 +58450,17 @@ Vue.use(vuex__WEBPACK_IMPORTED_MODULE_0__["default"]); // Vue.component('example
 
 var app = new Vue({
   el: '#app',
-  store: _store_index_js__WEBPACK_IMPORTED_MODULE_7__["default"],
-  mixins: [_spotify_core_js__WEBPACK_IMPORTED_MODULE_8__["default"]],
+  store: _store_index_js__WEBPACK_IMPORTED_MODULE_6__["default"],
+  mixins: [_spotify_core_js__WEBPACK_IMPORTED_MODULE_7__["default"]],
   components: {
     TopNav: _components_top_nav_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     SidebarComp: _components_sidebar_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
-    PlaybackController: _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
     PlaylistDashboard: _components_playlists_playlist_dashboard_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
-    StatsTable: _components_stats_table_stats_table_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
-    EditNamePopUp: _components_modals_edit_name_vue__WEBPACK_IMPORTED_MODULE_9__["default"],
+    StatsTable: _components_stats_table_stats_table_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    EditNamePopUp: _components_modals_edit_name_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     Quickmerge: _components_quickmerge_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    SplitOverview: _components_playlists_split_split_overview_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
-    PlaylistDetail: _components_playlists_playlist_detail_vue__WEBPACK_IMPORTED_MODULE_11__["default"]
+    SplitOverview: _components_playlists_split_split_overview_vue__WEBPACK_IMPORTED_MODULE_9__["default"],
+    PlaylistDetail: _components_playlists_playlist_detail_vue__WEBPACK_IMPORTED_MODULE_10__["default"]
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['isModalOpen', 'mergeActive', 'split', 'splitPlaylistModal', 'detailPlaylist', 'statSelectedPlaylist'])),
   created: function created() {
@@ -59736,7 +59978,10 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     apiRoot: 'https://api.spotify.com/v1',
     user: '',
     statSelectedPlaylist: '',
-    audioFeatures: null,
+    playlist_analisys: {
+      name: null,
+      audio_features: null
+    },
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist: false,
@@ -59784,13 +60029,16 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     }
   },
   mutations: {
-    setAudioFeatures: function setAudioFeatures(state, payload) {
-      state.audioFeatures = payload;
+    setAudioFeatures: function setAudioFeatures(state, _ref) {
+      var name = _ref.name,
+          content = _ref.content;
+      state.playlist_analisys.name = name;
+      state.playlist_analisys.audio_features = content;
     },
-    setSplitActive: function setSplitActive(state, _ref) {
-      var playlist = _ref.playlist,
-          duration = _ref.duration,
-          genres = _ref.genres;
+    setSplitActive: function setSplitActive(state, _ref2) {
+      var playlist = _ref2.playlist,
+          duration = _ref2.duration,
+          genres = _ref2.genres;
       state.split.isActive = true;
       state.split.playlist = playlist;
       state.split.playlist.duration = duration;

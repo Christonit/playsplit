@@ -10958,10 +10958,9 @@ aside {
   padding: 24px;
   max-width: 268px;
   width: 100%;
-  height: calc(100vh - 10.5rem);
+  height: calc(100vh - 4.5rem);
   position: fixed;
   top: 66px;
-  background-color: #111417;
   z-index: 10;
 }
 
@@ -10971,7 +10970,7 @@ aside {
   width: 240px;
 }
 
-.playlist-playing-container img {
+.playlist-playing-container .current-playlist-img {
   width: 100%;
   border-radius: 4px;
 }
@@ -10981,7 +10980,7 @@ aside {
   margin-right: auto;
   position: fixed;
   top: 72px;
-  height: calc(100vh - 11rem);
+  height: calc(100vh - 5rem);
   overflow-y: scroll;
   width: 100%;
 }
@@ -11432,14 +11431,11 @@ input {
 }
 
 #playback {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: block;
   background-color: rgba(255, 255, 255, 0.05);
-  position: fixed;
   bottom: 0;
   width: 100%;
-  padding: 16px 24px;
+  margin: 16px 0;
 }
 
 .current-song {
@@ -11448,9 +11444,9 @@ input {
 }
 
 .current-song-img {
-  height: 48px;
+  height: auto;
   border-radius: 4px;
-  width: 48px;
+  width: 32px;
   margin-right: 16px;
 }
 
@@ -11459,6 +11455,12 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.playback-btn-container {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
 }
 
 .playback-timer {
@@ -11493,6 +11495,7 @@ input {
   height: 4px;
   margin: 12px 0;
   background-color: rgba(255, 255, 255, 0.3);
+  position: relative;
 }
 
 .stats-row {

@@ -8,26 +8,16 @@
             </span>
         </div>
 
-        <div class="playback-controller">
 
-            <div class="playback-timer">
-                <span class="text-small" v-if="passed_time != 0">{{ passed_time.min}} : {{ passed_time.sec}}</span>
-                <div class="progress-bar">
-                    <span class="progress-bar-tracker"></span>
-                </div>
-                <span class="text-small">{{ `${playback.current_track.duration.min}:${playback.current_track.duration.sec}` }}</span>
-            </div>
-
-            <div class="playback-btn-container">
-                <button class="material-icons" @click="prevTrack">skip_previous</button>
-                <button class="material-icons" @click="playStop">play_arrow</button>
-                <button class="material-icons" @click="nextTrack">skip_next</button>
-            </div>
+        <div class="playback-btn-container">
+            <button class="material-icons" @click="prevTrack">skip_previous</button>
+            <button class="material-icons" @click="playStop">play_arrow</button>
+            <button class="material-icons" @click="nextTrack">skip_next</button>
+        </div>
             
 
-        </div>
 
-        <div class="up-next text-right">
+        <div class="up-next">
             <span class="legend text">UP NEXT</span>
             <p class="my-0">{{playback.next_track.title}} - {{playback.next_track.artist}}</p>
         </div>

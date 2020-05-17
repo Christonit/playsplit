@@ -28,8 +28,9 @@
 
         <div class="grid-actions-container">
             <div class="btn-container" v-if="!mergeActive">
-                <button @click="activateMerge">merge</button>
-                <button @click="splitThis">split</button>
+                <button @click="activateMerge" name="btn-merge">merge</button>
+                <button @click="splitThis" name="btn-split">split</button>
+                <button @click="inspectStats"  class="btn-action material-icons" name="btn-inspect-stats">bar_chart</button>
             </div>
 
 
@@ -42,12 +43,7 @@
                 </toggle-btn>
             </div>
 
-            
 
-            <!-- <label for="toggle" class="toggle-label" v-else>
-                Preserve
-                <button class="btn-toggle active"> <hr/> </button>
-            </label> -->
             <span  class="material-icons btn-options">more_horiz</span>
         </div>
     </div>
@@ -77,17 +73,24 @@ export default {
         }
     },
     computed:{
-        ...mapState(['current_playback','timer','mergeActive','playlistToMerge']),
+        ...mapState([
+        'current_playback',
+        'timer',
+        'mergeActive',
+        'playlistToMerge']),
+
         artistsIds(){
                         let IDs = []
 
             if(this.playlist != null){
-            this.playlist.tracks.items.forEach(playlist => {
-                playlist.track.artists.forEach( artist => {
-                    IDs.push(artist.id);
-                })
-            })
+                if(this.playlist.tracks.total > 0){
+                    this.playlist.tracks.items.forEach(playlist => {
+                        playlist.track.artists.forEach( artist => {
+                            IDs.push(artist.id);
+                        })
+                    })
 
+                }
             }
             return IDs;
         },
@@ -156,6 +159,7 @@ export default {
             }
             
         }
+
         
     },
     mounted(){
@@ -178,35 +182,19 @@ export default {
                     let genres = JSON.parse(data) 
                     return ( this.genres = genres.reverse());
                 }).then( ()=>{
-
-                    for( var i = 0; i < 5; i++ ){
-                        
-                        let genres = this.genres[i].split(":");
-
-                        this.top5Genres.push(genres[0]);
-                    }
-
+                    this.genres.map((genre,key) => {
+                        if( key < 5){
+                            let genres = genre.split(":");
+                            this.top5Genres.push(genres[0]);
+                        }
+                    })
+                    
                 });
 
                 clearInterval(interval);
 
             }
         }, 100)
-
-        this.getPlaylistGenres(this.artistsIds).then( data => {
-                let genres = JSON.parse(data) 
-               return ( this.genres = genres.reverse());
-                }).then( ()=>{
-
-                    for( var i = 0; i < 5; i++ ){
-                        let genres = this.genres[i].split(":");
-
-                        this.top5Genres.push(genres[0]);
-                    }
-
-        });
-
-      
         
     },
     methods:{
@@ -217,7 +205,8 @@ export default {
         'setSelectedToMerge',
         'substractMergeDurationMs',
         'setSplitActive',
-        'setDetailPlaylist'
+        'setDetailPlaylist',
+        'setAudioFeatures'
         ]),
         preservationControl($event){
 
@@ -332,6 +321,20 @@ export default {
             let detail = this.playlist;
             let genres = this.top5Genres;
             this.setDetailPlaylist({detail,genres})
+            e.stopPropagation();
+
+        },
+         inspectStats(e){
+
+            let track_ids = this.trackIDs.join(',');
+            this.getAudioFeatures(track_ids).then( data => {
+
+                this.setAudioFeatures({
+                    name: this.playlist.name,
+                    content: data.audio_features
+                    }) 
+
+            })
             e.stopPropagation();
 
         }

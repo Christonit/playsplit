@@ -8,7 +8,10 @@ const store = new Vuex.Store({
     apiRoot:'https://api.spotify.com/v1',
     user: '',
     statSelectedPlaylist:'',
-    audioFeatures:null,
+    playlist_analisys:{
+        name:null,
+        audio_features:null
+    },
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist:false,
@@ -53,8 +56,9 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
-    setAudioFeatures(state, payload){
-        state.audioFeatures = payload;
+    setAudioFeatures(state, { name, content}){
+        state.playlist_analisys.name = name;
+        state.playlist_analisys.audio_features = content;
     },
     setSplitActive(state,{playlist,duration, genres}){
         state.split.isActive = true

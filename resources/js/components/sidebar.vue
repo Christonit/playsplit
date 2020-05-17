@@ -12,8 +12,8 @@
             </a>
         </div>
 
-        <div v-if="currentPlaylist != null " class="playlist-playing-container">
-            <div>
+        <!-- <div v-if="currentPlaylist != null " class="playlist-playing-container"> -->
+        <div  v-if="currentPlaylist != null" class="playlist-playing-container">
                 <span class="legend">
                     NOW PLAYING
                 </span>
@@ -25,20 +25,27 @@
                     <span>50/{{ currentPlaylist.tracks}}</span>
 
                 </div>
-            </div>
 
-            <img :src=" currentPlaylist.cover" alt="">
+            <img :src=" currentPlaylist.cover" alt="" class="current-playlist-img">
+            <playback-controller>
+            </playback-controller>
+
         </div>
+        
     </aside>
 </template>
 
 <script>
+import PlaybackController from '../components/playback-component.vue'
 import {mapState} from 'vuex';
 
     export default {
         name:'sidebar-comp',
         computed:{
             ...mapState(['currentPlaylist'])
+        },
+        components:{
+            PlaybackController,
         },
         mounted() {
         }
