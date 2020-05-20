@@ -7,8 +7,13 @@ body{
     margin-left: 32px;
     position: fixed;
     right: 2.5%;
-
+    top: 112px;
 }
+
+#music-stats .subtitle{
+    margin: 0 12px 20px;
+}
+
 aside{
     padding: 24px;
     max-width: 268px;
@@ -32,13 +37,15 @@ aside{
 }
 
 .app-container{
-    margin-left: 20px;
+    margin-left: 10px;
     margin-right: auto;
     position: fixed;
-    top: 72px;
-    height: calc(100vh - 5rem);
-    overflow-y: scroll;
+    top: 66px;
+    height: calc(100vh - 4.5rem);
+    overflow-y: hidden;
     width: 100%;
+
+
 }
 
 
@@ -49,6 +56,9 @@ aside{
     margin: auto ;
     position: relative;
     right: 10px;
+    height: 100%;
+    overflow: hidden;
+    padding: 40px 0 0;
     // width: 60%;
     // max-width: 960px;
     // min-width: 740px;
@@ -75,6 +85,7 @@ aside{
     left: -10px;
     height: 100%;
     top: 0;
+    padding:  40px 0;
     // right: 10px;
     &::-webkit-scrollbar {
         display: none;
@@ -86,6 +97,10 @@ aside{
 
 .section-body {
     position: relative;
+    overflow-y: scroll;
+    height: calc(100% - 48px);
+    margin-right: -20px;
+    padding-right: 3px;
 }
 
 
@@ -94,9 +109,16 @@ aside{
     @include flex-between-center;
     padding: 0 16px;
     flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: $black;
+    z-index: 1;
+
 }
 
 
 .section-header-description{
     width: 100%;
+    display: inline-block;
+    margin: 24px 0;
 }

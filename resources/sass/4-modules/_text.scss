@@ -1,3 +1,7 @@
+.subtitle{
+    font-size: 20px;
+}
+
 .text{
     @include text-14;
     color: $white500;
@@ -28,6 +32,8 @@
     padding: 4px 12px;
     margin: 0 8px;
     text-transform: capitalize;
+    line-height: 1.1;
+    display: inline-block;
     &:first-child{
         margin-left: 0;
     }

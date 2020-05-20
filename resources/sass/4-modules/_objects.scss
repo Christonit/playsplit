@@ -116,3 +116,49 @@ margin-left: 12px;
     position: absolute;
     z-index: -1
 }
+
+
+.btn-action:hover .tooltip{
+    opacity: 1;
+    background: $black;
+    min-width: 84px;
+    text-align: center;
+    padding: 8px;
+    width: auto;
+    max-width: 120px;
+    display: inline-block;
+    top: 36px;
+    // overflow: hidden;
+    font-size: 12px;
+    line-height: 1;
+    @include b-radius-8;
+    margin: auto;
+    left: -30px;
+}
+
+.tooltip::after{
+    width: 16px;
+    height: 8px;
+    content: " ";
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-image: url("../../img/arrow_left.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.tooltip::before{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    background-color: $el-12;
+    content: ' ';
+    @include b-radius-8;
+
+}

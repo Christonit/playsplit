@@ -36,7 +36,11 @@
                             <li class="split-original-row" v-for="(playlist,key) in playlist_og" 
                                 :key="key" :id="playlist.track.id">
                                 <span class="split-original-cell">{{key + 1}}</span>
-                                <span class="split-original-cell">{{playlist.track.name}}...</span>
+                                <span class="split-original-cell">
+                                    <span class="split-text">
+                                        {{playlist.track.name + ' - ' + join_artists(playlist.track.artists)}}
+                                    </span>
+                                </span>
                                 <span class="split-original-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
                             </li>
                         </draggable> 
@@ -169,10 +173,10 @@
 
                 <div id="split-footer" class="d-flex justify-content-end">
                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                    <label class="btn btn-secondary active" @click="split_options.pull = true">
+                    <label class="btn btn-toggle active" @click="split_options.pull = true">
                         <input type="radio" name="options" id="option1"  checked> Move
                     </label>
-                    <label class="btn btn-secondary">
+                    <label class="btn btn-toggle">
                         <input type="radio" name="options" id="option2" @click="split_options.pull = 'clone'"> Copy
                     </label>
                   
@@ -226,7 +230,8 @@ export default {
 
         this.split_body_height = elHeight;
 
-        this.$refs.og_playlist.style.maxHeight = (elHeight - (56*2)) + "px"
+        this.$refs.og_playlist.style.maxHeight = (elHeight - (40 * 3)) + "px"
+        this.$refs.og_playlist.style.minHeight = (elHeight - (40 * 3)) + "px"
         this.setHeight()
 
 
@@ -265,6 +270,7 @@ export default {
     mixins:[functions],
     computed:{
         ...mapState(['split','isModalOpen','splitPlaylistName']),
+        
         timePrinter(){
             let time = this.split.playlist.duration.hours;
             let hours = (time != 0 ? `${time} ${( time > 1 ? 'hours': 'hour')}`: '')
@@ -304,7 +310,16 @@ export default {
     },
     methods:{
         ...mapMutations(['clearSplit']),
-        
+        join_artists(artists){
+            
+            let arr = [];
+
+            artists.map( artist => {
+                arr.push(artist.name);
+            })
+
+            return arr.join(', ');
+        },
         splitHeight(quantity){
            this.splits_active = quantity;
            this.setHeight();
@@ -502,15 +517,15 @@ export default {
 
             }
             if(this.splits_active == 2){
-                el.style.height = (this.split_body_height - (56 * 2)) + "px"
+                el.style.height = (this.split_body_height - (40 * 3)) + "px"
                 
             }
 
             if(this.splits_active == 3){
-                el.style.height = (this.split_body_height - (58.325* 3)) + "px"
+                el.style.height = (this.split_body_height - (46.125* 4)) + "px"
             }
             if( this.splits_active == 4){
-                el.style.height = (this.split_body_height - (59.75 * 4)) + "px"
+                el.style.height = (this.split_body_height - (50 * 5)) + "px"
             }
 
 

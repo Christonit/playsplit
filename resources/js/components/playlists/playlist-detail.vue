@@ -2,19 +2,18 @@
 
     
     <section id="playlist-detail" class='action-container'>
-        <div class="section-header">
-            <h2 class="title">{{detailPlaylist.detail.name}}</h2> 
+        <div class="section-header ">
+            <h2 class="title my-0">{{detailPlaylist.detail.name}}</h2> 
             <div class="btn-container d-inline-flex align-items-center">
                 <button class=" mx-3 btn btn-secondary" @click="close">Close</button>
                 <button class="btn btn-primary">Split</button>
             </div>
 
-            <div class="section-header-description">
-                <p class="text">Created by <b class="highlight">{{detailPlaylist.detail.owner.display_name}}</b> • {{detailPlaylist.detail.tracks.items.length}} tracks • {{timePrinter}}</p>
+            
+                <p class="text section-header-description">Created by <b class="highlight">{{detailPlaylist.detail.owner.display_name}}</b> • {{detailPlaylist.detail.tracks.items.length}} tracks • {{timePrinter}}</p>
                 <div class="top-genres-container" >
                     <span class="pill" v-for="genre in detailPlaylist.genres">{{genre}}</span>
                 </div>
-            </div>            
         </div>
 
         <div class="tracks-container" ref="tracks_container">

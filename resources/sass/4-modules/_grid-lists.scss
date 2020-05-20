@@ -4,9 +4,12 @@
     @include b-radius-4;
     @include border-white-1;
     padding: 16px 16px;
-    overflow: hidden;
     height: 76px;
     margin: 8px 0;
+    overflow: hidden;
+    &:last-child{
+        margin-bottom: 172px;
+    }
 }
 .grid-list-item.active{
     background: $el-1;
@@ -14,6 +17,9 @@
 }
 .grid-list-item:hover{
     border: 1px solid $white300;
+    background-color: $el-1;
+    overflow: visible;
+
 }
 
 
@@ -50,8 +56,16 @@
     max-width: 216px;
     text-align: left;
 }
+.grid-list-item .grid-cell:nth-child(3){
+    min-width: 72px;
+    max-width: 72px;
+    text-align: left;
+}
 .grid-list-item .grid-cell:nth-child(4){
     margin: 0 0 0 24px;
+    min-width: 88px;
+    max-width: 88px;
+
 }
 
 .grid-list-item .grid-cell{

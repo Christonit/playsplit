@@ -6,7 +6,90 @@
 
 .btn{
     min-width: 120px;
+    &:active:focus{
+        border: none;
+        box-shadow: unset;
+    }
+    &:active{
+        border: none;
+        box-shadow: unset;
+    }
+    &:focus{
+        border: none;
+        box-shadow: unset;
+    }
+    &.focus{
+        border: none;
+        box-shadow: unset;
+    }
 }
+
+.btn-container .btn{
+    margin: 0 8px;
+
+    &:last-child{
+        margin-right: 8px;
+    }
+}
+
+
+.btn-secondary{
+    background-color: $el-4;
+    color: $white500;
+    border: none;
+    &:hover{
+        background-color: $el-12;
+        border: transparent;
+    }
+    &:focus{
+        background-color: $white300;
+        border: transparent;
+        box-shadow: unset;
+    }
+    &:active:focus{
+        background-color: $white300;
+        border: transparent;
+        box-shadow: unset;
+    }
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active:focus{
+    background-color: $white300;
+    border: transparent;
+    box-shadow: unset;
+}
+
+.btn-primary{
+    background-color: $cherry;
+    color: $black;
+    border: none;
+
+    &:hover{
+        background-color: $cherry40;
+        color: $black;
+
+    }
+    &:disabled{
+        background-color: $cherry20;
+        color: $black;
+
+    }
+    &:focus{
+        background-color: $cherry60;
+        color: $black;
+        border: none;
+        box-shadow: unset;
+
+    }
+}
+
+.btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled):active {
+    background-color: $cherry60;
+    color: $black;
+    border: none;
+    box-shadow: unset;
+}
+
 
 .btn-secondary.dropdown-toggle:focus {
     box-shadow: unset;
@@ -74,7 +157,101 @@ button.close{
 }
 
 .split-btn.active{
-    background: $white500;
+    background: $white300;
     border-color: transparent;
     color: $white900;
+}
+
+.btn-action{
+    background-size: 20px;
+    height: 24px;
+    width: 24px;
+    display: block;
+    background-color: unset;
+    border: none;
+    font-size: 20px;
+    background-repeat: no-repeat;
+    padding: 0;
+    background-position: center;
+    margin: 0 8px;
+    color: $white500;
+    position: relative;
+
+    &.merge{
+        background-image: url("../../img/merge-icon.svg");
+    }
+    &.split{
+        background-image: url("../../img/split-icon.svg");
+    }
+}
+
+.btn-options.material-icons{
+    font-size: 20px;
+    color: $white300;
+    cursor: pointer;
+
+    &:hover{
+        color: $white500;
+    }
+}
+.btn-action:hover{
+    color: $white900;
+
+    &.merge{
+        background-image: url("../../img/merge-icon-fill.svg");
+    }
+    &.split{
+        background-image: url("../../img/split-icon-fill.svg");
+    }
+}
+
+
+.view-type-toggle button{
+    padding: 4px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: $white300;
+
+    &:hover{
+        color: $white900;
+    }
+
+    &.active{
+        color: $white500;
+    }
+
+    &:first-child{
+        margin: 0 8px;
+    }
+}
+
+.btn-group-toggle .btn-toggle{
+    background-color: $white100;
+    @include b-radius-8;
+    min-width: 72px;
+    padding: 8px;
+    line-height: 1.15;
+    color: $white500;
+    &:active:focus{
+        border: none;
+        box-shadow: unset;
+    }
+    &:active{
+        border: none;
+        box-shadow: unset;
+    }
+}
+.btn-toggle.active{
+    background-color: $white300;
+    color: $white900;
+    @include b-radius-8;
+    &:active:focus{
+        border: none;
+        box-shadow: unset;
+    }
+    &:active{
+        border: none;
+        box-shadow: unset;
+    }
 }

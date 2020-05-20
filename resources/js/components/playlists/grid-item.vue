@@ -12,7 +12,7 @@
             </button>
         </div>
         <div class="grid-cell">
-            <a href='#' class="grid-list-heading">{{name}}</a>
+            <a href='#' class="grid-list-heading">{{playlist_name}}</a>
             <span class="grid-list-text">
                 {{topGenres}}
             </span>
@@ -23,14 +23,14 @@
             <span class="grid-list-text">{{tracksTotal}} tracks</span>
         </div>
         <div class="grid-cell">
-            <span class="grid-list-text">{{totalDuration.hours > 0 ? `${totalDuration.hours} hours` : ''}}  {{totalDuration.min}} min</span>
+            <span class="grid-list-text">{{totalDuration.hours > 0 ? `${totalDuration.hours} hrs` : ''}}  {{totalDuration.min}} min</span>
         </div>
 
         <div class="grid-actions-container">
             <div class="btn-container" v-if="!mergeActive">
-                <button @click="activateMerge" name="btn-merge">merge</button>
-                <button @click="splitThis" name="btn-split">split</button>
-                <button @click="inspectStats"  class="btn-action material-icons" name="btn-inspect-stats">bar_chart</button>
+                <button @click="activateMerge" name="btn-merge" class="btn-action merge"> <span class="tooltip">Merge</span> </button>
+                <button @click="splitThis" name="btn-split" class="btn-action split"> <span class="tooltip">Split</span></button>
+                <button @click="inspectStats"  class="btn-action" name="btn-inspect-stats"><span class="material-icons">bar_chart</span>  <span class="tooltip">Check stats</span></button>
             </div>
 
 
@@ -78,7 +78,13 @@ export default {
         'timer',
         'mergeActive',
         'playlistToMerge']),
+        playlist_name(){
+            if(this.name.length > 30){
+                return this.name.slice(0,28) + '...'
+            }
 
+            return this.name;
+        },
         artistsIds(){
                         let IDs = []
 
@@ -95,7 +101,11 @@ export default {
             return IDs;
         },
         topGenres(){
-             return `${this.top5Genres.join(', ').slice(0,32)}...`;  
+            if(this.top5Genres.join(', ').length > 30){
+                return `${this.top5Genres.join(', ').slice(0,28)}...`;  
+             }
+            
+             return this.top5Genres.join(', ');
         },
         totalDuration(){
             let totalInMinutes = this.songMstoSeconds(this.duration);

@@ -4,7 +4,7 @@
     grid: 2;
     grid-template-columns: repeat(2, 1fr);
     grid-column-gap: 24px;
-    height: calc(100% - 120px);
+    height: calc(96% - 112px);
 }
 
 
@@ -16,6 +16,7 @@
 
 .split-original-header .split-original-cell{
     color: $white900;
+    padding: 16px 0;
         
 }
 .split-original-body{
@@ -32,12 +33,21 @@
     text-decoration: none;
     list-style: none;
     border-bottom: 1px solid $white100;
+    position: relative;
+    display: flex;
     &:last-child{
         border-bottom: none;
     }
 }
+.split-original-row:hover{
+    background-color: $white200;
+    cursor: move;
+    span{
+        color: $cherry;
+    }
+}
 .split-original-cell{
-    padding: 16px 0;
+    padding: 12px 0;
     @include text-14;
     color: $white500;
     display: inline-block;
@@ -46,12 +56,32 @@
     width: 40px;
     text-align: center;
 }
+
 .split-original-cell:nth-child(2){
-    width: 60%;
+    width: 64%;
 }
+
+
+.split-original-body .split-original-cell:nth-child(2){
+    overflow: hidden;
+    position: relative;
+    height: 44px;
+    margin-right: 12px;
+    margin-left: 4px;
+
+}
+
+.split-text {
+    width: 100%;
+    white-space: nowrap;
+    position: absolute;
+    word-break: normal;
+    display: block;
+}
+
 .split-original-cell:last-child{
     // width: auto;
-    width: calc(38% - 40px);
+    width: calc(32% - 40px);
 }
 
 .split-controller{
@@ -76,7 +106,22 @@ li[draggable="true"]{
 }
 
 .track-selected{
-    background-color: blue;
+    background-color: $white100;
+
+    position: relative;
+    &::before{
+        position: absolute;
+        left: -1px;
+        content: 'drag_indicator';
+        font-family: "Material Icons";
+        font-size: 16px;
+        top: 0;
+        bottom: 0;
+        height: 20px;
+        color: $white500;
+        margin: auto;
+        line-height: 1.25;
+    }
 }
 
 .split-edit{

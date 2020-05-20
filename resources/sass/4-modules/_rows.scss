@@ -1,6 +1,8 @@
 .tracks-container{
-    padding: 0;
-    height: auto;
+    padding: 36px 0;
+    height: calc(92% - 24px);
+    position: relative;
+    display: block;
     // overflow-y: scroll;
     div{
     }
@@ -52,6 +54,7 @@
 
 .track-row:hover{
     background-color: $white100;
+    border-bottom: none;
 }
 .track-row:hover .track-row-cell{
     color: $white900;
@@ -67,6 +70,13 @@
 .track-rows-container{
     padding: 0;
     border: 1px solid $white100;
+    max-height: calc(100% - 48px);
+    overflow-y: scroll;
+    display: block;
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
 
 }
 

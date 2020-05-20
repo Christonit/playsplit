@@ -1,6 +1,6 @@
 <template>
     <section id="playlists-list" class='section-container'>
-            <div class="section-header">
+            <div class="section-header mb--24">
                 <h2 class="title">My playlists</h2>
                 <div class="btn-container d-inline-flex align-items-center">
                     <button class=" mx-3 btn btn-secondary" 
@@ -8,7 +8,7 @@
                         @click="cancelMerge">Cancel merge</button>
                     
                     <div class="view-type-toggle">
-                        <button class="material-icons">view_list</button>
+                        <button class="material-icons active">view_list</button>
                         <button class="material-icons">view_module</button>
                     </div>
                 </div>

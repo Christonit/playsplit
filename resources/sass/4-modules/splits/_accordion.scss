@@ -15,6 +15,7 @@
     overflow: hidden;
     background: $black;
     line-height: 1.45;
+    z-index: 9;
     &:before{
         position: absolute;
         width: 100%;
@@ -42,8 +43,10 @@ padding: 0;
     list-style: none;
     border-bottom:1px solid $white100;
     position: relative;
+    // padding: 12px 0;
+    padding: 0;
     &:last-child{
-        border-bottom: none;
+        // border-bottom: none;
     }
 }
 .accordion-item.to-drop::before{
@@ -55,7 +58,8 @@ padding: 0;
 }
 
 .accordion-cell{
-    padding: 16px 0;
+    // padding: 16px 0;
+    padding: 12px 0;
     font-size: 14px;
     font-weight: normal;
     color: rgba(255, 255, 255, 0.5);

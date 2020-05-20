@@ -3,10 +3,11 @@
         <span class=" text"> <slot name="feauture-name"></slot> </span>
         <div class="d-flex justify-content-between flex-wrap">
             <div class="stat-bar">
-                <hr class="stat-position-tracker" :style="'left:'+ percentage + '%'">
+                <span class="stat-position-tracker" :style="'left:'+ percentage + '%'">
+                </span>
             </div>
-            <b class=" label text-left highlight"> <slot name="feauture-left-treshold"></slot> </b>
-            <b class=" label text-right highlight"> <slot name="feauture-right-treshold"></slot> </b>
+            <b class="text-left highlight"> <slot name="feauture-left-treshold"></slot> </b>
+            <b class="text-right highlight"> <slot name="feauture-right-treshold"></slot> </b>
         </div>
         
     </div>
