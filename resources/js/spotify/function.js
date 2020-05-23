@@ -147,7 +147,6 @@ export default {
                 })
                 .then( data => {
                     let playlist = JSON.parse(data);
-
                     this.$store.commit('addLatestPlaylist', playlist)
 
 

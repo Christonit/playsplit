@@ -2292,6 +2292,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -2412,8 +2414,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mounted: function mounted() {
     var _this2 = this;
 
-    this.getPlaylistInfo(this.id).then(function (res) {
-      return _this2.playlist = res;
+    var id = this.$refs.playlist_preview.id;
+    this.getPlaylistInfo(id).then(function (res) {
+      _this2.playlist = res;
     }).then(function () {
       var total_ms = 0;
       var tracks_array = _this2.playlist.tracks.items;
@@ -2480,7 +2483,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.removePlaylistToMerge(this.queueId);
           this.substractMergeDurationMs(this.duration);
           this.isActive = false;
-          this.$emit('test');
           el.classList.remove('to-merge');
           toggle.classList.add('hide');
         } else {
@@ -2496,6 +2498,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           toggle.classList.remove('hide');
         }
       } else {
+        console.log(e);
         this.inspectPlaylist(e);
       }
     },
@@ -2548,21 +2551,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       e.stopPropagation();
     },
     inspectPlaylist: function inspectPlaylist(e) {
-      var detail = this.playlist;
+      var _this6 = this;
+
       var genres = this.top5Genres;
-      this.setDetailPlaylist({
-        detail: detail,
-        genres: genres
+      var playlist_info = this.getPlaylistInfo(this.id);
+      playlist_info.then(function (res) {
+        var detail = res;
+
+        _this6.setDetailPlaylist({
+          detail: detail,
+          genres: genres
+        });
       });
       e.stopPropagation();
     },
     inspectStats: function inspectStats(e) {
-      var _this6 = this;
+      var _this7 = this;
 
       var track_ids = this.trackIDs.join(',');
       this.getAudioFeatures(track_ids).then(function (data) {
-        _this6.setAudioFeatures({
-          name: _this6.playlist.name,
+        _this7.setAudioFeatures({
+          name: _this7.playlist.name,
           content: data.audio_features
         });
       });
@@ -3666,7 +3675,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
             _this.latestCreatedPlaylist(id);
           }
+        })["catch"](function (e) {
+          return console.log('Error during latest merge fetch:' + e.message);
         });
+      })["catch"](function (e) {
+        return console.log("Error during merged playlist creation: ".concat(e.message));
       });
     },
     deletePlaylist: function deletePlaylist(playlist_id) {
@@ -47369,6 +47382,7 @@ var render = function() {
     {
       ref: "playlist_preview",
       staticClass: "grid-list-item",
+      attrs: { id: _vm.id },
       on: { click: _vm.expandOrMerge }
     },
     [

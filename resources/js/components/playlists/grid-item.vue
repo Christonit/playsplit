@@ -1,5 +1,7 @@
 <template>
-    <div class="grid-list-item" ref="playlist_preview" 
+    <div class="grid-list-item" 
+        :id="id"
+        ref="playlist_preview" 
         @click="expandOrMerge">
         <div class="grid-list-img">
             <template v-if="img.length == 0 || img == undefined">
@@ -86,7 +88,7 @@ export default {
             return this.name;
         },
         artistsIds(){
-                        let IDs = []
+            let IDs = []
 
             if(this.playlist != null){
                 if(this.playlist.tracks.total > 0){
@@ -173,7 +175,11 @@ export default {
         
     },
     mounted(){
-        this.getPlaylistInfo(this.id).then( res => this.playlist = res).then( ()=>{
+        let id = this.$refs.playlist_preview.id;
+        this.getPlaylistInfo(id).then( res => {
+            this.playlist = res
+            })
+            .then( ()=>{
             let total_ms = 0
 
             let tracks_array = this.playlist.tracks.items;
@@ -259,7 +265,6 @@ export default {
                     this.removePlaylistToMerge(this.queueId)
                     this.substractMergeDurationMs(this.duration)
                     this.isActive = false
-                    this.$emit('test')
                     el.classList.remove('to-merge')
                     toggle.classList.add('hide')
 
@@ -276,11 +281,10 @@ export default {
 
                     toggle.classList.remove('hide')
 
-
                 }
 
             }else{
-
+                console.log(e);
                 this.inspectPlaylist(e);
                 
             }
@@ -338,9 +342,15 @@ export default {
             e.stopPropagation();
         },
         inspectPlaylist(e){
-            let detail = this.playlist;
+            
             let genres = this.top5Genres;
-            this.setDetailPlaylist({detail,genres})
+            let playlist_info = this.getPlaylistInfo(this.id);
+
+            playlist_info.then( res => {
+                let detail = res
+                this.setDetailPlaylist({detail,genres})
+            });
+
             e.stopPropagation();
 
         },

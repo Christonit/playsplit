@@ -177,11 +177,11 @@ export default {
 
                     }
 
-                })
+                }).catch(e => console.log('Error during latest merge fetch:'+ e.message ))
 
               
             
-            })
+            }).catch( e => console.log(`Error during merged playlist creation: ${e.message}` ))
 
         },
         deletePlaylist(playlist_id){
