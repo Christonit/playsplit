@@ -8,6 +8,12 @@
     display: block;
     line-height: 1.4;
 }
+
+.legend{
+    @include text-12;
+    color: $white500;
+}
+
 .text-small{
     @include text-12;
     color: $white500;
@@ -36,5 +42,12 @@
     display: inline-block;
     &:first-child{
         margin-left: 0;
+    }
+}
+
+.up-next{
+    overflow: hidden;
+    p{
+        white-space: nowrap;
     }
 }

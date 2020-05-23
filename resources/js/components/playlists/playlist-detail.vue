@@ -34,7 +34,7 @@
                                 <span class="track-row-cell">{{track.track.name}}</span>
                                 <span class="track-row-cell">{{ artists(track.track.artists) }}</span>
                                 <span class="track-row-cell">{{minutesPrinter(track.track.duration_ms)}}</span>
-                                <button  class="material-icons btn-options">more_horiz</button>
+                                <button  class="material-icons btn-options">more_vert</button>
 
                             </li>
 

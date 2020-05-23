@@ -37,7 +37,8 @@
     width: 44px;
     overflow: hidden;
     position: relative;
-    
+    display: block;
+    min-width: 44px;
 }
 
 .grid-list-heading{

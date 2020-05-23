@@ -14,19 +14,7 @@
 
         <!-- <div v-if="currentPlaylist != null " class="playlist-playing-container"> -->
         <div  v-if="currentPlaylist != null" class="playlist-playing-container">
-                <span class="legend">
-                    NOW PLAYING
-                </span>
-
-                <div class="d-flex align-items-center justify-content-between">
-
-                    <b>{{currentPlaylist.title}}</b>
-
-                    <span>50/{{ currentPlaylist.tracks}}</span>
-
-                </div>
-
-            <img :src=" currentPlaylist.cover" alt="" class="current-playlist-img">
+                
             <playback-controller>
             </playback-controller>
 

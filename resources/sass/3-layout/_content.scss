@@ -27,11 +27,12 @@ aside{
 
 .playlist-playing-container{
     position: absolute;
-    bottom: 24px;
+    bottom: 36px;
     width: 240px;
 
     .current-playlist-img{
         width: 100%;
+        margin: 16px 0;
         @include b-radius-4;
     }
 }

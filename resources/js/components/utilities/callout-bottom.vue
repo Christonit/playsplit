@@ -15,17 +15,33 @@
 </template>
 
 <script>
+
+import {mapMutations} from 'vuex';
+
 export default {
     name:'callout-bottom',
     props:{
     hasCloseBtn:{
         type:Boolean,
         default: false
+    },
+    calloutName:{
+        type:String,
+        default:null
     }
     },
     methods:{
+        ...mapMutations(['setAlert']),
         close(){
-            this.$emit('hideMessase');
+            if( this.calloutName == null){
+                this.$emit('hideMessase');
+            }
+            if( this.calloutName == 'playback'){
+                this.setAlert({name: 'playback', payload: false })
+
+            }
+
+
         }
     }
 }

@@ -2,7 +2,16 @@
     <div>
         <div id="quickmerge">
                     <div class="merge-info-review">
-                        <span class="merge-title" @click="openModal">{{ (mergeName!= '') ? mergeName : 'Type playlist name'}}</span> 
+                        <span class="merge-title" 
+                            :style="mergeName == '' ? 'text-decoration: underline' : '' " >
+
+                            {{ (mergeName!= '') ? mergeName : 'Type playlist name'}}
+
+                            <button class="material-icons btn-edit" @click="openModal">
+                            edit
+                            </button> 
+
+                        </span> 
                         <p class="text mb-0">
 
                             <span class="highlight" v-if="totalPlaylists == 0">Select one or more playlits to merge</span>
@@ -14,7 +23,7 @@
                     <div class="btn-container">
                         <button class="btn btn-secondary" @click="clearMerge" :disabled='(totalPlaylists == 0)'>Clear selected</button>
                         <button class="btn btn-primary" 
-                                :disabled="errors.to_many_tracks || (totalPlaylists == 0 ) || (totalPlaylists == 1 )"
+                                :disabled="errors.to_many_tracks || (totalPlaylists == 0 ) || (totalPlaylists == 1 ) || mergeName == '' "
                                 @click="createMergedPlaylist">
                                 Merge
                         </button>
@@ -59,7 +68,7 @@ export default {
             let tracks = this.playlistToMerge;
             let counter = 0;
             tracks.map( el => (counter += el.tracks.length) )
-            if(counter >= 100){
+            if(counter > 100){
                 this.errors.to_many_tracks = true;
             }else{
                 this.errors.to_many_tracks = false;
@@ -184,3 +193,4 @@ export default {
     }
 }
 </script>
+

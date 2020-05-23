@@ -1,6 +1,8 @@
 <template>
     <label for="toggle" class="toggle-label">
-        <slot name="title"></slot>
+        <span class="mr-2">
+            <slot name="title"></slot>
+        </span>
         <button class="btn-toggle active" @click="toggle"> <hr/> </button>
     </label>
 </template>

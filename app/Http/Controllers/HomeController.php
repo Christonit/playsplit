@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ServerRequestInterface;
+use Illuminate\Support\Facades\Http;
 use App\User;
 use Auth;
+use Carbon\Carbon;
+
 
 class HomeController extends Controller
 {
@@ -25,16 +28,16 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    private function auth_base_64(){
+        return base64_encode(env('SPOTIFY_CLIENT_ID').':'.env('SPOTIFY_SECRET_ID'));
+    }
+
     public function index()
     {
 
         if( Auth::check()){
 
-            $user = Auth::user();
-
-            // return $user;
-
-            return view('app-overview')->with('user', $user); 
+            return view('app-overview'); 
         }
         return view('landing');
     }
@@ -65,11 +68,10 @@ class HomeController extends Controller
             ]);
 
 
-            // 6. encode response in JSON  
+        // 6. encode response in JSON  
         $tokens = json_decode($response->getBody(),true);
         // 7. OPen get request to api spotify to obtain user ID.
         $spotify_user = $this->handleUserInfo($tokens);
-
 
         // return $user['email'];
         $user = $this->findOrCreateSpotifyUser($spotify_user);
@@ -140,8 +142,10 @@ class HomeController extends Controller
 
         $user->fill([
             'spotify_id' => $spotify['id'],
+            'name' => $spotify['display_name'],
             'spotify_email' => $spotify['email'],
             'avatar' => $prof_pic,
+            'account_type' => $spotify['product'],
             'access_token' => $spotify['access_token'],
             'refresh_token' => $spotify['refresh_token']
         ])->save();
@@ -157,7 +161,38 @@ class HomeController extends Controller
     }
 
     public function userData(){
+        // 1.Fetch logged user
+        $user = Auth::user();
+        $latest_login = $user['updated_at'];
+        // 2. Convert last updated time record to Carbon date format
+        $latest_login = Carbon::createFromFormat('Y-m-d H:i:s',$user['updated_at']);
 
-        return Auth::user();
+        // 3. Get the current time in carbon
+        $right_now =  Carbon::now();
+
+        // 4. Compare how many minutes has passed since last loggin
+        $time_left = $right_now->diffInMinutes($latest_login);
+        // 5. If it has passed more than 50 minutes
+        if( $time_left >= 50){
+            // 6. Refresh access token in spotify
+            $refresh =  Http::withHeaders(['Authorization'=> 'Basic '.$this->auth_base_64() ])->asForm()->post('https://accounts.spotify.com/api/token',[
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $user['refresh_token']
+            ]);
+
+            $new_token = $refresh->json();
+            // 7. saves the new token in database.
+            $user->access_token = $new_token['access_token'];
+            $user->save();   
+            //  8. get updated database records
+            $user = Auth::user();
+            $time_left = 0;
+        }
+
+        // 9. Set expiration time in minutes in the payload
+        $user['expiration_time_min'] = 60 - $time_left;
+
+
+        return $user;
     }
 }

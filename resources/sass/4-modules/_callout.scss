@@ -8,7 +8,7 @@
     align-items: center;
     //temporary
     justify-content: center;
-    bottom: 15.5rem;
+    bottom: 11.5rem;
     // end
 
     // bottom: 7.5rem;
@@ -32,7 +32,12 @@
 }
 
 .callout.bottom{
-    bottom: 0;
+    bottom: 52px;
+    // bottom: 0;
+}
+
+.callout.global{
+    left: -20px;
 }
 
 .callout .close{

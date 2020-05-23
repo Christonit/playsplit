@@ -8,7 +8,7 @@ export default {
       };
     },
     computed: {            
-      ...mapState(['user','isUserLoaded','isSDKLoaded','activePlaylist','passed_time','passed_time_ms']),
+      ...mapState(['user','isUserLoaded','isSDKLoaded','activePlaylist','passed_time','passed_time_ms','device_id']),
       ...mapGetters(['authorization']),
       header_GET(){
             return {
@@ -52,12 +52,15 @@ export default {
           if(response.status == 200){
             return response.text()
           }
+
             
         }).then(data => {
 
             let payload = JSON.parse(data);
             return payload;
 
+        }).catch(e => {
+          console.log(`Error fetching playlist info: ${e.message}`)
         })
 
       },
@@ -74,24 +77,24 @@ export default {
               this.$store.commit('setPlaylists',payload.items)
               console.log('Playlists loaded')
 
+          }).catch(e => {
+            console.log(`Error fetching user's playlists: ${e.message}`)
           })
       },
-      playSong(uri){
-        if(this.activePlaylist == false){ 
-          
-          fetch('https://api.spotify.com/v1/me/player/play?device_id='+this.$store.state.device_id,{
-              method: 'PUT',
-              headers: this.authorization,
-              body:JSON.stringify({uris: [uri]})
-            })
-            .then( (res)=> this.$store.commit('setPlaylistPlaying', true) )
+      playSong(uri){          
+            console.log(uri)
 
-          }else{
-
-          this.player.togglePlay()
-
-        }
-                              
+             return fetch('https://api.spotify.com/v1/me/player/play?device_id='+this.$store.state.device_id,{
+                method: 'PUT',
+                headers: this.authorization,
+                body:JSON.stringify({uris: [uri]})
+              })
+              .then( (res)=> this.$store.commit('setPlaylistPlaying', true) )
+              .catch(e => {
+                console.log(`Error playing playlist: ${e.message}`)
+              })
+            
+              
                             
       },
       playTrack(){
@@ -120,7 +123,6 @@ export default {
 
         // Playback status updates
         this.player.addListener('player_state_changed', state => { 
-          
           if(state != null){
 
             let { 
@@ -147,37 +149,12 @@ export default {
         this.player.addListener('ready', ({ device_id }) => {
             console.log('Ready with Device ID', device_id);
             this.$store.commit('setDeviceId', device_id);
+            this.$store.commit('setContentLoaded', 'device_ready');
             this.isSpotifyOnline = true;
             
         });
-    },
-    setTime(tracked = 0, pressed = false){
-
-      let interval = setInterval( ()=>{
-          console.log('timer')
-          let time = 0;
-          if( this.passed_time_ms >= tracked  || pressed == true  ){
-
-              this.setPassedTimeMs(0)
-              this.setPassedTime(0) 
-              
-              return clearInterval(interval)
-
-          }
-          if(this.isPlayPaused == true){
-
-              return clearInterval(interval)
-
-          }
-          
-            time += 1000 
-            this.setPassedTimeMs(time)
-            this.setPassedTime( songMstoSeconds(this.passed_time_ms)  )  
-
-        },1000)
-
     }
-
+    
     }
     
   };

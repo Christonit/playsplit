@@ -131,6 +131,9 @@ button.close{
     &:hover{
         color: $white900;
     }
+    &:focus{
+        outline: unset;
+    }
 }
 
 .split-btn{
@@ -254,4 +257,28 @@ button.close{
         border: none;
         box-shadow: unset;
     }
+}
+
+.btn-edit{
+    position: absolute;
+    top: -6px;
+    bottom: 0;
+    font-size: 20px;
+    padding: 4px 4px 4px 16px;
+    background: none;
+    border: none;
+    display: inline-block;
+    line-height: 1;
+    height: 24px;
+    right: -12px;
+    color: $white500;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 100ms ease;
+}
+
+.merge-title:hover .btn-edit{
+    opacity: 1;
+    right: -32px;
+    pointer-events: auto;
 }

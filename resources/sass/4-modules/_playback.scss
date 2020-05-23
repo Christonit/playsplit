@@ -1,22 +1,49 @@
 #playback{
     display: block;
-    background-color: $el-1;
     bottom: 0;
     width: 100%;
     margin: 16px 0;
 }
 
+.btn-playback{
+    background-color: transparent;
+    border-radius: 24px;
+    margin: 0 16px;
+    padding: 0;
+    border: none;
+    font-size: 32px;
+    color: $white900;
+    text-align: center;
+    height: 36px;
+    width: 36px;
+    &:hover{
+        background-color: $white100;
+        border-color: none;
+    }
+}
+.btn-playback:nth-child(2){
+    border: 1px solid $white900;
+    font-size: 24px;
+}
 .current-song{
     @include flex-align-center;
 }
 
 .current-song-img{
-    height: auto;
+    height: 32px;
     @include b-radius-4;
     width: 32px;
     margin-right: 16px;
 }
 
+.playback-info{
+    overflow: hidden;
+
+    .text{
+        white-space: nowrap;
+        width: 100%;
+    }
+}
 .playback-controller{
     width: 666px;
     @include flex-between-center

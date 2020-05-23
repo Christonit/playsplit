@@ -155,7 +155,7 @@ export default {
 
         },
         playSong(context){
-            if(this.$store.state.activePlaylist == false){ 
+            // if(this.$store.state.activePlaylist == false){ 
               fetch('https://api.spotify.com/v1/me/player/play?device_id='+this.$store.state.device_id,{
                   method: 'PUT',
                   headers: this.authorization,
@@ -165,7 +165,7 @@ export default {
                 }).then( () =>{
 
                     this.player.getCurrentState().then(state => {
-                        
+                        console.log(state)
                         let {   current_track,
                                 next_tracks, 
                                 previous_tracks
@@ -181,11 +181,11 @@ export default {
                     })
                 } )
             
-            }else{
+            // }else{
     
-              this.player.togglePlay()
+            //   this.player.togglePlay()
     
-            }
+            // }
                                   
                                 
           },

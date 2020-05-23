@@ -44,7 +44,7 @@
             </div>
 
 
-            <span  class="material-icons btn-options">more_horiz</span>
+            <span  class="material-icons btn-options">more_vert</span>
         </div>
     </div>
 </template>
@@ -313,12 +313,22 @@ export default {
             return tracks;
         },
          play(e){
-            this.playSong(this.uri)
-            this.$store.dispatch('getCurrentPlaylist',{
+
+            if( this.$store.state.user.account_type == "premium"){
+
+                this.playSong(this.uri);
+            
+                this.$store.dispatch('getCurrentPlaylist',{
                     title:this.name, 
                     tracks:this.tracksTotal,
+                    track_ids:this.trackIDs,
                     cover: this.playlist.images[0].url
                 })
+
+            }else{
+               this.$store.commit('setAlert',{ name: 'playback' , payload: true}) 
+            }
+            
             e.stopPropagation();   
         },
 

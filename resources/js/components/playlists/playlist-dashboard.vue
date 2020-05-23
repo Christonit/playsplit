@@ -1,5 +1,5 @@
 <template>
-    <section id="playlists-list" class='section-container'>
+    <section id="playlists-list" class='section-container' > 
             <div class="section-header mb--24">
                 <h2 class="title">My playlists</h2>
                 <div class="btn-container d-inline-flex align-items-center">
@@ -15,7 +15,7 @@
                 
             </div>
 
-            <div class="section-body">
+            <div class="section-body" ref='playlistsList'>
                 <template v-if='playlists.length != 0'>
                     
                     <grid-item v-for='(playlist,key) in playlists' 
@@ -25,12 +25,14 @@
                         :img="playlist.images" 
                         :name="playlist.name" 
                         :uri="playlist.uri" 
-                        :get-playlist-info='getPlaylistInfo'
                         >
                     </grid-item>
 
                 </template>
-
+                <lottie-player v-if='isLoading'
+                    class="content-loading"
+                    :options='loadingSrc.options' 
+                    :src="loadingSrc.src"/>
             </div>
             
 
@@ -46,45 +48,92 @@ import {mapState, mapMutations} from 'vuex';
 export default {
     name:'playlist-dashboard',
     mixins:[functions],
+    data(){
+        return {
+            offset:{
+                active:true,
+                current:20},
+                isLoading:false,
+                loadingSrc:{
+                    src:'../../../img/loading-content-data.json',
+                    options:{
+                        autoplay:true,
+                        background:'none',
+                        renderer:'svg',
+                        loop:true,
+                        path:'../../../img/loading-content-data.json',
+                        width:'32px',
+                        height:'32px'
+                    }
+                },
+            }
+    },
     // props:['getPlaylistInfo'],
     components:{
         GridItem
     },
     mounted(){
 
-        let interval = setInterval( ()=> {
-            if(this.playlists.length > 0){
-                let first_playlist_id = this.playlists[0].id;
+            let listBody =  this.$refs.playlistsList
+            listBody.addEventListener('scroll', e => {
+                   if((listBody.scrollTop + listBody.clientHeight) >=  listBody.scrollHeight ){
+                        this.isLoading = true;
+                        let user_id = this.$store.state.user.spotify_id;
 
-                this.getPlaylistInfo(first_playlist_id).then( data => {
-                    let arr = [];
+                        fetch(`${this.apiRoot}/users/${user_id}/playlists?limit=20&offset=${this.offset.current}`,
+                        {method:'GET',
+                        headers:
+                        this.$store.getters.authorization}).then( res => {
+                            if(res.status == 200){
+                                return res.text()
+                            }
+                        })
+                        .then( data => {
+                            let playlist = JSON.parse(data);
 
-                    data.tracks.items.map( item => {
-                        arr.push(item.track.id);
+                            let payload = playlist.items;
+                            payload.map( item => {
+                                this.appendPlaylists(item)
+                            })
+                            this.isLoading = false;
+                            this.offset.current += 20;
+                        });
+                   } 
+            })
+
+            let interval = setInterval( ()=> {
+                if(this.playlists.length > 0){
+                    let first_playlist_id = this.playlists[0].id;
+
+                    this.getPlaylistInfo(first_playlist_id).then( data => {
+                        let arr = [];
+
+                        data.tracks.items.map( item => {
+                            arr.push(item.track.id);
+                        })
+
+                        return arr;
+                    })
+                    .then( data => this.addStatPlaylist(data) ).then( ()=>{
+                            // console.log(this.playlistsIdString);
+                        this.getAudioFeatures(this.playlistsIdString).then( data => {
+
+                            this.setAudioFeatures({
+                                name: this.playlists[0].name,
+                                content: data.audio_features
+                                }) 
+                            
+                        })
                     })
 
-                    return arr;
-                })
-                .then( data => this.addStatPlaylist(data) ).then( ()=>{
-                        // console.log(this.playlistsIdString);
-                    this.getAudioFeatures(this.playlistsIdString).then( data => {
-
-                        this.setAudioFeatures({
-                            name: this.playlists[0].name,
-                            content: data.audio_features
-                            }) 
-                        
-                    })
-                })
-
-                clearInterval(interval)
-            }
-        },100);
+                    clearInterval(interval)
+                }
+            },100);
 
         
     },
     computed:{
-        ...mapState(['playlists','mergeActive','statSelectedPlaylist']),
+        ...mapState(['apiRoot','playlists','mergeActive','statSelectedPlaylist']),
         playlistsIdString(){
             return this.statSelectedPlaylist.join(',')
         },
@@ -96,7 +145,8 @@ export default {
         'openCloseModal',
         'emptyPlaylistToDelete',
         'addStatPlaylist',
-        'setAudioFeatures']),
+        'setAudioFeatures',
+        'appendPlaylists']),
         openModal(){
             this.openCloseModal(0)
         },

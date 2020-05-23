@@ -1,8 +1,21 @@
 <template>
     <div id="playback">
+        <span class="legend">
+                    NOW PLAYING
+                </span>
+
+                <div class="d-flex align-items-center justify-content-between ">
+
+                    <b>{{currentPlaylist.title}}</b>
+
+                    <span class="text-small">{{ current_track_pos }}/{{ currentPlaylist.tracks}}</span>
+
+                </div>
+
+        <img :src=" currentPlaylist.cover" alt="" class="current-playlist-img">
         <div class="current-song">
             <img :src="playback.current_track.image != '' ? playback.current_track.image : 'https://via.placeholder.com/44'" alt="" class="current-song-img"/>
-            <span>
+            <span class="playback-info">
                 <span class="text highlight">{{playback.current_track.title}}</span>
                 <span class="text">{{playback.current_track.artist}}</span>
             </span>
@@ -10,9 +23,9 @@
 
 
         <div class="playback-btn-container">
-            <button class="material-icons" @click="prevTrack">skip_previous</button>
-            <button class="material-icons" @click="playStop">play_arrow</button>
-            <button class="material-icons" @click="nextTrack">skip_next</button>
+            <button class="material-icons btn-playback" @click="prevTrack">skip_previous</button>
+            <button class="material-icons btn-playback" @click="playStop">play_arrow</button>
+            <button class="material-icons btn-playback" @click="nextTrack">skip_next</button>
         </div>
             
 
@@ -35,9 +48,6 @@
         data(){
             return {
                 isSpotifyOnline:false,
-                passed_time:0,
-                passed_time_ms:0,
-
 
             }
         },
@@ -49,8 +59,17 @@
 
         },
         computed:{
-            ...mapState(['user','isUserLoaded','isPlayPaused','isSDKLoaded','timer','activePlaylist','player','current_playback']),
-    
+            ...mapState(['user','isUserLoaded','isPlayPaused','isSDKLoaded','timer','activePlaylist','player','currentPlaylist','current_playback']),
+            current_track_pos(){
+                if(this.current_playback != ''){
+                    
+                    let current = this.current_playback.current_track.id;
+                    let tracks_total = this.currentPlaylist.track_ids;
+
+                    return (tracks_total.indexOf(current) + 1 );
+                
+                }
+            },
             playback(){
 
                 let next_track = {
@@ -62,7 +81,8 @@
                     artist : '',
                     title: '',
                     image: '',
-                    duration: ''
+                    duration: '',
+                    id: ''
                 }
 
                 if(this.current_playback != ''){
@@ -72,6 +92,7 @@
                     let next_track_sp = this.current_playback.next_tracks[0];
 
                     let artists = []
+                    
                     current_track_sp.artists.map( artist => artists.push( artist.name) )
 
                     artists = artists.join(', ');
@@ -96,6 +117,8 @@
                     current_track.title =  current_track_sp.name
                     current_track.image = cover
                     current_track.duration = this.songMstoSeconds(current_track_sp.duration_ms)
+
+                    current_track.id = this.current_playback.current_track.id;
                 
                 }   
 
@@ -122,7 +145,6 @@
                 return fetch('https://api.spotify.com/v1/me/player/next',
                     this._POST
                 ).then( ()=>{
-                    this.setTime(undefined, true)
                 })
             },
 
@@ -130,7 +152,6 @@
                 return fetch('https://api.spotify.com/v1/me/player/previous',
                     this._POST
                 ).then(()=>{
-                    this.setTime(undefined, true)
  
                 })
             }

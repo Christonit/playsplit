@@ -24,6 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "lottie-player-vue": "0.0.12",
         "sortablejs": "^1.10.2",
         "vuex": "^3.2.0"
     }

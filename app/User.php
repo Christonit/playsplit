@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'spotify_id', 'spotify_email','refresh_token', 'access_token', 'avatar', 
+        'spotify_id', 'name','spotify_email','account_type','refresh_token', 'access_token', 'avatar', 
     ];
 
     /**

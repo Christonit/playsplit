@@ -9,7 +9,7 @@ require('./vuedraggable');
 
 window.Vue = require('vue');
 import Vuex from 'vuex';
-
+import LottiePlayer from 'lottie-player-vue';
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -31,9 +31,10 @@ import EditNamePopUp from './components/modals/edit-name.vue';
 import {mapState} from 'vuex';
 import SplitOverview from './components/playlists/split/split-overview.vue';
 import PlaylistDetail from './components/playlists/playlist-detail.vue';
+import CalloutBottom from "./components/utilities/callout-bottom.vue";
 
 Vue.use(Vuex);
-
+Vue.use(LottiePlayer);
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
@@ -48,6 +49,20 @@ const app = new Vue({
     el: '#app',
     store,
     mixins:[spotify],
+    data:{
+        loadingSrc:{
+            src:'../img/loading-data.json',
+            options:{
+                autoplay:true,
+                background:'none',
+                renderer:'svg',
+                loop:true,
+                path:'../img/loading-data.json',
+                width:'56px',
+                height:'56px'
+            }
+        },
+    },
     components:{
         TopNav,
         SidebarComp,
@@ -56,10 +71,12 @@ const app = new Vue({
         EditNamePopUp,
         Quickmerge,
         SplitOverview,
-        PlaylistDetail
+        PlaylistDetail,
+        CalloutBottom,
+        // LottiePlayer
     },
     computed:{
-        ...mapState(['isModalOpen','mergeActive','split','splitPlaylistModal','detailPlaylist','statSelectedPlaylist'])
+        ...mapState(['content_loaded','isModalOpen','mergeActive','split','splitPlaylistModal','detailPlaylist','statSelectedPlaylist','alerts'])
     },
     created(){
      

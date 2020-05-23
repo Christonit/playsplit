@@ -81,7 +81,11 @@
                     <div class='accordion-item' v-for="(playlist,key) in playlist_2.content" 
                         :key="key" :id="playlist.track.id" :data-key="key">
                         <span class="accordion-cell">{{key + 1}}</span>
-                        <span class="accordion-cell">{{playlist.track.name}}</span>
+                        <span class="accordion-cell">
+                            <span class="split-text">
+                                {{playlist.track.name + ' - ' + join_artists(playlist.track.artists)}}
+                            </span>
+                        </span>
                         <span class="accordion-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
                     </div>
 
@@ -114,7 +118,11 @@
                     <div class='accordion-item' v-for="(playlist,key) in playlist_3.content" 
                         :key="key" :id="playlist.track.id" :data-key="key">
                         <span class="accordion-cell">{{key + 1}}</span>
-                        <span class="accordion-cell">{{playlist.track.name}}</span>
+                        <span class="accordion-cell">
+                            <span class="split-text">
+                                {{playlist.track.name + ' - ' + join_artists(playlist.track.artists)}}
+                            </span>
+                        </span>
                         <span class="accordion-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
                     </div>
 
@@ -149,7 +157,11 @@
                     <div class='accordion-item' v-for="(playlist,key) in playlist_4.content" 
                         :key="key" :id="playlist.track.id" :data-key="key">
                         <span class="accordion-cell">{{key + 1}}</span>
-                        <span class="accordion-cell">{{playlist.track.name}}</span>
+                        <span class="accordion-cell">
+                            <span class="split-text">
+                                {{playlist.track.name + ' - ' + join_artists(playlist.track.artists)}}
+                            </span>
+                        </span>
                         <span class="accordion-cell">{{minutesPrinter(playlist.track.duration_ms)}}</span>
                     </div>
 

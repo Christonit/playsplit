@@ -19,8 +19,8 @@
             </div>
             <div id="top-bar-links">
                 <span class="user-dropdown">
-                    <span class="text">Christopher Santana</span>
-                    <img src="#" alt="" class="user-profile-pic">
+                    <span class="text highlight">{{username}}</span>
+                    <img :src="user.avatar" alt="" class="user-profile-pic">
                 </span>
                 <div class="dropdown-items">
                     <a href="/auth/spotify/logout"> Logout</a>
@@ -32,9 +32,21 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
     export default {
         name:'top-nav',
         mounted() {
+            
+        },
+        computed:{
+            ...mapState(['user']),
+            username(){
+                if(this.user != ''){
+
+                    return this.user.name.split(' ').slice(0,2).join(' ')
+                
+                }
+            }
             
         }
     }

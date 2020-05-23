@@ -10993,6 +10993,18 @@ p {
   margin: 0 0 0 auto;
 }
 
+.user-dropdown {
+  display: flex;
+  align-items: center;
+}
+
+.user-profile-pic {
+  max-height: 24px;
+  border-radius: 24px;
+  margin-left: 8px;
+  height: auto;
+}
+
 body {
   overflow: hidden;
 }
@@ -11022,12 +11034,13 @@ aside {
 
 .playlist-playing-container {
   position: absolute;
-  bottom: 24px;
+  bottom: 36px;
   width: 240px;
 }
 
 .playlist-playing-container .current-playlist-img {
   width: 100%;
+  margin: 16px 0;
   border-radius: 4px;
 }
 
@@ -11115,15 +11128,18 @@ aside {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
+  margin-top: 96px;
 }
 
 .nav-item-icon {
   display: block;
   content: " ";
   height: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
   width: 20px;
   margin-right: 16px;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .nav-item {
@@ -11131,6 +11147,17 @@ aside {
   align-items: center;
   padding: 8px 0;
   margin: 8px 0;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-item:hover {
+  color: rgba(255, 255, 255, 0.97);
+  text-decoration: none;
+}
+
+.nav-item.active {
+  color: rgba(255, 255, 255, 0.97);
+  text-decoration: none;
 }
 
 .nav-item.active::before {
@@ -11141,6 +11168,30 @@ aside {
   background-color: #ED2F52;
   left: 0;
   position: absolute;
+}
+
+.nav-item-icon.playlist {
+  background-image: url(/images/playlist-icon.svg?aa26c9c60c15cda86ae0666c6f20f073);
+}
+
+.nav-item:hover .nav-item-icon.playlist {
+  background-image: url(/images/playlist-icon-fill.svg?1d37f031b78e45c8846ede392b6d1cb8);
+}
+
+.nav-item.active .nav-item-icon.playlist {
+  background-image: url(/images/playlist-icon-fill.svg?1d37f031b78e45c8846ede392b6d1cb8);
+}
+
+.nav-item-icon.songs {
+  background-image: url(/images/songs-icon.svg?05bdaeff1ac27504b5836264c167eeac);
+}
+
+.nav-item:hover .nav-item-icon.songs {
+  background-image: url(/images/songs-icon-fill.svg?2cb925f2502302b950b0db51626484d7);
+}
+
+.nav-item.active .nav-item-icon.songs {
+  background-image: url(/images/songs-icon-fill.svg?2cb925f2502302b950b0db51626484d7);
 }
 
 .grid-actions-container {
@@ -11202,6 +11253,11 @@ aside {
   top: 54px;
 }
 
+.btn-group-toggle {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
 .btn-toggle {
   border: none;
   background-color: rgba(255, 255, 255, 0.1);
@@ -11212,7 +11268,6 @@ aside {
   display: block;
   padding: 0;
   border-radius: 24px;
-  margin-left: 12px;
 }
 
 .btn-toggle hr {
@@ -11309,6 +11364,39 @@ aside {
   background-color: rgba(255, 255, 255, 0.14);
   content: " ";
   border-radius: 8px;
+}
+
+.app-loading {
+  background: #111417;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app-loading {
+  background: #111417;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-loading {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 72px 0;
 }
 
 .btn-container {
@@ -11454,6 +11542,10 @@ button.close:hover {
   color: rgba(255, 255, 255, 0.97);
 }
 
+button.close:focus {
+  outline: unset;
+}
+
 .split-btn {
   font-size: 14px;
   font-weight: normal;
@@ -11586,6 +11678,30 @@ button.close:hover {
   box-shadow: unset;
 }
 
+.btn-edit {
+  position: absolute;
+  top: -6px;
+  bottom: 0;
+  font-size: 20px;
+  padding: 4px 4px 4px 16px;
+  background: none;
+  border: none;
+  display: inline-block;
+  line-height: 1;
+  height: 24px;
+  right: -12px;
+  color: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 100ms ease;
+}
+
+.merge-title:hover .btn-edit {
+  opacity: 1;
+  right: -32px;
+  pointer-events: auto;
+}
+
 .input-large {
   width: 100%;
   display: block;
@@ -11615,6 +11731,12 @@ input {
   color: rgba(255, 255, 255, 0.5);
   display: block;
   line-height: 1.4;
+}
+
+.legend {
+  font-size: 12px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .text-small {
@@ -11650,6 +11772,14 @@ input {
 
 .pill:first-child {
   margin-left: 0;
+}
+
+.up-next {
+  overflow: hidden;
+}
+
+.up-next p {
+  white-space: nowrap;
 }
 
 .grid-list-item {
@@ -11694,6 +11824,8 @@ input {
   width: 44px;
   overflow: hidden;
   position: relative;
+  display: block;
+  min-width: 44px;
 }
 
 .grid-list-heading {
@@ -11756,10 +11888,32 @@ input {
 
 #playback {
   display: block;
-  background-color: rgba(255, 255, 255, 0.05);
   bottom: 0;
   width: 100%;
   margin: 16px 0;
+}
+
+.btn-playback {
+  background-color: transparent;
+  border-radius: 24px;
+  margin: 0 16px;
+  padding: 0;
+  border: none;
+  font-size: 32px;
+  color: rgba(255, 255, 255, 0.97);
+  text-align: center;
+  height: 36px;
+  width: 36px;
+}
+
+.btn-playback:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: none;
+}
+
+.btn-playback:nth-child(2) {
+  border: 1px solid rgba(255, 255, 255, 0.97);
+  font-size: 24px;
 }
 
 .current-song {
@@ -11768,10 +11922,19 @@ input {
 }
 
 .current-song-img {
-  height: auto;
+  height: 32px;
   border-radius: 4px;
   width: 32px;
   margin-right: 16px;
+}
+
+.playback-info {
+  overflow: hidden;
+}
+
+.playback-info .text {
+  white-space: nowrap;
+  width: 100%;
 }
 
 .playback-controller {
@@ -11980,7 +12143,7 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
-  bottom: 15.5rem;
+  bottom: 11.5rem;
   z-index: 999;
   max-width: 960px;
   min-width: 740px;
@@ -12001,7 +12164,11 @@ input {
 }
 
 .callout.bottom {
-  bottom: 0;
+  bottom: 52px;
+}
+
+.callout.global {
+  left: -20px;
 }
 
 .callout .close {
@@ -12317,6 +12484,7 @@ li[draggable=true] {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   padding: 0;
+  display: flex;
 }
 
 .accordion-item.to-drop::before {
@@ -12341,11 +12509,16 @@ li[draggable=true] {
 }
 
 .accordion-cell:nth-child(2) {
-  width: 63%;
+  width: 68%;
+  overflow: hidden;
+  position: relative;
+  height: 44px;
+  margin-right: 12px;
+  margin-left: 4px;
 }
 
 .accordion-cell:last-child {
-  width: calc(35% - 40px);
+  width: calc(30% - 40px);
 }
 
 .accordion[data-open=false] {

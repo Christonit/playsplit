@@ -53,6 +53,11 @@
     }
 }   
 
+.btn-group-toggle{
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
 .btn-toggle{
  border: none;
  background-color: $white100;
@@ -63,7 +68,6 @@
  display: block;
  padding: 0;
  border-radius: 24px;
-margin-left: 12px;
 }   
 
 .btn-toggle hr{
@@ -161,4 +165,36 @@ margin-left: 12px;
     content: ' ';
     @include b-radius-8;
 
+}
+
+.app-loading{
+    background: $black;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.app-loading{
+    background: $black;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content-loading{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 72px 0;
 }

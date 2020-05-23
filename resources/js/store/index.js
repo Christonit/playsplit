@@ -12,6 +12,10 @@ const store = new Vuex.Store({
         name:null,
         audio_features:null
     },
+    content_loaded:{
+        playback_ready:false,
+        first_stat_ready:false
+    },
     isUserLoaded: false,
     isSDKLoaded: false,
     activePlaylist:false,
@@ -48,6 +52,9 @@ const store = new Vuex.Store({
         isActive:false,
         detail:null,
         genres:null
+    },
+    alerts:{
+        playback:false
     }
   },
   getters:{
@@ -56,6 +63,14 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    setContentLoaded(state, payload){
+        if( payload == 'device_ready'){
+            state.content_loaded.playback_ready = true;
+        }
+        if( payload == 'stat_ready'){
+            state.content_loaded.first_stat_ready = true;
+        }
+    },
     setAudioFeatures(state, { name, content}){
         state.playlist_analisys.name = name;
         state.playlist_analisys.audio_features = content;
@@ -70,7 +85,11 @@ const store = new Vuex.Store({
         state.split.isActive = false
         state.split.playlists = [];
     },
-    
+    setAlert( state, {name,payload}){
+        if(name == 'playback'){
+            state.alerts.playback = payload;
+        }
+    },
     setMergeActive(state, payload){
         state.mergeActive = payload
     },
@@ -145,6 +164,9 @@ const store = new Vuex.Store({
     setPlaylists(state, payload) {
         state.playlists = payload;
     },
+    appendPlaylists(state, payload) {
+        state.playlists.push(payload);
+    },
     setDeviceId(state, payload) {
         state.device_id = payload;
     },
@@ -189,13 +211,19 @@ const store = new Vuex.Store({
       getUserData(context){
         return fetch('/fetch-user-data').then(response => {
             if(response.status == 200) {
+                console.log(response.status)
                 return response.text()
             }
+            
         }).then( data => {
            const user_data  = JSON.parse(data);
            context.commit('setUserData',user_data)
         })
         .then(context.commit('setUserOnline'))
+        .catch(e =>{
+            console.log(`There was an error with user info retrival in the server: ${e.message}`)
+        })
+        
       },
       setPlayer(context,payload){
           context.commit('setPlayer', payload)
