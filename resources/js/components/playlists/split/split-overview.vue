@@ -614,15 +614,19 @@ export default {
             }
 
             split_name.forEach((split, index) => {
-                this.createPlaylist(split).then(id => {
+                console.log(index)
+                this.createPlaylist(split).then( id => {
 
                     this.addTracksToPlaylist(id,split_uris[index])
 
                     return id;
 
                 }).then((playlist_id)=>{
+                    setTimeout( () => {
 
-                    this.latestCreatedPlaylist(playlist_id)   
+                        this.latestCreatedPlaylist(playlist_id)   
+
+                    }, 2000);
 
                 }).then( ()=>{
 
@@ -685,11 +689,17 @@ export default {
                         // This condition gere is for what to do 
                         // after successfull track adding or error handling
                         if(status == 200 || status == 201){
-                            
+                            let data = res.text();
+                            return data;
                             // Force rerender for last added playlist or force a page reload.
 
                         }
 
+                    })
+                    .then(data => {
+                        console.log(data)
+                    }).catch(e =>{
+                        console.log(`Error in track adding to new split: ${e.message}`)
                     })
         }
 

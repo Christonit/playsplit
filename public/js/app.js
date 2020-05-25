@@ -2294,6 +2294,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2315,7 +2324,55 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       top5Genres: []
     };
   },
+  mounted: function mounted() {
+    var _this = this;
+
+    var id = this.$refs.playlist_preview.id;
+    this.getPlaylistInfo(id).then(function (res) {
+      console.log(res);
+      _this.playlist = res;
+    }).then(function () {
+      var total_ms = 0;
+      var tracks_array = _this.playlist.tracks.items;
+
+      if (tracks_array.length > 0) {
+        tracks_array.map(function (track) {
+          return total_ms += track.track.duration_ms;
+        });
+        _this.duration = total_ms;
+      }
+    });
+    var interval = setInterval(function () {
+      if (_this.artistsIds.length > 0) {
+        _this.getPlaylistGenres(_this.artistsIds).then(function (data) {
+          var genres = JSON.parse(data);
+          return _this.genres = genres.reverse();
+        }).then(function () {
+          _this.genres.map(function (genre, key) {
+            if (key < 5) {
+              var genres = genre.split(":");
+
+              _this.top5Genres.push(genres[0]);
+            }
+          });
+        });
+
+        clearInterval(interval);
+      }
+    }, 100);
+  },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['current_playback', 'timer', 'mergeActive', 'playlistToMerge']), {
+    duration_ms: function duration_ms() {
+      var total_ms = 0;
+      var tracks_array = this.playlist.tracks.items;
+
+      if (tracks_array.length > 0) {
+        tracks_array.map(function (track) {
+          return total_ms += track.track.duration_ms;
+        });
+        return total_ms;
+      }
+    },
     playlist_name: function playlist_name() {
       if (this.name.length > 30) {
         return this.name.slice(0, 28) + '...';
@@ -2357,7 +2414,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
     },
     playlistsTracks: function playlistsTracks() {
-      var _this = this;
+      var _this2 = this;
 
       var track_list = [];
 
@@ -2368,7 +2425,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             id: track.track.id,
             title: track.track.name,
             uri: track.track.uri,
-            duration: _this.songMstoSeconds(track.track.duration_ms),
+            duration: _this2.songMstoSeconds(track.track.duration_ms),
             artists: track.track.artists
           };
           track_list.push(obj);
@@ -2411,50 +2468,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     }
   }),
-  mounted: function mounted() {
-    var _this2 = this;
-
-    var id = this.$refs.playlist_preview.id;
-    this.getPlaylistInfo(id).then(function (res) {
-      _this2.playlist = res;
-    }).then(function () {
-      var total_ms = 0;
-      var tracks_array = _this2.playlist.tracks.items;
-
-      if (tracks_array.length > 0) {
-        tracks_array.map(function (track) {
-          return total_ms += track.track.duration_ms;
-        });
-        _this2.duration = total_ms;
-      }
-    });
-    var interval = setInterval(function () {
-      if (_this2.artistsIds.length > 0) {
-        _this2.getPlaylistGenres(_this2.artistsIds).then(function (data) {
-          var genres = JSON.parse(data);
-          return _this2.genres = genres.reverse();
-        }).then(function () {
-          _this2.genres.map(function (genre, key) {
-            if (key < 5) {
-              var genres = genre.split(":");
-
-              _this2.top5Genres.push(genres[0]);
-            }
-          });
-        });
-
-        clearInterval(interval);
-      }
-    }, 100);
-  },
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'setSelectedToMerge', 'substractMergeDurationMs', 'setSplitActive', 'setDetailPlaylist', 'setAudioFeatures']), {
     preservationControl: function preservationControl($event) {
       if ($event == true) {
-        this.restoreFromDeletePlaylistBatch(); // el.filter((element,key) => {
-        //     if(element == this.id){
-        //         return this.$store.commit('preservePlaylist',key)
-        //     }
-        // });
+        this.restoreFromDeletePlaylistBatch();
       } else if ($event == false) {
         this.$store.commit('unpreservePlaylist', this.id);
       }
@@ -2498,7 +2515,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           toggle.classList.remove('hide');
         }
       } else {
-        console.log(e);
         this.inspectPlaylist(e);
       }
     },
@@ -2531,7 +2547,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           title: this.name,
           tracks: this.tracksTotal,
           track_ids: this.trackIDs,
-          cover: this.playlist.images[0].url
+          cover: this.img[0].url
         });
       } else {
         this.$store.commit('setAlert', {
@@ -2543,22 +2559,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       e.stopPropagation();
     },
     splitThis: function splitThis(e) {
-      this.setSplitActive({
-        playlist: this.playlist,
-        duration: this.totalDuration,
-        genres: this.top5Genres
+      var _this6 = this;
+
+      var id = this.$refs.playlist_preview.id;
+      this.getPlaylistInfo(id).then(function (playlist) {
+        _this6.setSplitActive({
+          playlist: playlist,
+          duration: _this6.totalDuration,
+          genres: _this6.top5Genres
+        });
       });
       e.stopPropagation();
     },
     inspectPlaylist: function inspectPlaylist(e) {
-      var _this6 = this;
+      var _this7 = this;
 
       var genres = this.top5Genres;
       var playlist_info = this.getPlaylistInfo(this.id);
       playlist_info.then(function (res) {
         var detail = res;
 
-        _this6.setDetailPlaylist({
+        _this7.setDetailPlaylist({
           detail: detail,
           genres: genres
         });
@@ -2566,12 +2587,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       e.stopPropagation();
     },
     inspectStats: function inspectStats(e) {
-      var _this7 = this;
+      var _this8 = this;
 
       var track_ids = this.trackIDs.join(',');
       this.getAudioFeatures(track_ids).then(function (data) {
-        _this7.setAudioFeatures({
-          name: _this7.playlist.name,
+        _this8.setAudioFeatures({
+          name: _this8.playlist.name,
           content: data.audio_features
         });
       });
@@ -2772,6 +2793,12 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3433,12 +3460,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       split_name.forEach(function (split, index) {
+        console.log(index);
+
         _this2.createPlaylist(split).then(function (id) {
           _this2.addTracksToPlaylist(id, split_uris[index]);
 
           return id;
         }).then(function (playlist_id) {
-          _this2.latestCreatedPlaylist(playlist_id);
+          setTimeout(function () {
+            _this2.latestCreatedPlaylist(playlist_id);
+          }, 2000);
         }).then(function () {
           var uris = [];
 
@@ -3485,8 +3516,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         var status = res.status; // This condition gere is for what to do 
         // after successfull track adding or error handling
 
-        if (status == 200 || status == 201) {// Force rerender for last added playlist or force a page reload.
+        if (status == 200 || status == 201) {
+          var data = res.text();
+          return data; // Force rerender for last added playlist or force a page reload.
         }
+      }).then(function (data) {
+        console.log(data);
+      })["catch"](function (e) {
+        console.log("Error in track adding to new split: ".concat(e.message));
       });
     }
   })
@@ -3960,6 +3997,14 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -47413,7 +47458,7 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("div", { staticClass: "grid-cell" }, [
-        _c("a", { staticClass: "grid-list-heading", attrs: { href: "#" } }, [
+        _c("span", { staticClass: "grid-list-heading" }, [
           _vm._v(_vm._s(_vm.playlist_name))
         ]),
         _vm._v(" "),
@@ -47502,14 +47547,27 @@ var render = function() {
           1
         ),
         _vm._v(" "),
-        _c("span", { staticClass: "material-icons btn-options" }, [
-          _vm._v("more_vert")
-        ])
+        _vm._m(0)
       ])
     ]
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "btn-options" }, [
+      _c("span", { staticClass: "material-icons" }, [_vm._v("more_vert")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "dropdown-items" }, [
+        _c("button", { staticClass: "dropdown-item" }, [_vm._v("Edit")]),
+        _vm._v(" "),
+        _c("button", { staticClass: "dropdown-item" }, [_vm._v("Delete")])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -47700,9 +47758,7 @@ var render = function() {
                 _vm._v(_vm._s(_vm.minutesPrinter(track.track.duration_ms)))
               ]),
               _vm._v(" "),
-              _c("button", { staticClass: "material-icons btn-options" }, [
-                _vm._v("more_vert")
-              ])
+              _vm._m(1, true)
             ])
           }),
           0
@@ -47724,6 +47780,20 @@ var staticRenderFns = [
       _c("span", { staticClass: "track-row-cell" }, [_vm._v("Artist")]),
       _vm._v(" "),
       _c("span", { staticClass: "track-row-cell" }, [_vm._v("Duration")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("button", { staticClass: "btn-options" }, [
+      _c("span", { staticClass: "material-icons" }, [_vm._v("more_vert")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "dropdown-items" }, [
+        _c("button", { staticClass: "dropdown-item" }, [_vm._v("Edit")]),
+        _vm._v(" "),
+        _c("button", { staticClass: "dropdown-item" }, [_vm._v("Delete")])
+      ])
     ])
   }
 ]
@@ -48893,29 +48963,26 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "top-navigation" }, [
-      _c("button", { staticClass: "material-icons back-arrow" }, [
-        _vm._v("arrow_back_ios")
+    return _c("div", { staticClass: "top-bar" }, [
+      _c("button", { staticClass: "back-arrow" }, [
+        _c("i", { staticClass: "material-icons " }, [_vm._v("arrow_back_ios ")])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "form-inline" }, [
+      _c("div", { staticClass: "search-bar" }, [
         _c("input", {
           staticClass: "form-control mr-sm-2",
           attrs: {
-            type: "search",
+            type: "input",
             placeholder: "Search",
             "aria-label": "Search"
           }
         }),
         _vm._v(" "),
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-outline-success my-2 my-sm-0",
-            attrs: { type: "submit" }
-          },
-          [_vm._v("Search")]
-        )
+        _c("span", { staticClass: "search-dropdown" }, [
+          _c("label", { staticClass: "search-dropdown-label" }, [
+            _vm._v("\n                        Playlists\n                    ")
+          ])
+        ])
       ])
     ])
   },
@@ -48924,11 +48991,16 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "dropdown-items" }, [
-      _c("a", { attrs: { href: "/auth/spotify/logout" } }, [_vm._v(" Logout")]),
+      _c(
+        "button",
+        {
+          staticClass: "dropdown-item",
+          attrs: { href: "/auth/spotify/logout" }
+        },
+        [_vm._v(" Edit profile")]
+      ),
       _vm._v(" "),
-      _c("a", { attrs: { href: "/auth/spotify/logout" } }, [
-        _vm._v(" Edit profile")
-      ])
+      _c("a", { attrs: { href: "/auth/spotify/logout" } }, [_vm._v(" Logout")])
     ])
   }
 ]

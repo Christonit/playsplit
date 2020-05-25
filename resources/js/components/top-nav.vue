@@ -9,12 +9,19 @@
         </div>
 
 
-            <div class="top-navigation">
+            <div class="top-bar">
 
-                <button class="material-icons back-arrow">arrow_back_ios</button>
-                <div class="form-inline">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                <button class="back-arrow">
+                    <i class="material-icons ">arrow_back_ios </i>
+                </button>
+
+                <div class="search-bar">
+                    <input class="form-control mr-sm-2" type="input" placeholder="Search" aria-label="Search">
+                    <span class="search-dropdown">
+                        <label class="search-dropdown-label">
+                            Playlists
+                        </label>
+                    </span>
                 </div>
             </div>
             <div id="top-bar-links">
@@ -23,8 +30,9 @@
                     <img :src="user.avatar" alt="" class="user-profile-pic">
                 </span>
                 <div class="dropdown-items">
+                    <button class="dropdown-item" href="/auth/spotify/logout"> Edit profile</button>
                     <a href="/auth/spotify/logout"> Logout</a>
-                    <a href="/auth/spotify/logout"> Edit profile</a>
+
                 </div>
             </div>
         

@@ -34,7 +34,13 @@
                                 <span class="track-row-cell">{{track.track.name}}</span>
                                 <span class="track-row-cell">{{ artists(track.track.artists) }}</span>
                                 <span class="track-row-cell">{{minutesPrinter(track.track.duration_ms)}}</span>
-                                <button  class="material-icons btn-options">more_vert</button>
+                                <button  class="btn-options">
+                                    <span  class="material-icons">more_vert</span>
+                                    <div class="dropdown-items">
+                                        <button class="dropdown-item">Edit</button>
+                                        <button class="dropdown-item">Delete</button>
+                                    </div>
+                                </button>
 
                             </li>
 

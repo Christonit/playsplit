@@ -14,7 +14,7 @@
             </button>
         </div>
         <div class="grid-cell">
-            <a href='#' class="grid-list-heading">{{playlist_name}}</a>
+            <span class="grid-list-heading">{{playlist_name}}</span>
             <span class="grid-list-text">
                 {{topGenres}}
             </span>
@@ -45,8 +45,17 @@
                 </toggle-btn>
             </div>
 
+            <div class="btn-options">
+                <span  class="material-icons">more_vert</span>
 
-            <span  class="material-icons btn-options">more_vert</span>
+                <div class="dropdown-items">
+                    <button class="dropdown-item">Edit</button>
+                    <button class="dropdown-item">Delete</button>
+                </div>
+
+            </div>
+            
+
         </div>
     </div>
 </template>
@@ -74,12 +83,66 @@ export default {
             top5Genres:[]
         }
     },
+    mounted(){
+        let id = this.$refs.playlist_preview.id;
+        this.getPlaylistInfo(id)
+            .then( res => {
+            console.log(res)
+            this.playlist = res})
+            .then( ()=>{
+            let total_ms = 0
+
+            let tracks_array = this.playlist.tracks.items;
+                if(tracks_array.length > 0){
+                    tracks_array.map( track => {
+                    return total_ms  += track.track.duration_ms;
+                });
+               this.duration = total_ms;
+            }
+            
+        })
+
+        const interval = setInterval( () => {
+            if(this.artistsIds.length > 0 ){
+                this.getPlaylistGenres(this.artistsIds).then( data => {
+                    let genres = JSON.parse(data) 
+                    return ( this.genres = genres.reverse());
+                }).then( ()=>{
+                    this.genres.map((genre,key) => {
+                        if( key < 5){
+                            let genres = genre.split(":");
+                            this.top5Genres.push(genres[0]);
+                        }
+                    })
+                    
+                });
+
+                clearInterval(interval);
+
+            }
+        }, 100)
+        
+    },
     computed:{
         ...mapState([
         'current_playback',
         'timer',
         'mergeActive',
         'playlistToMerge']),
+        duration_ms(){
+            let total_ms = 0
+
+            let tracks_array = this.playlist.tracks.items;
+            if(tracks_array.length > 0){
+                tracks_array.map( track => {
+                    return total_ms  += track.track.duration_ms;
+                });
+            
+                return total_ms;
+            }
+            
+
+        },
         playlist_name(){
             if(this.name.length > 30){
                 return this.name.slice(0,28) + '...'
@@ -174,45 +237,6 @@ export default {
 
         
     },
-    mounted(){
-        let id = this.$refs.playlist_preview.id;
-        this.getPlaylistInfo(id).then( res => {
-            this.playlist = res
-            })
-            .then( ()=>{
-            let total_ms = 0
-
-            let tracks_array = this.playlist.tracks.items;
-                if(tracks_array.length > 0){
-                    tracks_array.map( track => {
-                    return total_ms  += track.track.duration_ms;
-                });
-               this.duration = total_ms;
-            }
-            
-        })
-
-        const interval = setInterval( () => {
-            if(this.artistsIds.length > 0 ){
-                this.getPlaylistGenres(this.artistsIds).then( data => {
-                    let genres = JSON.parse(data) 
-                    return ( this.genres = genres.reverse());
-                }).then( ()=>{
-                    this.genres.map((genre,key) => {
-                        if( key < 5){
-                            let genres = genre.split(":");
-                            this.top5Genres.push(genres[0]);
-                        }
-                    })
-                    
-                });
-
-                clearInterval(interval);
-
-            }
-        }, 100)
-        
-    },
     methods:{
         ...mapMutations([
         'setPlaylistToMerge',
@@ -229,12 +253,6 @@ export default {
             if( $event == true){
 
                 this.restoreFromDeletePlaylistBatch()
-
-                // el.filter((element,key) => {
-                //     if(element == this.id){
-                //         return this.$store.commit('preservePlaylist',key)
-                //     }
-                // });
 
             }else if($event == false){
 
@@ -284,7 +302,6 @@ export default {
                 }
 
             }else{
-                console.log(e);
                 this.inspectPlaylist(e);
                 
             }
@@ -326,7 +343,7 @@ export default {
                     title:this.name, 
                     tracks:this.tracksTotal,
                     track_ids:this.trackIDs,
-                    cover: this.playlist.images[0].url
+                    cover: this.img[0].url
                 })
 
             }else{
@@ -338,11 +355,18 @@ export default {
 
         splitThis(e){
 
-            this.setSplitActive({playlist:this.playlist,duration:this.totalDuration, genres:this.top5Genres})
+            let id = this.$refs.playlist_preview.id;
+
+            this.getPlaylistInfo(id).then( playlist => {
+
+                this.setSplitActive({playlist: playlist ,duration:this.totalDuration, genres:this.top5Genres})
+
+            })
+
             e.stopPropagation();
         },
         inspectPlaylist(e){
-            
+
             let genres = this.top5Genres;
             let playlist_info = this.getPlaylistInfo(this.id);
 
