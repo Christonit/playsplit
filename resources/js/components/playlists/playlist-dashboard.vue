@@ -8,8 +8,8 @@
                         @click="cancelMerge">Cancel merge</button>
                     
                     <div class="view-type-toggle">
-                        <button class="material-icons active">view_list</button>
-                        <button class="material-icons">view_module</button>
+                        <button class="material-icons active" @click="viewToggle('list')" ref='list_toggle'>view_list</button>
+                        <button class="material-icons" @click="viewToggle('card')" ref='card_toggle'>view_module</button>
                     </div>
                 </div>
                 
@@ -18,7 +18,7 @@
             <div class="section-body" ref='playlistsList'>
                 <template v-if='playlists.length != 0'>
                     
-                    <grid-item v-for='(playlist,key) in playlists' 
+                    <grid-item v-for='(playlist,key) in playlists'
                         :key='key' 
                         :id="playlist.id" 
                         :tracks-total='playlist.tracks.total' 
@@ -136,7 +136,8 @@ export default {
         ...mapState(['apiRoot','playlists','mergeActive','statSelectedPlaylist']),
         playlistsIdString(){
             return this.statSelectedPlaylist.join(',')
-        },
+        }
+       
     },
     methods:{
         ...mapMutations(['emptyPlaylistToMerge',
@@ -165,6 +166,19 @@ export default {
         },
         inspectAudioFeatures(){
 
+        },
+        viewToggle(view_mode){
+            if( view_mode == 'card'){
+                this.$refs.playlistsList.classList.add('grid-cards')
+                this.$refs.list_toggle.classList.remove('active')
+                this.$refs.card_toggle.classList.add('active')
+
+            }else{
+                this.$refs.playlistsList.classList.remove('grid-cards')
+                    this.$refs.list_toggle.classList.add('active')
+                this.$refs.card_toggle.classList.remove('active')
+
+            }
         }
     }
 }

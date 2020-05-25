@@ -1,35 +1,3 @@
-.grid-actions-container{
-    position: relative;
-    margin: 0 0 0 auto;
-    @include flex-align-center;
-}
-
-
-.grid-list-item:hover .btn-container{
-    margin: 0 32px 0 0;
-    position: relative;
-    top: 0px;
-    opacity: 1;
-}
-.grid-list-item  .btn-container{
-    margin: 0 32px 0 0;
-    position: relative;
-    top: 56px;
-    opacity: 0;
-}
-.grid-list-item.to-merge  .btn-container{
-    margin: 0 32px;
-    position: relative;
-    top: 56px;
-    opacity: 0;
-    display: none;
-}
-.grid-list-item.to-merge:hover  .btn-container{
-    margin: 0 32px;
-    position: relative;
-    top: 56px;
-    opacity: 0;
-}
 
 .toggle-label{
     margin: 0 16px 0 0;

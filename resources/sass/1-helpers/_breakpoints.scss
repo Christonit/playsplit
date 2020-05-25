@@ -4,7 +4,7 @@ $xs: 375px;
 $sm:  620px;
 $md:  992px;
 $lg:  1200px;
-$xl:  1400px;
+$xl:  1441px;
 
 $tablet-landscape: 1250px;
 $tablet-portrait: 1024px;
@@ -36,7 +36,7 @@ $mobile-small3: 320px;
     @media (min-width: 1200px) { @content; }
   }
   @else if $class == xl {
-    @media (min-width: 1400px) { @content; }
+    @media (min-width: 1600px) { @content; }
   }
  
   @else {

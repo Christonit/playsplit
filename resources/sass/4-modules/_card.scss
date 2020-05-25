@@ -1,0 +1,10 @@
+.grid-cards{
+    display: grid;
+    column-gap: 24px;
+    row-gap: 24px;
+    grid-template-columns: repeat(3, minmax(180px,288px));
+    @include breakpoint(xl){
+        grid-template-columns: repeat(4, minmax(180px,222px));
+
+    }
+}

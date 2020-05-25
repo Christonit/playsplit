@@ -2769,7 +2769,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.setMergeActive(false);
       this.setMergeName('');
     },
-    inspectAudioFeatures: function inspectAudioFeatures() {}
+    inspectAudioFeatures: function inspectAudioFeatures() {},
+    viewToggle: function viewToggle(view_mode) {
+      if (view_mode == 'card') {
+        this.$refs.playlistsList.classList.add('grid-cards');
+        this.$refs.list_toggle.classList.remove('active');
+        this.$refs.card_toggle.classList.add('active');
+      } else {
+        this.$refs.playlistsList.classList.remove('grid-cards');
+        this.$refs.list_toggle.classList.add('active');
+        this.$refs.card_toggle.classList.remove('active');
+      }
+    }
   })
 });
 
@@ -47611,7 +47622,35 @@ var render = function() {
                 )
               : _vm._e(),
             _vm._v(" "),
-            _vm._m(0)
+            _c("div", { staticClass: "view-type-toggle" }, [
+              _c(
+                "button",
+                {
+                  ref: "list_toggle",
+                  staticClass: "material-icons active",
+                  on: {
+                    click: function($event) {
+                      return _vm.viewToggle("list")
+                    }
+                  }
+                },
+                [_vm._v("view_list")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  ref: "card_toggle",
+                  staticClass: "material-icons",
+                  on: {
+                    click: function($event) {
+                      return _vm.viewToggle("card")
+                    }
+                  }
+                },
+                [_vm._v("view_module")]
+              )
+            ])
           ]
         )
       ]),
@@ -47650,20 +47689,7 @@ var render = function() {
     ]
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "view-type-toggle" }, [
-      _c("button", { staticClass: "material-icons active" }, [
-        _vm._v("view_list")
-      ]),
-      _vm._v(" "),
-      _c("button", { staticClass: "material-icons" }, [_vm._v("view_module")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

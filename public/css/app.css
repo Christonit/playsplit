@@ -11264,42 +11264,6 @@ aside {
   background-image: url(/images/songs-icon-fill.svg?2cb925f2502302b950b0db51626484d7);
 }
 
-.grid-actions-container {
-  position: relative;
-  margin: 0 0 0 auto;
-  display: flex;
-  align-items: center;
-}
-
-.grid-list-item:hover .btn-container {
-  margin: 0 32px 0 0;
-  position: relative;
-  top: 0px;
-  opacity: 1;
-}
-
-.grid-list-item .btn-container {
-  margin: 0 32px 0 0;
-  position: relative;
-  top: 56px;
-  opacity: 0;
-}
-
-.grid-list-item.to-merge .btn-container {
-  margin: 0 32px;
-  position: relative;
-  top: 56px;
-  opacity: 0;
-  display: none;
-}
-
-.grid-list-item.to-merge:hover .btn-container {
-  margin: 0 32px;
-  position: relative;
-  top: 56px;
-  opacity: 0;
-}
-
 .toggle-label {
   margin: 0 16px 0 0;
   display: flex;
@@ -11538,6 +11502,20 @@ aside {
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
+}
+
+.grid-cards {
+  display: grid;
+  -moz-column-gap: 24px;
+       column-gap: 24px;
+  row-gap: 24px;
+  grid-template-columns: repeat(3, minmax(180px, 288px));
+}
+
+@media (min-width: 1600px) {
+  .grid-cards {
+    grid-template-columns: repeat(4, minmax(180px, 222px));
+  }
 }
 
 button:focus {
@@ -12056,6 +12034,184 @@ input {
 
 .grid-list-img:hover .btn-play {
   opacity: 1;
+}
+
+.grid-actions-container {
+  position: relative;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.grid-list-item:hover .btn-container {
+  position: relative;
+  top: 0px;
+  opacity: 1;
+}
+
+.grid-list-item .btn-container {
+  margin: 0 32 0 0;
+  position: relative;
+  top: -32px;
+  opacity: 0;
+}
+
+.grid-cards .grid-list-item {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 16px;
+  height: auto;
+  margin: 0;
+  flex-wrap: wrap;
+  overflow: initial;
+}
+
+.grid-cards .grid-list-item:last-child {
+  margin-bottom: inherit;
+}
+
+.grid-cards .grid-list-item.active {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.grid-cards .grid-list-item:hover {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.05);
+  overflow: visible;
+}
+
+.grid-cards .grid-list-item.to-merge:hover {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.grid-cards .grid-list-item.to-merge {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: transparent;
+}
+
+.grid-cards .grid-list-img {
+  border-radius: 4px;
+  height: auto;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  display: block;
+  min-width: 100%;
+  max-height: 188px;
+}
+
+.grid-cards .grid-list-heading {
+  font-size: 14px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.97);
+  display: block;
+}
+
+.grid-cards .grid-list-img img {
+  height: auto;
+  width: 100%;
+}
+
+.grid-cards .grid-list-item .grid-cell:nth-child(2) {
+  margin: 12px 0;
+  min-width: initial;
+  max-width: initial;
+  text-align: left;
+  width: 100%;
+}
+
+.grid-cards .grid-list-item .grid-cell:nth-child(2) .grid-list-text {
+  display: none;
+}
+
+.grid-cards .grid-list-item .grid-cell:nth-child(3) {
+  min-width: auto;
+  max-width: 72px;
+  text-align: left;
+  padding-right: 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  line-height: 1;
+  margin: 0;
+}
+
+.grid-cards .grid-list-item .grid-cell:nth-child(4) {
+  margin: 0 0 0 8px;
+  min-width: initial;
+  max-width: initial;
+  line-height: 1;
+}
+
+.grid-cards .grid-list-item .grid-cell {
+  width: auto;
+  max-width: auto;
+  color: rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.grid-cards .grid-list-img .btn-play {
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  color: rgba(255, 255, 255, 0.97);
+  background-color: rgba(237, 47, 82, 0.5);
+  border: none;
+  font-size: 24px;
+}
+
+.grid-cards .grid-list-img:hover .btn-play {
+  opacity: 1;
+}
+
+.grid-cards .grid-actions-container {
+  position: relative;
+  margin: 12px 0 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.grid-cards .grid-list-item:hover .btn-container {
+  margin: 0 0 0 -8px;
+  position: relative;
+  top: 0px;
+  opacity: 1;
+}
+
+.grid-cards .grid-list-item .btn-container {
+  margin: 0 0 0 -8px;
+  position: relative;
+  top: 0;
+  opacity: 1;
+}
+
+.grid-cards .grid-list-item.to-merge .btn-container {
+  margin: 0 32px;
+  position: relative;
+  top: 56px;
+  opacity: 0;
+  display: none;
+}
+
+.grid-cards .grid-list-item.to-merge:hover .btn-container {
+  margin: 0 32px;
+  position: relative;
+  top: 56px;
+  opacity: 0;
 }
 
 #playback {
