@@ -102,7 +102,7 @@
     margin:0;
     @include flex-align-center;
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
 .grid-list-item:hover .btn-container{
@@ -111,10 +111,13 @@
     opacity: 1;
 }
 .grid-list-item  .btn-container{
-    margin: 0 32 0 0;
+    margin: 0;
     position: relative;
     top: -32px;
     opacity: 0;
+    @include breakpoint(xl){
+        margin: 0 32px 0 0;
+    }
 }
 
 .grid-cards{
@@ -123,7 +126,7 @@
     .grid-list-item{
         @include inline-flex-align-center;
         width: 100%;
-        @include b-radius-4;
+        @include b-radius-8;
         @include border-white-1;
         padding: 16px 16px;
         height: auto;

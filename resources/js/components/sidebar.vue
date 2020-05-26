@@ -1,5 +1,5 @@
 <template>
-    <aside>
+    <aside :class="showSidebarMobile ? 'show' : '' " ref='sidebar'>
 
         <div class="nav-container">
             <a href="#" class="nav-item active">
@@ -19,6 +19,12 @@
             </playback-controller>
 
         </div>
+
+        <button class="btn btn-secondary" name="close-btn" 
+            v-if="showSidebarMobile"
+            @click="closeSidebar">
+                Close sidebar
+        </button>
         
     </aside>
 </template>
@@ -30,12 +36,18 @@ import {mapState} from 'vuex';
     export default {
         name:'sidebar-comp',
         computed:{
-            ...mapState(['currentPlaylist'])
+            ...mapState(['currentPlaylist',
+            'showSidebarMobile'])
         },
         components:{
             PlaybackController,
         },
         mounted() {
+        },
+        methods:{
+            closeSidebar(){
+                this.$store.commit('toggleSidebarMobile', false);
+            }
         }
     }
 </script>

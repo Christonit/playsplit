@@ -128,7 +128,8 @@ export default {
         'current_playback',
         'timer',
         'mergeActive',
-        'playlistToMerge']),
+        'playlistToMerge',
+        'resolutions']),
         duration_ms(){
             let total_ms = 0
 
@@ -246,7 +247,8 @@ export default {
         'substractMergeDurationMs',
         'setSplitActive',
         'setDetailPlaylist',
-        'setAudioFeatures'
+        'setAudioFeatures',
+        'toggleStatsMobile'
         ]),
         preservationControl($event){
 
@@ -389,6 +391,13 @@ export default {
                     }) 
 
             })
+
+            if(window.innerWidth < this.resolutions.lg){
+
+                this.toggleStatsMobile(true);
+
+            }
+
             e.stopPropagation();
 
         }

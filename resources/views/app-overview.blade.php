@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <top-nav></top-nav>
+    
+    <top-nav ></top-nav>
     <sidebar-comp></sidebar-comp>
     <div class="app-container">
 
@@ -27,7 +28,7 @@
     <edit-name-pop-up v-if="splitPlaylistModal.split_1" :emition="true"></edit-name-pop-up>
     <edit-name-pop-up v-if="splitPlaylistModal.split_2" :emition="true"></edit-name-pop-up>
     <edit-name-pop-up v-if="splitPlaylistModal.split_3" :emition="true"></edit-name-pop-up>
-
+    <fab-button v-if='windowWidth < resolutions.lg'></fab-button>
     <lottie-player v-if='content_loaded.playback_ready == false'
                     class='app-loading' 
                     :options='loadingSrc.options' 

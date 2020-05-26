@@ -4,6 +4,7 @@ button:focus{
 .btn-container {
     display: inline-flex;
     justify-content: center;
+    position: relative;
 }
 
 
@@ -303,9 +304,6 @@ button[name="btn-inspect-stats"] .material-icons{
     }
 }
 
-
-
-
 .dropdown-item{
     background-color: unset;
     color: $white500;
@@ -315,4 +313,24 @@ button[name="btn-inspect-stats"] .material-icons{
     background-color: unset;
     color: $white900;
     border: unset;
+}
+
+.fab{
+    position: absolute;
+    bottom: 56px;
+    right: 24px;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    padding: 8px 16px;
+}
+
+button[name="close-btn"]{
+    position: absolute;
+    bottom: 60px;
+    display: block;
+    padding: 12px 12px;
+    line-height: 1;
+    width: 100%;
+    max-width: 172px;
 }

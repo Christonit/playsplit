@@ -5,6 +5,15 @@
     flex-wrap: wrap;
     flex-direction: column;
     margin-top: 96px;
+    position: relative;
+    @include breakpoint(md){
+        margin-top: -32px;
+
+    }
+    @include breakpoint(lg){
+        margin-top: 96px;
+
+    }
 }
 
 .nav-item-icon{
@@ -41,7 +50,7 @@
     height: 20px;
     width: 3px;
     background-color: $cherry;
-    left: 0;
+    left: -24px;
     position: absolute;
     
 }

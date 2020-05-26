@@ -6,6 +6,7 @@
     background-color: $black;
     z-index: 10;
     justify-content: space-between;
+    align-items: center;
 }
 .branding{
     max-width: 268px;
@@ -15,7 +16,13 @@
     display: inline-flex;
     align-items: center;
     margin-left: auto;
+    margin-right: auto;
     width: 50%;
+    @include breakpoint(xl){
+        width: 60%;
+        max-width: 1200px;
+    }
+
 }
 
 
@@ -84,7 +91,7 @@
 #top-bar-links{
     display: inline-block;
     position: relative;
-    margin: 0 0 0 auto;
+    // margin: 0 0 0 auto;
 }
 
 

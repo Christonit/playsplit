@@ -2361,7 +2361,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     }, 100);
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['current_playback', 'timer', 'mergeActive', 'playlistToMerge']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['current_playback', 'timer', 'mergeActive', 'playlistToMerge', 'resolutions']), {
     duration_ms: function duration_ms() {
       var total_ms = 0;
       var tracks_array = this.playlist.tracks.items;
@@ -2468,7 +2468,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     }
   }),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'setSelectedToMerge', 'substractMergeDurationMs', 'setSplitActive', 'setDetailPlaylist', 'setAudioFeatures']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['setPlaylistToMerge', 'removePlaylistToMerge', 'addMergeDurationMs', 'setSelectedToMerge', 'substractMergeDurationMs', 'setSplitActive', 'setDetailPlaylist', 'setAudioFeatures', 'toggleStatsMobile']), {
     preservationControl: function preservationControl($event) {
       if ($event == true) {
         this.restoreFromDeletePlaylistBatch();
@@ -2596,6 +2596,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           content: data.audio_features
         });
       });
+
+      if (window.innerWidth < this.resolutions.lg) {
+        this.toggleStatsMobile(true);
+      }
+
       e.stopPropagation();
     }
   })
@@ -3785,15 +3790,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'sidebar-comp',
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['currentPlaylist'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])(['currentPlaylist', 'showSidebarMobile'])),
   components: {
     PlaybackController: _components_playback_component_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  mounted: function mounted() {}
+  mounted: function mounted() {},
+  methods: {
+    closeSidebar: function closeSidebar() {
+      this.$store.commit('toggleSidebarMobile', false);
+    }
+  }
 });
 
 /***/ }),
@@ -3945,6 +3961,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -3959,7 +3979,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   mounted: function mounted() {// this.getFeatures(this.playlistsIdString);
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['playlist_analisys']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapState"])(['playlist_analisys', 'resolutions', 'showStatsMobile']), {
+    playlist_name: function playlist_name() {
+      if (this.playlist_analisys.name.length > 35) {
+        return this.playlist_analisys.name.slice(0, 34) + '...';
+      }
+
+      return this.playlist_analisys.name;
+    },
     features: function features() {
       var acoustic = 0;
       var danceability = 0;
@@ -3987,7 +4014,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   watch: {},
-  methods: {}
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapMutations"])(['toggleStatsMobile']), {
+    closeStat: function closeStat() {
+      this.toggleStatsMobile(false);
+    }
+  })
 });
 
 /***/ }),
@@ -4123,6 +4154,42 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     }
   })
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/fab-button.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/utilities/fab-button.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "fab-button",
+  data: function data() {
+    return {};
+  },
+  mounted: function mounted() {},
+  methods: {
+    open: function open() {
+      this.$store.commit('toggleSidebarMobile', true);
+    }
+  }
 });
 
 /***/ }),
@@ -48666,18 +48733,34 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("aside", [
-    _vm._m(0),
-    _vm._v(" "),
-    _vm.currentPlaylist != null
-      ? _c(
-          "div",
-          { staticClass: "playlist-playing-container" },
-          [_c("playback-controller")],
-          1
-        )
-      : _vm._e()
-  ])
+  return _c(
+    "aside",
+    { ref: "sidebar", class: _vm.showSidebarMobile ? "show" : "" },
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _vm.currentPlaylist != null
+        ? _c(
+            "div",
+            { staticClass: "playlist-playing-container" },
+            [_c("playback-controller")],
+            1
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.showSidebarMobile
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-secondary",
+              attrs: { name: "close-btn" },
+              on: { click: _vm.closeSidebar }
+            },
+            [_vm._v("\n            Close sidebar\n    ")]
+          )
+        : _vm._e()
+    ]
+  )
 }
 var staticRenderFns = [
   function() {
@@ -48767,167 +48850,190 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { attrs: { id: "music-stats" } }, [
-    _c("h3", { staticClass: "subtitle" }, [_vm._v("Playlists stats")]),
-    _vm._v(" "),
-    _vm.playlist_analisys.audio_features != null
-      ? _c(
-          "div",
-          { staticClass: "stats-table" },
-          [
-            _c("div", { staticClass: "stats-row" }, [
-              _c("span", { staticClass: "text" }, [_vm._v("Inspecting")]),
+  return _c(
+    "div",
+    {
+      class: _vm.showStatsMobile ? "active" : "",
+      attrs: { id: "music-stats" }
+    },
+    [
+      _c("h3", { staticClass: "subtitle" }, [_vm._v("Playlists stats")]),
+      _vm._v(" "),
+      _vm.playlist_analisys.audio_features != null
+        ? _c(
+            "div",
+            { staticClass: "stats-table" },
+            [
+              _c("div", { staticClass: "stats-row" }, [
+                _c("span", { staticClass: "text" }, [_vm._v("Inspecting")]),
+                _vm._v(" "),
+                _c("b", { staticClass: "highlight" }, [
+                  _vm._v(_vm._s(_vm.playlist_name))
+                ])
+              ]),
               _vm._v(" "),
-              _c("b", { staticClass: "highlight" }, [
-                _vm._v(_vm._s(_vm.playlist_analisys.name))
-              ])
-            ]),
-            _vm._v(" "),
+              _c(
+                "stat-row",
+                {
+                  attrs: {
+                    feature: "acoustic",
+                    "feature-value": _vm.features.acoustic
+                  }
+                },
+                [
+                  _c("template", { slot: "feauture-name" }, [
+                    _vm._v("\n                Acousticness\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-left-treshold" }, [
+                    _vm._v("\n                Electric\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-right-treshold" }, [
+                    _vm._v("\n                Acoustic\n            ")
+                  ])
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c(
+                "stat-row",
+                {
+                  attrs: {
+                    feature: "vocals",
+                    "feature-value": _vm.features.vocals
+                  }
+                },
+                [
+                  _c("template", { slot: "feauture-name" }, [
+                    _vm._v("\n                Vocals\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-left-treshold" }, [
+                    _vm._v("\n                A lot\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-right-treshold" }, [
+                    _vm._v("\n                Instrumental\n            ")
+                  ])
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c(
+                "stat-row",
+                {
+                  attrs: {
+                    feature: "danceability",
+                    "feature-value": _vm.features.danceability
+                  }
+                },
+                [
+                  _c("template", { slot: "feauture-name" }, [
+                    _vm._v("\n                Danceability\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-left-treshold" }, [
+                    _vm._v("\n                Not danceable\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-right-treshold" }, [
+                    _vm._v("\n                Danceable\n            ")
+                  ])
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c(
+                "stat-row",
+                {
+                  attrs: {
+                    feature: "energy",
+                    "feature-value": _vm.features.energy
+                  }
+                },
+                [
+                  _c("template", { slot: "feauture-name" }, [
+                    _vm._v("\n                Energy\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-left-treshold" }, [
+                    _vm._v("\n                Chill\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-right-treshold" }, [
+                    _vm._v("\n                Energetic\n            ")
+                  ])
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c(
+                "stat-row",
+                {
+                  attrs: {
+                    feature: "tempo",
+                    "feature-value": _vm.features.tempo
+                  }
+                },
+                [
+                  _c("template", { slot: "feauture-name" }, [
+                    _vm._v("\n                Tempo\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-left-treshold" }, [
+                    _vm._v("\n                Slow\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-right-treshold" }, [
+                    _vm._v("\n                Fast\n            ")
+                  ])
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c(
+                "stat-row",
+                {
+                  attrs: {
+                    feature: "valence",
+                    "feature-value": _vm.features.valence
+                  }
+                },
+                [
+                  _c("template", { slot: "feauture-name" }, [
+                    _vm._v("\n                Mood\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-left-treshold" }, [
+                    _vm._v("\n                Down\n            ")
+                  ]),
+                  _vm._v(" "),
+                  _c("template", { slot: "feauture-right-treshold" }, [
+                    _vm._v("\n                Uplifting\n            ")
+                  ])
+                ],
+                2
+              )
+            ],
+            1
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.showStatsMobile
+        ? _c("div", { staticClass: "btn-container mt-4 w-100" }, [
             _c(
-              "stat-row",
+              "button",
               {
-                attrs: {
-                  feature: "acoustic",
-                  "feature-value": _vm.features.acoustic
-                }
+                staticClass: "btn btn-secondary",
+                on: { click: _vm.closeStat }
               },
-              [
-                _c("template", { slot: "feauture-name" }, [
-                  _vm._v("\n                Acousticness\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-left-treshold" }, [
-                  _vm._v("\n                Electric\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-right-treshold" }, [
-                  _vm._v("\n                Acoustic\n            ")
-                ])
-              ],
-              2
-            ),
-            _vm._v(" "),
-            _c(
-              "stat-row",
-              {
-                attrs: {
-                  feature: "vocals",
-                  "feature-value": _vm.features.vocals
-                }
-              },
-              [
-                _c("template", { slot: "feauture-name" }, [
-                  _vm._v("\n                Vocals\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-left-treshold" }, [
-                  _vm._v("\n                A lot\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-right-treshold" }, [
-                  _vm._v("\n                Instrumental\n            ")
-                ])
-              ],
-              2
-            ),
-            _vm._v(" "),
-            _c(
-              "stat-row",
-              {
-                attrs: {
-                  feature: "danceability",
-                  "feature-value": _vm.features.danceability
-                }
-              },
-              [
-                _c("template", { slot: "feauture-name" }, [
-                  _vm._v("\n                Danceability\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-left-treshold" }, [
-                  _vm._v("\n                Not danceable\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-right-treshold" }, [
-                  _vm._v("\n                Danceable\n            ")
-                ])
-              ],
-              2
-            ),
-            _vm._v(" "),
-            _c(
-              "stat-row",
-              {
-                attrs: {
-                  feature: "energy",
-                  "feature-value": _vm.features.energy
-                }
-              },
-              [
-                _c("template", { slot: "feauture-name" }, [
-                  _vm._v("\n                Energy\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-left-treshold" }, [
-                  _vm._v("\n                Chill\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-right-treshold" }, [
-                  _vm._v("\n                Energetic\n            ")
-                ])
-              ],
-              2
-            ),
-            _vm._v(" "),
-            _c(
-              "stat-row",
-              {
-                attrs: { feature: "tempo", "feature-value": _vm.features.tempo }
-              },
-              [
-                _c("template", { slot: "feauture-name" }, [
-                  _vm._v("\n                Tempo\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-left-treshold" }, [
-                  _vm._v("\n                Slow\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-right-treshold" }, [
-                  _vm._v("\n                Fast\n            ")
-                ])
-              ],
-              2
-            ),
-            _vm._v(" "),
-            _c(
-              "stat-row",
-              {
-                attrs: {
-                  feature: "valence",
-                  "feature-value": _vm.features.valence
-                }
-              },
-              [
-                _c("template", { slot: "feauture-name" }, [
-                  _vm._v("\n                Mood\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-left-treshold" }, [
-                  _vm._v("\n                Down\n            ")
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "feauture-right-treshold" }, [
-                  _vm._v("\n                Uplifting\n            ")
-                ])
-              ],
-              2
+              [_vm._v("Close stats")]
             )
-          ],
-          1
-        )
-      : _vm._e()
-  ])
+          ])
+        : _vm._e()
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -48990,10 +49096,6 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "top-bar" }, [
-      _c("button", { staticClass: "back-arrow" }, [
-        _c("i", { staticClass: "material-icons " }, [_vm._v("arrow_back_ios ")])
-      ]),
-      _vm._v(" "),
       _c("div", { staticClass: "search-bar" }, [
         _c("input", {
           staticClass: "form-control mr-sm-2",
@@ -49006,7 +49108,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("span", { staticClass: "search-dropdown" }, [
           _c("label", { staticClass: "search-dropdown-label" }, [
-            _vm._v("\n                        Playlists\n                    ")
+            _vm._v(
+              "\n                            Playlists\n                        "
+            )
           ])
         ])
       ])
@@ -49070,6 +49174,39 @@ var render = function() {
         : _vm._e()
     ],
     2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/fab-button.vue?vue&type=template&id=4c43a728&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/utilities/fab-button.vue?vue&type=template&id=4c43a728& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "button",
+    { staticClass: "btn btn-primary fab", on: { click: _vm.open } },
+    [
+      _c("span", { staticClass: "material-icons mr-2" }, [
+        _vm._v("\n        menu\n    ")
+      ]),
+      _vm._v("\n\n    Open sidebar\n")
+    ]
   )
 }
 var staticRenderFns = []
@@ -62419,6 +62556,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_playlists_split_split_overview_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/playlists/split/split-overview.vue */ "./resources/js/components/playlists/split/split-overview.vue");
 /* harmony import */ var _components_playlists_playlist_detail_vue__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/playlists/playlist-detail.vue */ "./resources/js/components/playlists/playlist-detail.vue");
 /* harmony import */ var _components_utilities_callout_bottom_vue__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./components/utilities/callout-bottom.vue */ "./resources/js/components/utilities/callout-bottom.vue");
+/* harmony import */ var _components_utilities_fab_button_vue__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./components/utilities/fab-button.vue */ "./resources/js/components/utilities/fab-button.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -62446,6 +62584,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
  */
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+
 
 
 
@@ -62495,10 +62634,15 @@ var app = new Vue({
     Quickmerge: _components_quickmerge_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
     SplitOverview: _components_playlists_split_split_overview_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
     PlaylistDetail: _components_playlists_playlist_detail_vue__WEBPACK_IMPORTED_MODULE_11__["default"],
-    CalloutBottom: _components_utilities_callout_bottom_vue__WEBPACK_IMPORTED_MODULE_12__["default"] // LottiePlayer
+    CalloutBottom: _components_utilities_callout_bottom_vue__WEBPACK_IMPORTED_MODULE_12__["default"],
+    FabButton: _components_utilities_fab_button_vue__WEBPACK_IMPORTED_MODULE_13__["default"] // LottiePlayer
 
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['content_loaded', 'isModalOpen', 'mergeActive', 'split', 'splitPlaylistModal', 'detailPlaylist', 'statSelectedPlaylist', 'alerts'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['resolutions', 'content_loaded', 'isModalOpen', 'mergeActive', 'split', 'splitPlaylistModal', 'detailPlaylist', 'statSelectedPlaylist', 'alerts']), {
+    windowWidth: function windowWidth() {
+      return window.innerWidth;
+    }
+  }),
   created: function created() {
     this.$store.dispatch('getUserData');
   }
@@ -63452,6 +63596,76 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/utilities/fab-button.vue":
+/*!**********************************************************!*\
+  !*** ./resources/js/components/utilities/fab-button.vue ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _fab_button_vue_vue_type_template_id_4c43a728___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fab-button.vue?vue&type=template&id=4c43a728& */ "./resources/js/components/utilities/fab-button.vue?vue&type=template&id=4c43a728&");
+/* harmony import */ var _fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fab-button.vue?vue&type=script&lang=js& */ "./resources/js/components/utilities/fab-button.vue?vue&type=script&lang=js&");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _fab_button_vue_vue_type_template_id_4c43a728___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _fab_button_vue_vue_type_template_id_4c43a728___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/utilities/fab-button.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/utilities/fab-button.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/utilities/fab-button.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./fab-button.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/fab-button.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/utilities/fab-button.vue?vue&type=template&id=4c43a728&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/utilities/fab-button.vue?vue&type=template&id=4c43a728& ***!
+  \*****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_fab_button_vue_vue_type_template_id_4c43a728___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./fab-button.vue?vue&type=template&id=4c43a728& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/utilities/fab-button.vue?vue&type=template&id=4c43a728&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_fab_button_vue_vue_type_template_id_4c43a728___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_fab_button_vue_vue_type_template_id_4c43a728___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/utilities/toggle.vue":
 /*!******************************************************!*\
   !*** ./resources/js/components/utilities/toggle.vue ***!
@@ -63991,6 +64205,15 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     apiRoot: 'https://api.spotify.com/v1',
     user: '',
     statSelectedPlaylist: '',
+    resolutions: {
+      xs: 375,
+      sm: 620,
+      md: 992,
+      lg: 1200,
+      xl: 1441
+    },
+    showStatsMobile: false,
+    showSidebarMobile: false,
     playlist_analisys: {
       name: null,
       audio_features: null
@@ -64102,6 +64325,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     addStatPlaylist: function addStatPlaylist(state, payload) {
       state.statSelectedPlaylist = payload;
+    },
+    toggleStatsMobile: function toggleStatsMobile(state, payload) {
+      state.showStatsMobile = payload;
+    },
+    toggleSidebarMobile: function toggleSidebarMobile(state, payload) {
+      state.showSidebarMobile = payload;
     },
     //Merge related mutations
     addMergeDurationMs: function addMergeDurationMs(state, payload) {

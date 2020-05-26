@@ -8,6 +8,15 @@ const store = new Vuex.Store({
     apiRoot:'https://api.spotify.com/v1',
     user: '',
     statSelectedPlaylist:'',
+    resolutions:{
+        xs: 375,
+        sm:  620,
+        md:  992,
+        lg:  1200,
+        xl:  1441
+    },
+    showStatsMobile:false,
+    showSidebarMobile:false,
     playlist_analisys:{
         name:null,
         audio_features:null
@@ -107,6 +116,12 @@ const store = new Vuex.Store({
     },
     addStatPlaylist(state,payload){
         state.statSelectedPlaylist = payload
+    },
+    toggleStatsMobile(state,payload){
+        state.showStatsMobile = payload
+    },
+    toggleSidebarMobile(state,payload){
+        state.showSidebarMobile = payload
     },
     //Merge related mutations
     addMergeDurationMs(state,payload){

@@ -10,10 +10,10 @@
 
 
             <div class="top-bar">
-
+<!-- 
                 <button class="back-arrow">
                     <i class="material-icons ">arrow_back_ios </i>
-                </button>
+                </button> -->
 
                 <div class="search-bar">
                     <input class="form-control mr-sm-2" type="input" placeholder="Search" aria-label="Search">

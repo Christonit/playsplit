@@ -10976,6 +10976,7 @@ p {
   background-color: #111417;
   z-index: 10;
   justify-content: space-between;
+  align-items: center;
 }
 
 .branding {
@@ -10986,7 +10987,15 @@ p {
   display: inline-flex;
   align-items: center;
   margin-left: auto;
+  margin-right: auto;
   width: 50%;
+}
+
+@media (min-width: 1600px) {
+  .top-bar {
+    width: 60%;
+    max-width: 1200px;
+  }
 }
 
 .back-arrow {
@@ -11060,7 +11069,6 @@ p {
 #top-bar-links {
   display: inline-block;
   position: relative;
-  margin: 0 0 0 auto;
 }
 
 .user-dropdown {
@@ -11079,19 +11087,6 @@ body {
   overflow: hidden;
 }
 
-#music-stats {
-  max-width: 280px;
-  width: 100%;
-  margin-left: 32px;
-  position: fixed;
-  right: 2.5%;
-  top: 112px;
-}
-
-#music-stats .subtitle {
-  margin: 0 12px 20px;
-}
-
 aside {
   padding: 24px;
   max-width: 268px;
@@ -11099,12 +11094,45 @@ aside {
   height: calc(100vh - 4.5rem);
   position: fixed;
   top: 66px;
-  z-index: 10;
+  z-index: -1;
+  transition: all 500ms;
+  left: -30%;
+  opacity: 0;
+}
+
+@media (min-width: 1200px) {
+  aside {
+    left: 0;
+    z-index: 1;
+    opacity: 1;
+  }
+}
+
+aside::before {
+  content: " ";
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, rgba(17, 20, 23, 0.9) 10%, rgba(17, 20, 23, 0.8) 70%, rgba(17, 20, 23, 0.5) 100%);
+  top: 0;
+  right: 0;
+}
+
+@media (min-width: 1200px) {
+  aside::before {
+    display: none;
+  }
+}
+
+aside.show {
+  z-index: 99;
+  left: 0;
+  opacity: 1;
 }
 
 .playlist-playing-container {
   position: absolute;
-  bottom: 36px;
+  bottom: 112px;
   width: 240px;
 }
 
@@ -11136,6 +11164,13 @@ aside {
   padding: 40px 0 0;
 }
 
+@media (min-width: 1600px) {
+  .section-container {
+    width: 60%;
+    max-width: 1200px;
+  }
+}
+
 .section-container::-webkit-scrollbar {
   display: none;
 }
@@ -11157,6 +11192,13 @@ aside {
   height: 100%;
   top: 0;
   padding: 40px 0;
+}
+
+@media (min-width: 1600px) {
+  .action-container {
+    width: 60%;
+    max-width: 1200px;
+  }
 }
 
 .action-container::-webkit-scrollbar {
@@ -11199,6 +11241,19 @@ aside {
   flex-wrap: wrap;
   flex-direction: column;
   margin-top: 96px;
+  position: relative;
+}
+
+@media (min-width: 992px) {
+  .nav-container {
+    margin-top: -32px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .nav-container {
+    margin-top: 96px;
+  }
 }
 
 .nav-item-icon {
@@ -11236,7 +11291,7 @@ aside {
   height: 20px;
   width: 3px;
   background-color: #ED2F52;
-  left: 0;
+  left: -24px;
   position: absolute;
 }
 
@@ -11353,7 +11408,7 @@ aside {
   height: 24px;
   content: " ";
   position: absolute;
-  top: -8px;
+  top: -16px;
   left: 0;
   right: 0;
   margin: auto;
@@ -11509,12 +11564,23 @@ aside {
   -moz-column-gap: 24px;
        column-gap: 24px;
   row-gap: 24px;
-  grid-template-columns: repeat(3, minmax(180px, 288px));
+  grid-template-columns: repeat(3, minmax(160px, 288px));
+  width: 102%;
+  padding-right: 8px;
+}
+
+@media (min-width: 1200px) {
+  .grid-cards {
+    grid-template-columns: repeat(4, minmax(160, 222px));
+    width: 103%;
+  }
 }
 
 @media (min-width: 1600px) {
   .grid-cards {
-    grid-template-columns: repeat(4, minmax(180px, 222px));
+    grid-template-columns: repeat(5, minmax(180px, 282px));
+    width: 102%;
+    padding-right: 24px;
   }
 }
 
@@ -11525,6 +11591,7 @@ button:focus {
 .btn-container {
   display: inline-flex;
   justify-content: center;
+  position: relative;
 }
 
 .btn {
@@ -11852,6 +11919,26 @@ button[name=btn-inspect-stats] .material-icons {
   border: unset;
 }
 
+.fab {
+  position: absolute;
+  bottom: 56px;
+  right: 24px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  padding: 8px 16px;
+}
+
+button[name=close-btn] {
+  position: absolute;
+  bottom: 60px;
+  display: block;
+  padding: 12px 12px;
+  line-height: 1;
+  width: 100%;
+  max-width: 172px;
+}
+
 .input-large {
   width: 100%;
   display: block;
@@ -12042,7 +12129,7 @@ input {
   display: flex;
   align-items: center;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .grid-list-item:hover .btn-container {
@@ -12052,17 +12139,23 @@ input {
 }
 
 .grid-list-item .btn-container {
-  margin: 0 32 0 0;
+  margin: 0;
   position: relative;
   top: -32px;
   opacity: 0;
+}
+
+@media (min-width: 1600px) {
+  .grid-list-item .btn-container {
+    margin: 0 32px 0 0;
+  }
 }
 
 .grid-cards .grid-list-item {
   display: inline-flex;
   align-items: center;
   width: 100%;
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 16px 16px;
   height: auto;
@@ -12304,6 +12397,64 @@ input {
   border-radius: 4px;
 }
 
+#music-stats {
+  max-width: 280px;
+  width: 100%;
+  margin-left: 32px;
+  position: fixed;
+  right: -30%;
+  top: 112px;
+  z-index: -1;
+  opacity: 0;
+  transition: all 500ms;
+}
+
+@media (min-width: 1200px) {
+  #music-stats {
+    z-index: 99;
+    right: 24px;
+    opacity: 1;
+  }
+}
+
+@media (min-width: 1600px) {
+  #music-stats {
+    z-index: 99;
+    right: 2.5%;
+    opacity: 1;
+  }
+}
+
+#music-stats::before {
+  content: " ";
+  position: fixed;
+  background: linear-gradient(90deg, rgba(17, 20, 23, 0.35) 0%, rgba(17, 20, 23, 0.8) 30%, rgba(17, 20, 23, 0.9) 90%);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+}
+
+@media (min-width: 1200px) {
+  #music-stats::before {
+    display: none;
+  }
+}
+
+#music-stats.active {
+  right: 2.5%;
+  z-index: 99;
+  opacity: 1;
+}
+
+#music-stats .subtitle {
+  margin: 0 12px 20px;
+  z-index: 1;
+  position: relative;
+}
+
 .stat-bar {
   display: block;
   width: 100%;
@@ -12312,6 +12463,7 @@ input {
   background-color: rgba(255, 255, 255, 0.3);
   position: relative;
   border-radius: 4px;
+  z-index: 1;
 }
 
 .stats-row {
@@ -12356,6 +12508,8 @@ input {
   background-color: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
   padding: 4px 12px;
+  position: relative;
+  z-index: 1;
 }
 
 #quickmerge {

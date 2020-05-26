@@ -1,11 +1,11 @@
 <template>
-    <div id="music-stats">
+    <div id="music-stats" :class="showStatsMobile ? 'active': '' ">
         <h3 class="subtitle">Playlists stats</h3>
 
         <div class="stats-table" v-if="playlist_analisys.audio_features != null">
             <div class="stats-row">
                 <span class="text">Inspecting</span>
-                 <b class="highlight">{{ playlist_analisys.name}}</b>
+                 <b class="highlight">{{ playlist_name}}</b>
             </div>
             <stat-row feature="acoustic" :feature-value="features.acoustic">
                 <template slot="feauture-name">
@@ -82,6 +82,10 @@
             </stat-row>
             
         </div>
+            <div class="btn-container mt-4 w-100"
+                v-if="showStatsMobile">
+                <button class="btn btn-secondary" @click="closeStat">Close stats</button>
+            </div>
     </div>
 </template>
 
@@ -104,7 +108,15 @@ export default {
         // this.getFeatures(this.playlistsIdString);
     },
     computed:{
-        ...mapState(['playlist_analisys']),
+        ...mapState(['playlist_analisys',
+        'resolutions',
+        'showStatsMobile']),
+        playlist_name(){
+            if(this.playlist_analisys.name.length > 35){
+                return this.playlist_analisys.name.slice(0,34) + '...';
+            }
+            return this.playlist_analisys.name;
+        },
         features(){
             let acoustic = 0;
             let danceability = 0;
@@ -140,6 +152,10 @@ export default {
        
     },
     methods:{
+        ...mapMutations(['toggleStatsMobile']),
+        closeStat(){
+           this.toggleStatsMobile(false); 
+        }
 
     }
 }

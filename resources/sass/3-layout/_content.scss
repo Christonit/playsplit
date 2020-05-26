@@ -1,18 +1,6 @@
 body{
     overflow: hidden;
 }
-#music-stats{
-    max-width: 280px;
-    width: 100%;
-    margin-left: 32px;
-    position: fixed;
-    right: 2.5%;
-    top: 112px;
-}
-
-#music-stats .subtitle{
-    margin: 0 12px 20px;
-}
 
 aside{
     padding: 24px;
@@ -21,13 +9,43 @@ aside{
     height: calc(100vh - 4.5rem);
     position: fixed;
     top: 66px;
-    z-index: 10;
+    z-index: -1;
+    transition: all 500ms;
+    left: -30%;
+    opacity: 0;
+    @include breakpoint(lg){
+        left: 0;
+        z-index: 1;
+        opacity: 1;
+    }
+    &::before{
+        content: ' ';
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(90deg, rgba(17,20,23,0.9) 10%, rgba(17,20,23,0.8) 70%, rgba(17,20,23,0.5) 100%);
+        top: 0;
+        right: 0;
+        @include breakpoint(lg){
+            display: none;
+        }
+    }
 
 }
 
+
+aside.show{
+    z-index: 99;
+    left: 0;    
+    opacity: 1;
+    @include breakpoint(lg){
+       
+    }
+
+}
 .playlist-playing-container{
     position: absolute;
-    bottom: 36px;
+    bottom: 112px;
     width: 240px;
 
     .current-playlist-img{
@@ -60,13 +78,11 @@ aside{
     height: 100%;
     overflow: hidden;
     padding: 40px 0 0;
-    // width: 60%;
-    // max-width: 960px;
-    // min-width: 740px;
-    // margin-left: 8%;
-    // position: relative;
-    // overflow-y: scroll;
-    // -ms-overflow-style: none;
+    @include breakpoint(xl){
+        width: 60%;
+        max-width: 1200px;
+    }
+
     &::-webkit-scrollbar {
         display: none;
     }
@@ -87,7 +103,10 @@ aside{
     height: 100%;
     top: 0;
     padding:  40px 0;
-    // right: 10px;
+    @include breakpoint(xl){
+        width: 60%;
+        max-width: 1200px;
+    }
     &::-webkit-scrollbar {
         display: none;
     }

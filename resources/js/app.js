@@ -32,6 +32,7 @@ import {mapState} from 'vuex';
 import SplitOverview from './components/playlists/split/split-overview.vue';
 import PlaylistDetail from './components/playlists/playlist-detail.vue';
 import CalloutBottom from "./components/utilities/callout-bottom.vue";
+import FabButton from "./components/utilities/fab-button.vue";
 
 Vue.use(Vuex);
 Vue.use(LottiePlayer);
@@ -73,10 +74,14 @@ const app = new Vue({
         SplitOverview,
         PlaylistDetail,
         CalloutBottom,
+        FabButton
         // LottiePlayer
     },
     computed:{
-        ...mapState(['content_loaded','isModalOpen','mergeActive','split','splitPlaylistModal','detailPlaylist','statSelectedPlaylist','alerts'])
+        ...mapState(['resolutions','content_loaded','isModalOpen','mergeActive','split','splitPlaylistModal','detailPlaylist','statSelectedPlaylist','alerts']),
+        windowWidth(){
+            return window.innerWidth;
+        }
     },
     created(){
      
