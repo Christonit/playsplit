@@ -53,34 +53,45 @@ aside.show{
         margin: 16px 0;
         @include b-radius-4;
     }
+
+    @include breakpoint(lg){
+        bottom: 56px;
+    }
 }
 
 .app-container{
-    margin-left: 10px;
     margin-right: auto;
     position: fixed;
     top: 66px;
     height: calc(100vh - 4.5rem);
     overflow-y: hidden;
     width: 100%;
-
+    @include breakpoint(lg){
+        margin-left: 10px;
+    }
 
 }
 
 
 .section-container {
-    width: 50%;
-    max-width: 960px;
-    min-width: 740px;
-    margin: auto ;
+    width: 100%;
+    min-width: 640px;
+    margin: auto;
     position: relative;
-    right: 10px;
     height: 100%;
     overflow: hidden;
-    padding: 40px 0 0;
+    padding: 40px 20px 0;
+    @include breakpoint(lg){
+        padding: 40px 0 0;
+        width: 50%;
+        max-width: 960px;
+        right: 10px;
+
+    }
     @include breakpoint(xl){
         width: 60%;
         max-width: 1200px;
+        min-width: 740px;
     }
 
     &::-webkit-scrollbar {
@@ -91,21 +102,32 @@ aside.show{
     }
 }
 .action-container {
-    width: 50%;
-    max-width: 960px;
-    min-width: 740px;
+    width: 100%;
+    min-width: 640px;
     margin: auto ;
     position: absolute;
     background: $black;
     min-height: 400px;
-    right: 10px;
-    left: -10px;
     height: 100%;
     top: 0;
-    padding:  40px 0;
+    padding:  40px 24px;
+    z-index: 999;
+    @include breakpoint(lg){
+        max-width: 960px;
+        width: 50%;
+        right: 10px;
+        left: -10px;
+        height: 100%;
+        top: 0;
+        padding:  40px 0;
+    }
+    @include breakpoint(lg){
+        width: 50%;
+    }
     @include breakpoint(xl){
         width: 60%;
         max-width: 1200px;
+        min-width: 740px;
     }
     &::-webkit-scrollbar {
         display: none;
@@ -119,20 +141,30 @@ aside.show{
     position: relative;
     overflow-y: scroll;
     height: calc(100% - 48px);
-    margin-right: -20px;
-    padding-right: 3px;
+
+    @include breakpoint(lg){
+        padding: 0;
+        padding-right: 3px;
+        // padding: 0 24px;
+        margin-right: -20px;
+        padding-right: 3px;
+
+    }
 }
 
 
 
 .section-header{
     @include flex-between-center;
-    padding: 0 16px;
+    padding: 0 24px;
     flex-wrap: wrap;
     position: sticky;
     top: 0;
     background: $black;
     z-index: 1;
+    @include breakpoint(md){
+        padding: 0 16px;
+    }
 
 }
 

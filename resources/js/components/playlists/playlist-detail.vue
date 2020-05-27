@@ -6,7 +6,7 @@
             <h2 class="title my-0">{{detailPlaylist.detail.name}}</h2> 
             <div class="btn-container d-inline-flex align-items-center">
                 <button class=" mx-3 btn btn-secondary" @click="close">Close</button>
-                <button class="btn btn-primary">Split</button>
+                <button class="btn btn-primary" @click="splitThis">Split</button>
             </div>
 
             
@@ -99,7 +99,7 @@ export default {
 
     },
     methods:{
-        ...mapMutations(['clearSplit','unsetDetailPlaylist']),
+        ...mapMutations(['clearSplit','unsetDetailPlaylist','setSplitActive']),
          minutesPrinter(ms){
             let time = this.songMstoSeconds(ms);
 
@@ -112,6 +112,18 @@ export default {
             })
             return artists_collection.join(', ');
 
+        },
+        splitThis(e){
+
+            let id = this.detailPlaylist.detail.id;
+
+            this.getPlaylistInfo(id).then( playlist => {
+
+                this.setSplitActive({playlist: playlist ,duration:this.timePrinter, genres:this.detailPlaylist.genres})
+
+            }).then(()=> this.close() )
+
+            e.stopPropagation();
         },
         close(){
             this.unsetDetailPlaylist();

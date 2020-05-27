@@ -51,7 +51,6 @@ export default {
                 }
             }).then( response => {
                 
-                console.log(this.apiRoot)
 
               if(response.status == 200){
                 return response.text()
@@ -119,7 +118,6 @@ export default {
                         }).catch(err => console.log(err))
 
                 return promise;
-                console.log('xxx')
             })
 
             return promise;
@@ -177,14 +175,7 @@ export default {
                         
 
                     })
-                } )
-            
-            // }else{
-    
-            //   this.player.togglePlay()
-    
-            // }
-                                  
+                } )                       
                                 
           },
           songMstoSeconds(song){

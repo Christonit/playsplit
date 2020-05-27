@@ -236,15 +236,38 @@ import draggable from '../../../vuedraggable'
 
 export default {
     name: "split-overview",
+    created(){
+        // window.onresize = ()=>{
+        //     let elHeight = this.$refs.split_body.offsetHeight;
+        //     this.split_body_height = elHeight;
+
+        //     this.$refs.og_playlist.style.maxHeight = (elHeight - (40 * 3)) + "px"
+        //     this.$refs.og_playlist.style.minHeight = (elHeight - (40 * 3)) + "px"
+        //     this.setHeight()
+        // }
+        //  this.setHeight();
+
+    },
     mounted(){
         this.playlist_og =  this.$store.state.split.playlist.tracks.items
-        let elHeight = this.$refs.split_body.offsetHeight
 
-        this.split_body_height = elHeight;
+            let elHeight = this.$refs.split_body.offsetHeight;
+    
+            this.split_body_height = elHeight;
 
-        this.$refs.og_playlist.style.maxHeight = (elHeight - (40 * 3)) + "px"
-        this.$refs.og_playlist.style.minHeight = (elHeight - (40 * 3)) + "px"
-        this.setHeight()
+            this.$refs.og_playlist.style.maxHeight = (elHeight - (40 * 3)) + "px"
+            this.$refs.og_playlist.style.minHeight = (elHeight - (40 * 3)) + "px"
+            this.setHeight()
+        window.addEventListener('resize', ()=> {
+            let elHeight = this.$refs.split_body.offsetHeight;
+    
+            this.split_body_height = elHeight;
+
+            this.$refs.og_playlist.style.maxHeight = (elHeight - (40 * 3)) + "px"
+            this.$refs.og_playlist.style.minHeight = (elHeight - (40 * 3)) + "px"
+            this.setHeight()
+
+        })
 
 
         
@@ -263,6 +286,7 @@ export default {
                 playlist_og:[],
                 pulled_tracks:[],
                 isOpen:true,
+                accordionHeight:null,
                 playlist_2:{
                     name:'',
                     content:[]
@@ -529,14 +553,18 @@ export default {
 
             }
             if(this.splits_active == 2){
+                this.accordionHeight = (this.split_body_height - (40 * 3)) + "px";
                 el.style.height = (this.split_body_height - (40 * 3)) + "px"
                 
             }
 
             if(this.splits_active == 3){
+
+                this.accordionHeight = (this.split_body_height - (46.125* 4)) + "px"
                 el.style.height = (this.split_body_height - (46.125* 4)) + "px"
             }
             if( this.splits_active == 4){
+                this.accordionHeight = (this.split_body_height - (50 * 5)) + "px"
                 el.style.height = (this.split_body_height - (50 * 5)) + "px"
             }
 

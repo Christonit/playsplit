@@ -33,7 +33,7 @@ $mobile-small3: 320px;
   }
  
   @else if $class == lg {
-    @media (min-width: 1200px) { @content; }
+    @media (min-width: 1300px) { @content; }
   }
   @else if $class == xl {
     @media (min-width: 1600px) { @content; }

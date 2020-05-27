@@ -12,7 +12,7 @@ const store = new Vuex.Store({
         xs: 375,
         sm:  620,
         md:  992,
-        lg:  1200,
+        lg:  1300,
         xl:  1441
     },
     showStatsMobile:false,

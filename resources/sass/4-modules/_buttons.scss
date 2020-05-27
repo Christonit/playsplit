@@ -299,6 +299,8 @@ button[name="btn-inspect-stats"] .material-icons{
     cursor: pointer;
     line-height: 1.5;
     position: relative;
+    display: flex;
+    align-items: center;
     &:hover{
         color: $white500;
     }

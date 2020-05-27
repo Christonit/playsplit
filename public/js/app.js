@@ -2154,6 +2154,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (this.current_playback != '') {
         var current = this.current_playback.current_track.id;
         var tracks_total = this.currentPlaylist.track_ids;
+
+        if (tracks_total.indexOf(current) == 0) {
+          return 1;
+        }
+
+        ;
         return tracks_total.indexOf(current) + 1;
       }
     },
@@ -2329,7 +2335,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     var id = this.$refs.playlist_preview.id;
     this.getPlaylistInfo(id).then(function (res) {
-      console.log(res);
       _this.playlist = res;
     }).then(function () {
       var total_ms = 0;
@@ -2893,7 +2898,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return "".concat(hours, " ").concat(time.minutes, " minutes");
     }
   }),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['clearSplit', 'unsetDetailPlaylist']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['clearSplit', 'unsetDetailPlaylist', 'setSplitActive']), {
     minutesPrinter: function minutesPrinter(ms) {
       var time = this.songMstoSeconds(ms);
       return "".concat(time.min, ":").concat(time.sec);
@@ -2904,6 +2909,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         artists_collection.push(artist.name);
       });
       return artists_collection.join(', ');
+    },
+    splitThis: function splitThis(e) {
+      var _this = this;
+
+      var id = this.detailPlaylist.detail.id;
+      this.getPlaylistInfo(id).then(function (playlist) {
+        _this.setSplitActive({
+          playlist: playlist,
+          duration: _this.timePrinter,
+          genres: _this.detailPlaylist.genres
+        });
+      }).then(function () {
+        return _this.close();
+      });
+      e.stopPropagation();
     },
     close: function close() {
       this.unsetDetailPlaylist();
@@ -3167,13 +3187,32 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "split-overview",
+  created: function created() {// window.onresize = ()=>{
+    //     let elHeight = this.$refs.split_body.offsetHeight;
+    //     this.split_body_height = elHeight;
+    //     this.$refs.og_playlist.style.maxHeight = (elHeight - (40 * 3)) + "px"
+    //     this.$refs.og_playlist.style.minHeight = (elHeight - (40 * 3)) + "px"
+    //     this.setHeight()
+    // }
+    //  this.setHeight();
+  },
   mounted: function mounted() {
+    var _this = this;
+
     this.playlist_og = this.$store.state.split.playlist.tracks.items;
     var elHeight = this.$refs.split_body.offsetHeight;
     this.split_body_height = elHeight;
     this.$refs.og_playlist.style.maxHeight = elHeight - 40 * 3 + "px";
     this.$refs.og_playlist.style.minHeight = elHeight - 40 * 3 + "px";
     this.setHeight();
+    window.addEventListener('resize', function () {
+      var elHeight = _this.$refs.split_body.offsetHeight;
+      _this.split_body_height = elHeight;
+      _this.$refs.og_playlist.style.maxHeight = elHeight - 40 * 3 + "px";
+      _this.$refs.og_playlist.style.minHeight = elHeight - 40 * 3 + "px";
+
+      _this.setHeight();
+    });
   },
   components: {
     draggable: _vuedraggable__WEBPACK_IMPORTED_MODULE_5__["default"],
@@ -3192,6 +3231,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       playlist_og: [],
       pulled_tracks: [],
       isOpen: true,
+      accordionHeight: null,
       playlist_2: {
         name: '',
         content: []
@@ -3320,7 +3360,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     onEnd: function onEnd(evt) {
-      var _this = this;
+      var _this2 = this;
 
       if (evt.pullMode == true & evt.to.parentNode.getAttribute('class') == "splits-container") {
         var pulled_el = evt.items;
@@ -3330,7 +3370,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           tracks.forEach(function (el) {
             var id = el.getAttribute('id');
 
-            _this.pulled_tracks.push(id);
+            _this2.pulled_tracks.push(id);
           });
         } else {
           var id = evt.clone.getAttribute('id');
@@ -3348,9 +3388,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _tracks.forEach(function (el) {
             var id = el.getAttribute('id');
 
-            var track = _this.pulled_tracks.indexOf(id);
+            var track = _this2.pulled_tracks.indexOf(id);
 
-            _this.pulled_tracks.splice(id, 1);
+            _this2.pulled_tracks.splice(id, 1);
           });
         }
 
@@ -3404,19 +3444,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       if (this.splits_active == 2) {
+        this.accordionHeight = this.split_body_height - 40 * 3 + "px";
         el.style.height = this.split_body_height - 40 * 3 + "px";
       }
 
       if (this.splits_active == 3) {
+        this.accordionHeight = this.split_body_height - 46.125 * 4 + "px";
         el.style.height = this.split_body_height - 46.125 * 4 + "px";
       }
 
       if (this.splits_active == 4) {
+        this.accordionHeight = this.split_body_height - 50 * 5 + "px";
         el.style.height = this.split_body_height - 50 * 5 + "px";
       }
     },
     createSplit: function createSplit() {
-      var _this2 = this;
+      var _this3 = this;
 
       var split_name = [];
       var split_uris = [];
@@ -3478,25 +3521,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       split_name.forEach(function (split, index) {
         console.log(index);
 
-        _this2.createPlaylist(split).then(function (id) {
-          _this2.addTracksToPlaylist(id, split_uris[index]);
+        _this3.createPlaylist(split).then(function (id) {
+          _this3.addTracksToPlaylist(id, split_uris[index]);
 
           return id;
         }).then(function (playlist_id) {
           setTimeout(function () {
-            _this2.latestCreatedPlaylist(playlist_id);
+            _this3.latestCreatedPlaylist(playlist_id);
           }, 2000);
         }).then(function () {
           var uris = [];
 
-          _this2.pulled_tracks.forEach(function (track) {
+          _this3.pulled_tracks.forEach(function (track) {
             var uri = {
               uri: "spotify:track:".concat(track)
             };
             uris.push(uri);
           });
 
-          _this2.removeTrackFromPlaylist(_this2.split.playlist.id, uris);
+          _this3.removeTrackFromPlaylist(_this3.split.playlist.id, uris);
         });
       });
       this.clearSplit();
@@ -47800,7 +47843,11 @@ var render = function() {
               [_vm._v("Close")]
             ),
             _vm._v(" "),
-            _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Split")])
+            _c(
+              "button",
+              { staticClass: "btn btn-primary", on: { click: _vm.splitThis } },
+              [_vm._v("Split")]
+            )
           ]
         ),
         _vm._v(" "),
@@ -63600,15 +63647,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************************************!*\
   !*** ./resources/js/components/utilities/fab-button.vue ***!
   \**********************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fab_button_vue_vue_type_template_id_4c43a728___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fab-button.vue?vue&type=template&id=4c43a728& */ "./resources/js/components/utilities/fab-button.vue?vue&type=template&id=4c43a728&");
 /* harmony import */ var _fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fab-button.vue?vue&type=script&lang=js& */ "./resources/js/components/utilities/fab-button.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _fab_button_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -63638,7 +63684,7 @@ component.options.__file = "resources/js/components/utilities/fab-button.vue"
 /*!***********************************************************************************!*\
   !*** ./resources/js/components/utilities/fab-button.vue?vue&type=script&lang=js& ***!
   \***********************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -63966,16 +64012,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     getPlaylistInfo: function getPlaylistInfo(playlist_id) {
-      var _this = this;
-
       return fetch("".concat(this.apiRoot, "/playlists/").concat(playlist_id), {
         method: 'GET',
         headers: {
           Authorization: "Bearer ".concat(this.$store.state.user.access_token)
         }
       }).then(function (response) {
-        console.log(_this.apiRoot);
-
         if (response.status == 200) {
           return response.text();
         }
@@ -63994,11 +64036,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     prepGenresArray: function prepGenresArray(albums_ids_array) {
-      var _this2 = this;
+      var _this = this;
 
       var arr = [];
       albums_ids_array.forEach(function (item) {
-        _this2.getGenre(item).then(function (data) {
+        _this.getGenre(item).then(function (data) {
           arr.push(data);
         })["catch"](function (err) {
           return console.log(err);
@@ -64007,10 +64049,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return arr;
     },
     getPlaylistGenres: function getPlaylistGenres(albums_ids_array) {
-      var _this3 = this;
+      var _this2 = this;
 
       var promise = new Promise(function (resolve, reject) {
-        var rawGenresList = _this3.prepGenresArray(albums_ids_array);
+        var rawGenresList = _this2.prepGenresArray(albums_ids_array);
 
         var genres = null;
         var interval = setInterval(function () {
@@ -64027,7 +64069,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': _this3.csrf
+            'X-CSRF-TOKEN': _this2.csrf
           },
           body: JSON.stringify(data)
         }).then(function (response) {
@@ -64036,7 +64078,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           return console.log(err);
         });
         return promise;
-        console.log('xxx');
       });
       return promise;
     },
@@ -64050,7 +64091,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     latestCreatedPlaylist: function latestCreatedPlaylist(playlist_id) {
-      var _this4 = this;
+      var _this3 = this;
 
       return fetch("https://api.spotify.com/v1/playlists/".concat(playlist_id), this._GET).then(function (response) {
         var status = response.status;
@@ -64063,11 +64104,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }).then(function (data) {
         var playlist = JSON.parse(data);
 
-        _this4.$store.commit('addLatestPlaylist', playlist);
+        _this3.$store.commit('addLatestPlaylist', playlist);
       });
     },
     playSong: function playSong(context) {
-      var _this5 = this;
+      var _this4 = this;
 
       // if(this.$store.state.activePlaylist == false){ 
       fetch('https://api.spotify.com/v1/me/player/play?device_id=' + this.$store.state.device_id, {
@@ -64077,22 +64118,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           context_uri: context
         })
       }).then(function () {
-        _this5.player.getCurrentState().then(function (state) {
+        _this4.player.getCurrentState().then(function (state) {
           console.log(state);
           var _state$track_window = state.track_window,
               current_track = _state$track_window.current_track,
               next_tracks = _state$track_window.next_tracks,
               previous_tracks = _state$track_window.previous_tracks;
 
-          _this5.$store.commit('setCurrentPlayback', {
+          _this4.$store.commit('setCurrentPlayback', {
             current_track: current_track,
             next_tracks: next_tracks,
             previous_tracks: previous_tracks
           });
         });
-      }); // }else{
-      //   this.player.togglePlay()
-      // }
+      });
     },
     songMstoSeconds: function songMstoSeconds(song) {
       var ms = song;
@@ -64209,7 +64248,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       xs: 375,
       sm: 620,
       md: 992,
-      lg: 1200,
+      lg: 1300,
       xl: 1441
     },
     showStatsMobile: false,

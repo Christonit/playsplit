@@ -66,6 +66,10 @@
                     let current = this.current_playback.current_track.id;
                     let tracks_total = this.currentPlaylist.track_ids;
 
+                    if( tracks_total.indexOf(current) == 0 ){
+                        return 1;
+                    };
+                    
                     return (tracks_total.indexOf(current) + 1 );
                 
                 }

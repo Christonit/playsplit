@@ -87,7 +87,6 @@ export default {
         let id = this.$refs.playlist_preview.id;
         this.getPlaylistInfo(id)
             .then( res => {
-            console.log(res)
             this.playlist = res})
             .then( ()=>{
             let total_ms = 0

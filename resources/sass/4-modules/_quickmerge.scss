@@ -15,7 +15,7 @@
     right: 0;
     width: 50%;
     overflow: hidden;
-
+    @include shadow-el-3;
 }
 
 #quickmerge:before{

@@ -6,9 +6,11 @@
     <sidebar-comp></sidebar-comp>
     <div class="app-container">
 
-        <playlist-dashboard  ></playlist-dashboard>
         <split-overview  v-if="split.isActive"></split-overview>
         <playlist-detail  v-if="detailPlaylist.isActive"></playlist-detail>
+        <playlist-dashboard  ></playlist-dashboard>
+
+        <fab-button v-if='windowWidth < resolutions.lg'></fab-button>
 
         <callout-bottom 
             v-if="alerts.playback"
@@ -28,7 +30,6 @@
     <edit-name-pop-up v-if="splitPlaylistModal.split_1" :emition="true"></edit-name-pop-up>
     <edit-name-pop-up v-if="splitPlaylistModal.split_2" :emition="true"></edit-name-pop-up>
     <edit-name-pop-up v-if="splitPlaylistModal.split_3" :emition="true"></edit-name-pop-up>
-    <fab-button v-if='windowWidth < resolutions.lg'></fab-button>
     <lottie-player v-if='content_loaded.playback_ready == false'
                     class='app-loading' 
                     :options='loadingSrc.options' 
